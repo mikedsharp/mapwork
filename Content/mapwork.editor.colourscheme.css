@@ -1,0 +1,56 @@
+﻿body {
+}
+
+#leftBar {
+  background-color: #222;
+}
+
+#rightBar {
+  background-color: #222;
+}
+
+.ribbonItem {
+  color: #eee;
+}
+
+#createItem {
+}
+
+#toolboxItem {
+}
+
+#saveItem {
+}
+
+#publishItem {
+}
+
+
+
+.ribbonItem:hover {
+  color: #1b78b5;
+  font-weight: bold;
+}
+
+.errorBorder {
+  border-width: 2px;
+  padding: 0px;
+  border-color: #f00;
+  border-style: solid;
+}
+
+#paletteDialog {
+  background-color: #ccc;
+}
+
+#layersDialog {
+  background-color: #ccc;
+}
+
+#propertiesDialog {
+  background-color: #ccc;
+}
+
+#settingsDialog {
+  background-color: #ccc;
+}
