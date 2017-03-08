@@ -224,8 +224,13 @@ mapwork.model.Map = function () {
             tilesAccross: this.getTilesAccross(),
             tilesDown: this.getTilesDown(),
             layers: [],
-            properties: this.getAllProperties()
+           // properties: this.getAllProperties()
         };
+
+        var mapProperties = this.getAllProperties(); 
+        if(mapProperties.length > 0){
+            obj.properties = mapProperties; 
+        }
 
 
         allLayers = this.getLayers();
@@ -237,8 +242,12 @@ mapwork.model.Map = function () {
                 tilesetPath: allLayers[layerCount].getTilesetPath(),
                 rows: [],
                 zPosition: allLayers[layerCount].getZPosition(),
-                properties: allLayers[layerCount].getAllProperties()
+               // properties: allLayers[layerCount].getAllProperties()
             };
+            var layerProperties = allLayers[layerCount].getAllProperties(); 
+            if(layerProperties.length > 0){
+                layer.properties = layerProperties; 
+            }
 
             // break down the rows and insert into neat layer object
             for (rowCount = 0; rowCount < allLayers[layerCount].getRows().length; rowCount++) {
@@ -249,8 +258,14 @@ mapwork.model.Map = function () {
                 for (cellCount = 0; cellCount < currentRow.length; cellCount++) {
                     cell = {
                         tileCode: currentRow[cellCount].getTileCode(),
-                        properties: currentRow[cellCount].getAllProperties()
+                       // properties: currentRow[cellCount].getAllProperties()
                     };
+                    var cellProperties = currentRow[cellCount].getAllProperties(); 
+
+                    if(cellProperties.length > 0){
+                        cell.properties = cellProperties; 
+                    }
+
                     row.cells.push(cell);
                 }
                 layer.rows.push(row);
