@@ -1,0 +1,994 @@
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outline:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}.clear{clear:both;display:block;overflow:hidden;visibility:hidden;width:0;height:0}.clearfix:after{clear:both;content:' ';display:block;font-size:0;line-height:0;visibility:hidden;width:0;height:0}* html .clearfix,*:first-child+html .clearfix{zoom:1}
+body {
+}
+
+#settingsSelectProject {
+  display: none;
+}
+
+#rightBar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 72px;
+  z-index: 1;
+}
+
+#leftBar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 72px;
+  z-index: 1;
+}
+
+#canvasContainer {
+  position: absolute;
+  top: 0;
+  right: 72px;
+  bottom: 0;
+  left: 72px;
+  z-index: 1;
+}
+
+.layerSelectTileset {
+  width: 100%;
+}
+
+#paletteToolbox .table {
+  margin: 0 auto;
+}
+
+#editorCanvas {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  cursor: crosshair;
+  /* Vendor Prefixes for preventing the user from selecting certain HTML elements with cursor*/
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  outline: none;
+}
+
+
+a, p, div, img {
+  /* Vendor Prefixes for preventing the user from selecting certain HTML elements with cursor*/
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.itemContainer {
+  position: relative;
+  top: -75px;
+  left: 16px;
+  display: table;
+  overflow: visible;
+  height: 100%;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.ribbonItem {
+  margin: 10px 6px 10px 6px;
+  margin-top: 10px;
+  width: 32px;
+  height: 32px;
+  border-width: 0px;
+  background: none no-repeat left center;
+  cursor: pointer;
+}
+
+.verticalCentered {
+  position: absolute;
+  top: 50%;
+  margin-top: -15%;
+  margin-bottom: 0;
+  width: 50%;
+  height: 30%;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+#createItem:hover {
+  background-position-x: -32px;
+}
+
+#buildItem:hover {
+  background-position-x: -32px;
+}
+
+#saveItem:hover {
+  background-position-x: -32px;
+}
+
+#publishItem:hover {
+  background-position-x: -32px;
+}
+
+#paletteItem:hover {
+  background-position-x: -32px;
+}
+
+#layersItem:hover {
+  background-position-x: -32px;
+}
+
+#propertiesItem:hover {
+  background-position-x: -32px;
+}
+
+#settingsItem:hover {
+  background-position-x: -32px;
+}
+
+#createItem {
+  border-width: 0px;
+  background-image: url(6c8ed7327f1b43743e283b047951321f.png);
+  background-position: 0px 0px;
+}
+
+#buildItem {
+  border-width: 0px;
+  background-image: url(6c8ed7327f1b43743e283b047951321f.png);
+  background-position: 0px -32px;
+}
+
+#saveItem {
+  border-width: 0px;
+  background-image: url(6c8ed7327f1b43743e283b047951321f.png);
+  background-position: 0px -64px;
+  /*disk button Removed for iteration 1*/
+  display: none;
+}
+
+#publishItem {
+  border-width: 0px;
+  background-image: url(6c8ed7327f1b43743e283b047951321f.png);
+  background-position: 0px -96px;
+}
+
+
+#paletteItem {
+  border-width: 0px;
+  background-image: url(6c8ed7327f1b43743e283b047951321f.png);
+  background-position: 0px -128px;
+}
+
+#layersItem {
+  border-width: 0px;
+  background-image: url(6c8ed7327f1b43743e283b047951321f.png);
+  background-position: 0px -160px;
+}
+
+#propertiesItem {
+  border-width: 0px;
+  background-image: url(6c8ed7327f1b43743e283b047951321f.png);
+  background-position: 0px -192px;
+}
+
+#settingsItem {
+  border-width: 0px;
+  background-image: url(6c8ed7327f1b43743e283b047951321f.png);
+  background-position: 0px -224px;
+}
+
+#createProjectOptions {
+  display: none;
+}
+
+.dialogDummy {
+  position: absolute;
+  top: 0;
+  right: 72px;
+  bottom: 0;
+  display: none;
+  overflow: hidden;
+  overflow-x: hidden;
+  width: 256px;
+}
+
+.dialogButtonBox {
+  position: absolute;
+  bottom: 10px !important;
+}
+
+textarea {
+  resize: none;
+}
+
+
+.leftDialog {
+  position: relative;
+  top: 50%;
+  margin: 0 auto;
+  overflow: auto;
+  overflow-x: hidden;
+  width: 384px;
+  height: 320px;
+  background-color: #555;
+  color: #fff;
+  font-family: Verdana, Geneva, 'DejaVu Sans', sans-serif;
+  font-size: 11px;
+  display: none;
+}
+
+.numberInput {
+  width: 20px;
+}
+
+.textCentre {
+  text-align: center;
+}
+
+.button {
+  padding: 5px 10px;
+  border: 0px;
+  font-weight: bold;
+  border-radius: 2px;
+  background-color: #000;
+  background-color: #eee;
+  margin: 0;
+  display: inline-block;
+}
+
+.dialogStep {
+  display: none;
+}
+
+button::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+.block {
+  display: block;
+}
+
+.button:hover {
+  background-color: #468ade;
+  color: #eee;
+  cursor: pointer;
+}
+
+
+.fullWidth {
+  width: 100% !important;
+}
+
+.modalBlocker {
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: none;
+}
+
+#createDialog {
+  z-index: 3;
+}
+
+#publishDialog {
+  z-index: 3;
+}
+
+.horizontalList {
+  display: inline-block;
+}
+
+  .horizontalList li {
+    display: inline;
+    margin-right: 5px;
+  }
+
+
+.dialogContainer {
+  margin: 10px;
+}
+
+
+
+#buildContextRibbon {
+  display: none;
+}
+
+#paletteCanvasContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  overflow-x: hidden;
+}
+
+#paletteCanvas {
+  cursor: pointer;
+}
+
+
+#appContainer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.noPadding {
+  margin: 0;
+  padding: 2px;
+  border-style: hidden;
+}
+
+.w150 {
+  width: 149px !important;
+}
+
+.marT-5 {
+  margin-top: 5px;
+}
+
+.marT-10 {
+  margin-top: 10px;
+}
+
+.marT-20 {
+  margin-top: 20px;
+}
+
+.marT-30 {
+  margin-top: 30px;
+}
+
+
+.marTB-10 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.marTB-20 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.marTB-30 {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.marL-10 {
+  margin-left: 10px;
+}
+
+.marR-10 {
+  margin-right: 10px;
+}
+
+
+.propertiesInput {
+  width: 112px;
+}
+
+#mapPropertiesListContainer {
+  position: absolute;
+  bottom: 32px;
+  top: 310px;
+  overflow: auto;
+  width: 256px;
+}
+
+#mapPropertiesDetail {
+  position: relative;
+  top: 32px;
+  bottom: 32px;
+}
+
+#propertyFilterContainer {
+  position: relative;
+}
+
+#propertyTable {
+  width: 228px;
+  margin-left: 10px;
+  margin-right: 10px;
+  background-color: #ddd;
+  border: 1px solid #777;
+}
+
+#settingsTable {
+  width: 228px;
+  margin-left: 10px;
+  margin-right: 10px;
+  background-color: #ddd;
+  border: 1px solid #777;
+}
+
+#propertyTable .tableRow .tableCell {
+  width: 50% !important;
+}
+
+.border {
+  border: 1px solid #000 !important;
+}
+
+
+
+
+/*Table CSS*/
+.table {
+  display: table;
+  border-width: 0px;
+  border-collapse: collapse;
+  border-spacing: 0;
+  padding: 0; /* 'cellpadding' equivalent */
+  position: relative;
+  left: 0;
+}
+
+.tableRow {
+  border-width: 0px;
+  border-collapse: collapse;
+  border-spacing: 0;
+  padding: 0; /* 'cellpadding' equivalent */
+  margin: 0;
+  display: table-row;
+}
+
+.tableCell {
+  display: table-cell;
+  border-width: 0px;
+  border-collapse: collapse;
+  border-spacing: 0;
+  -ms-word-break: break-all;
+  word-break: break-all;
+  padding: 0px;
+}
+
+.toolboxItem {
+  cursor: pointer;
+  width: 64px;
+  height: 64px;
+  margin: 0;
+  padding: 0;
+  float: left;
+  clear: none;
+}
+
+.centre {
+  margin: 0 auto;
+}
+
+#inpCreateTileWidth, #inpCreateTileHeight, #settingsTileHeight, #settingsTileWidth {
+  display: none;
+}
+
+#notificationBanner {
+  position: absolute;
+  left: 72px;
+  right: 72px;
+  top: 0px;
+  z-index: 4;
+  display: none;
+  padding: 10px 0;
+}
+
+.redNotification {
+  background-color: #d84040;
+}
+
+.greenNotification {
+  background-color: #5ea84c;
+}
+
+#notificationBanner span {
+  display: block;
+  font-family: Verdana, Geneva, 'DejaVu Sans', sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  color: #eee;
+}
+
+#propertiesInspectTile {
+  background: url(15fcee88eacef132c0e4d6c5c3e57f59.png) -0px -64px;
+  width: 64px;
+  height: 64px;
+  display: inline-block;
+  cursor: pointer;
+}
+
+  #propertiesInspectTile:hover {
+    background: url(15fcee88eacef132c0e4d6c5c3e57f59.png) -64px -64px;
+  }
+
+
+#toolboxItemEraser:hover {
+  background: url(15fcee88eacef132c0e4d6c5c3e57f59.png) -64px -256px;
+}
+
+#toolboxItemAreaselect:hover {
+  background: url(15fcee88eacef132c0e4d6c5c3e57f59.png) -64px 0px;
+}
+
+#toolboxItemInspect:hover {
+  background: url(15fcee88eacef132c0e4d6c5c3e57f59.png) -64px -64px;
+}
+
+#toolboxItemBrush:hover {
+  background: url(15fcee88eacef132c0e4d6c5c3e57f59.png) -64px -128px;
+}
+
+#toolboxItemBucket:hover {
+  background: url(15fcee88eacef132c0e4d6c5c3e57f59.png) -64px -192px;
+}
+
+#toolboxItemAreaselect {
+  border-width: 0px;
+  background: url(15fcee88eacef132c0e4d6c5c3e57f59.png) 0px 0px;
+}
+
+#toolboxItemEraser {
+  border-width: 0px;
+  background: url(15fcee88eacef132c0e4d6c5c3e57f59.png) 0px -256px;
+}
+
+#toolboxItemInspect {
+  border-width: 0px;
+  background: url(15fcee88eacef132c0e4d6c5c3e57f59.png) 0px -64px;
+  display: none;
+}
+
+#toolboxItemBrush {
+  border-width: 0px;
+  background: url(15fcee88eacef132c0e4d6c5c3e57f59.png) 0px -128px;
+}
+
+#toolboxItemBucket {
+  border-width: 0px;
+  background: url(15fcee88eacef132c0e4d6c5c3e57f59.png) 0px -192px;
+}
+
+.itemSelected {
+  background: url(15fcee88eacef132c0e4d6c5c3e57f59.png) 128px -192px;
+}
+
+#layerControls {
+  position: absolute;
+  bottom: 0;
+  height: 32px;
+  width: 256px;
+  background-color: #444;
+  padding: 0;
+  margin: 0;
+}
+
+#layerMoveDown {
+  width: 96px;
+  height: 32px;
+  background-color: #444;
+  right: 0;
+  padding: 0;
+  margin: 0;
+  border-width: 0px;
+  float: left;
+  clear: none;
+  cursor: pointer;
+}
+
+#layerMoveUp {
+  width: 96px;
+  background-color: #444;
+  height: 32px;
+  float: left;
+  clear: none;
+  padding: 0;
+  margin: 0;
+  border-width: 0px;
+  cursor: pointer;
+}
+
+#layerCreateNewLayer {
+  width: 64px;
+  background-color: #444;
+  height: 32px;
+  float: left;
+  clear: none;
+  padding: 0;
+  margin: 0;
+  border-width: 0px;
+  cursor: pointer;
+}
+
+#layerMoveDown:hover {
+  background-color: #1b78b5;
+}
+
+#layerMoveUp:hover {
+  background-color: #1b78b5;
+}
+
+#layerCreateNewLayer:hover {
+  background-color: #1b78b5;
+}
+
+
+#layerMoveUp img {
+  margin: 0 auto;
+  width: 32px;
+  height: 16px;
+  position: relative;
+  left: 32px;
+  top: 8px;
+}
+
+#layerMoveDown img {
+  margin: 0 auto;
+  width: 31px;
+  height: 16px;
+  position: relative;
+  left: 32px;
+  top: 8px;
+}
+
+#layerCreateNewLayer img {
+  margin: 0 auto;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  left: 19px;
+  top: 4px;
+}
+
+.renameLayer {
+  width: 16px;
+  height: 16px;
+  background-image: url(9aa579169dcf987fac6fc0db61b4b0af.png);
+  background-repeat: no-repeat;
+  display: inline-block;
+  clear: none;
+  float: left;
+  margin-left: 5px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.toggleLayerVisibility {
+  width: 16px;
+  height: 16px;
+  background-repeat: no-repeat;
+  display: inline-block;
+  clear: none;
+  float: left;
+  margin-left: 5px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.layerVisibilityIconVisible {
+  background: url(1a6a15ce934ad370507e4aa33a451dfb.png) 0px 0px;
+}
+
+.layerVisibilityIconHidden {
+  background: url(1a6a15ce934ad370507e4aa33a451dfb.png) -16px 0px;
+}
+
+.deleteLayer {
+  width: 16px;
+  height: 16px;
+  background-image: url(44d1850bb7559e530228b0ba17baa951.png);
+  background-repeat: no-repeat;
+  display: inline-block;
+  clear: none;
+  float: left;
+  margin-left: 5px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.layerName {
+  display: inline-block;
+  clear: none;
+  float: left;
+  max-width: 157px;
+  width: 157px;
+  -ms-word-break: break-all;
+  word-break: break-all;
+  -ms-word-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.layerNameInput {
+  display: none;
+  clear: none;
+  float: left;
+  max-width: 157px;
+  padding: 0;
+  margin: 0;
+  border: 0px none none;
+}
+
+#layerList li {
+  margin-bottom: 5px;
+  margin-top: 5px;
+  display: inline-block;
+  clear: both;
+  width: 236px;
+  padding: 0 10px;
+}
+
+.layerUnselected:hover {
+  background-color: #ddd;
+  color: #444;
+}
+
+.layerListItemActions {
+  display: inline-block;
+  float: right;
+  clear: none;
+  padding: 10px 0;
+}
+
+.layerListItemDescription {
+  clear: none;
+  display: inline-block;
+  width: 137px;
+  cursor: pointer;
+  float: left;
+  padding: 10px 0;
+}
+
+.layerSelected {
+  background-color: #1b78b5;
+  color: #ddd;
+}
+
+#layerInformationContainer {
+  position: absolute;
+  bottom: 32px;
+  top: 94px;
+  width: 256px;
+}
+
+body {
+}
+
+#leftBar {
+  background-color: #222;
+}
+
+#rightBar {
+  background-color: #222;
+}
+
+.ribbonItem {
+  color: #eee;
+}
+
+#createItem {
+}
+
+#toolboxItem {
+}
+
+#saveItem {
+}
+
+#publishItem {
+}
+
+
+
+.ribbonItem:hover {
+  color: #1b78b5;
+  font-weight: bold;
+}
+
+.errorBorder {
+  border-width: 2px;
+  padding: 0px;
+  border-color: #f00;
+  border-style: solid;
+}
+
+#paletteDialog {
+  background-color: #ccc;
+}
+
+#layersDialog {
+  background-color: #ccc;
+}
+
+#propertiesDialog {
+  background-color: #ccc;
+}
+
+#settingsDialog {
+  background-color: #ccc;
+}
+
+body {
+}
+
+.ribbonItem span {
+  display: block;
+  margin-top: 3px;
+  margin-right: 2px;
+  margin-left: 2px;
+  font-size: 11px;
+  font-family: Verdana, Geneva, 'DejaVu Sans', sans-serif;
+}
+
+
+.dialogDummy {
+  font-family: Verdana;
+}
+
+  .dialogDummy h3 {
+    padding: 5px 0;
+    background-color: #444;
+    color: #ddd;
+  }
+
+  .dialogDummy p {
+    margin: 5px 10px 10px 10px;
+    text-align: center;
+    font-weight: normal;
+  }
+
+
+h3 {
+  text-align: center;
+  font-weight: bold;
+  font-size:14px;
+   padding: 5px 0;
+    background-color: #444;
+    color: #ddd;
+}
+.left {
+  float:left;
+}
+.right {
+float:right;
+}
+
+/*
+ * CSS Styles that are needed by jScrollPane for it to operate correctly.
+ *
+ * Include this stylesheet in your site or copy and paste the styles below into your stylesheet - jScrollPane
+ * may not operate correctly without them.
+ */
+
+.jspContainer
+{
+	overflow: hidden;
+	position: relative;
+}
+
+.jspPane
+{
+	position: absolute;
+}
+
+.jspVerticalBar
+{
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 16px;
+	height: 100%;
+	background: #777;
+}
+
+.jspHorizontalBar
+{
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 16px;
+	background: #777;
+}
+
+.jspVerticalBar *,
+.jspHorizontalBar *
+{
+	margin: 0;
+	padding: 0;
+}
+
+.jspCap
+{
+	display: none;
+}
+
+.jspHorizontalBar .jspCap
+{
+	float: left;
+}
+
+.jspTrack
+{
+	background: #ebe7de;
+	position: relative;
+}
+
+.jspDrag
+{
+	background: #777;
+	position: relative;
+	top: 0;
+	left: 0;
+	cursor: pointer;
+}
+
+.jspHorizontalBar .jspTrack,
+.jspHorizontalBar .jspDrag
+{
+	float: left;
+	height: 100%;
+}
+
+.jspArrow
+{
+	background: #50506d;
+	text-indent: -20000px;
+	display: block;
+	cursor: pointer;
+}
+
+.jspArrow.jspDisabled
+{
+	cursor: default;
+	background: #80808d;
+}
+
+.jspVerticalBar .jspArrow
+{
+	height: 16px;
+}
+
+.jspHorizontalBar .jspArrow
+{
+	width: 16px;
+	float: left;
+	height: 100%;
+}
+
+.jspVerticalBar .jspArrow:focus
+{
+	outline: none;
+}
+
+.jspCorner
+{
+	background: #eeeef4;
+	float: left;
+	height: 100%;
+}
+
+/* Yuk! CSS Hack for IE6 3 pixel bug :( */
+* html .jspCorner
+{
+	margin: 0 -3px 0 0;
+}

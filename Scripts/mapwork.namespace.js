@@ -1,9 +1,9 @@
 ﻿// global namespace vars
-var mapwork = mapwork || {};
+window.mapwork = window.mapwork || {};
 
-//mid-level object declarations 
-mapwork.worker = mapwork.worker || {};
-mapwork.editor = mapwork.editor || {};
-mapwork.helper = mapwork.helper || {};
-mapwork.model = mapwork.model || {};
-mapwork.viewcontroller = mapwork.viewcontroller || {};
+//mid-level object declarations
+// window.mapwork.worker = window.mapwork.worker || {};
+window.mapwork.editor = window.mapwork.editor || {};
+window.mapwork.helper = window.mapwork.helper || {};
+window.mapwork.model = window.mapwork.model || {};
+window.mapwork.viewcontroller = window.mapwork.viewcontroller || {};
