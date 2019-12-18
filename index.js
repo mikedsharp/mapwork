@@ -1,8 +1,6 @@
 require('expose-loader?$!jquery');
 require('./Scripts/jquery.jscrollpane.min.js');
 require('./Scripts/jquery.mousewheel.js');
-require('./Scripts/json2.js');
-require('./Scripts/rendering.requestanimationframe.polyfill.js');
 require('./Scripts/jquery.cookie.js');
 
 import './Scripts/mapwork.namespace.js';
@@ -15,7 +13,6 @@ import './Scripts/mapwork.view.camera.js';
 import './Scripts/mapwork.viewcontroller.js';
 import './Scripts/mapwork.editor.environment.js';
 import './Scripts/mapwork.helper.validation.js';
-// import './Scripts/mapwork.worker.js';
 
 import './Scripts/mapwork.editor.entrypoint.js';
 
