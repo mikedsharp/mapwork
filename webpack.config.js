@@ -9,6 +9,13 @@ module.exports = {
   output: {
     filename: 'bundle.js'
   },
+  devtool: 'inline-source-map',
+  devServer: {
+    contentBase: path.join(__dirname, 'dist'),
+    compress: true,
+    port: 9000,
+    hot: true
+  },
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'styles.css',
