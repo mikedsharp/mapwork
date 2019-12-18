@@ -1,7 +1,4 @@
-﻿/*global $,jQuery,alert,document,window,console*/
-/*jslint plusplus: true, white:true */
-
-/*check existence of mapwork.model in global namespace*/
+﻿/*check existence of mapwork.model in global namespace*/
 window.mapwork = mapwork || {};
 window.mapwork.view = mapwork.view || {};
 

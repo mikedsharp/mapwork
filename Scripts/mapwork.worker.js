@@ -1,6 +1,4 @@
-﻿// /*global $,jQuery,alert,document,window,console,Worker*/
-// /*jslint plusplus: true, white: true */
-// var mapwork = mapwork || {};
+﻿// var mapwork = mapwork || {};
 
 // mapwork.worker = {
 //   Init: function() {

@@ -1,6 +1,4 @@
-﻿/*global $,jQuery,alert,mapwork,document,window,setTimeout,requestAnimationFrame*/
-/*jslint plusplus: true, white: true */
-window.mapwork.viewcontroller = {
+﻿window.mapwork.viewcontroller = {
   Init: function() {
     'use strict';
     this.InitiateRenderLoop();

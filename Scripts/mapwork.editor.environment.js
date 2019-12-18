@@ -1,6 +1,4 @@
-﻿/*global $,jQuery,alert,mapwork,document,window,console,setTimeout, clearTimeout,setInterval,clearInterval,LocationSettings*/
-/*jslint white: true, plusplus:true */
-window.mapwork.editor.environment = {
+﻿window.mapwork.editor.environment = {
 
     Init: function () {
         "use strict";

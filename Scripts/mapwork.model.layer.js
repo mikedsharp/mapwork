@@ -1,7 +1,4 @@
-﻿/*global $,jQuery,alert,document,window,console,Image*/
-/*jslint plusplus: true, white:true */
-
-//model class declarations
+﻿//model class declarations
 /*START OF MAP */
 
 /*check existence of mapwork.model in global namespace*/

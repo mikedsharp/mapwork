@@ -1,6 +1,4 @@
-﻿/*global $,jQuery,alert,mapwork,document,window,console*/
-/*jslint white: true, plusplus:true */
-mapwork.helper.validation = {
+﻿mapwork.helper.validation = {
   ValidateInput: function(obj, options) {
     'use strict';
     obj = $(obj);
