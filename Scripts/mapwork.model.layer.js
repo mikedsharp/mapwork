@@ -4,6 +4,8 @@
 /*check existence of mapwork.model in global namespace*/
 window.mapwork = window.mapwork || {};
 window.mapwork.model = window.mapwork.model || {};
+var tilesetsEndpoint =
+  'https://mds-mapwork-tilesets.s3-eu-west-1.amazonaws.com';
 
 window.mapwork.model.Layer = function() {
   'use strict';
@@ -42,7 +44,7 @@ window.mapwork.model.Layer = function() {
   this.setTilesetImage = function(path) {
     // load file into an img object for rendering
     this.tilesetImage = new Image();
-    this.tilesetImage.src = 'Tilesets/' + path;
+    this.tilesetImage.src = tilesetsEndpoint + '/' + path;
     // this warrants explanation...
     // we need to get the width and height of the tileset
     // we can only do this when the image has loaded

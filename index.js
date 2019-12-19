@@ -1,4 +1,4 @@
-require('expose-loader?$!jquery');
+require('jquery');
 require('./Scripts/jquery.jscrollpane.min.js');
 require('./Scripts/jquery.mousewheel.js');
 require('./Scripts/jquery.cookie.js');
