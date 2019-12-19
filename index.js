@@ -16,9 +16,8 @@ import './Scripts/mapwork.helper.validation.js';
 
 import './Scripts/mapwork.editor.entrypoint.js';
 
-import './Content/reset.css';
-import './Content/reset.css';
-import './Content/mapwork.editor.structure.css';
-import './Content/mapwork.editor.colourscheme.css';
-import './Content/mapwork.editor.formatting.css';
-import './Content/jquery.jscrollpane.css';
+import './Content/reset.scss';
+import './Content/mapwork.editor.structure.scss';
+import './Content/mapwork.editor.colourscheme.scss';
+import './Content/mapwork.editor.formatting.scss';
+import './Content/jquery.jscrollpane.scss';
