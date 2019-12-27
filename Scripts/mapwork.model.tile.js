@@ -6,6 +6,9 @@
     this.properties = [];
   }
   setTileCode(code) {
+    if (isNaN(code)) {
+      throw new Error('TileCode must be a number');
+    }
     this.tileCode = code;
   }
   getTileCode() {

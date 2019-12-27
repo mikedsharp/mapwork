@@ -12,4 +12,30 @@ describe('mapwork.model.tile.js Tile object', () => {
       expect(testTile.properties).toEqual([]);
     });
   });
+  describe('setTileCode(code)', () => {
+    it('should set the Tiles tilecode to -1', () => {
+      testTile.setTileCode(-1);
+      expect(testTile.tileCode).toEqual(-1);
+    });
+    it('should set the Tiles tilecode to 0', () => {
+      testTile.setTileCode(0);
+      expect(testTile.tileCode).toEqual(0);
+    });
+    it('should set the Tiles tilecode to 1', () => {
+      testTile.setTileCode(1);
+      expect(testTile.tileCode).toEqual(1);
+    });
+    it('should set the Tiles tilecode to 999', () => {
+      testTile.setTileCode(999);
+      expect(testTile.tileCode).toEqual(999);
+    });
+    it("should reject new tilecode is it isn't a number", () => {
+      const originalValue = testTile.tileCode;
+      expect(() => {
+        testTile.setTileCode('asdf');
+      }).toThrow('TileCode must be a number');
+      expect(testTile.tileCode).not.toEqual('asdf');
+      expect(testTile.tileCode).toEqual(originalValue);
+    });
+  });
 });
