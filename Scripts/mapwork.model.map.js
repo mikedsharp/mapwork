@@ -1,14 +1,11 @@
-﻿//model class declarations
-/*START OF MAP */
-
-/*check existence of mapwork.model in global namespace*/
-window.mapwork = window.mapwork || {};
-window.mapwork.model = window.mapwork.model || {};
-
-import { Layer } from './mapwork.model.layer';
+﻿import { Layer } from './mapwork.model.layer';
+import { Tile } from './mapwork.model.tile';
 
 export class Map {
-  constructor() {
+  constructor(EditorEnvironment) {
+    // injected dependencies
+    this.EditorEnvironment = EditorEnvironment;
+
     this.properties = [];
     this.name = null;
     this.createdTimestamp = null;
@@ -165,7 +162,7 @@ export class Map {
 
     // create an initial layer
 
-    newLayer = new Layer();
+    newLayer = new Layer(this.EditorEnvironment);
     newLayer.createBlankModelLayer(
       this,
       'Untitled Layer',
@@ -190,7 +187,7 @@ export class Map {
 
     // layer-level assignment
     for (layerCount = 0; layerCount < json.layers.length; layerCount++) {
-      currentLayer = new Layer();
+      currentLayer = new Layer(this.EditorEnvironment);
       currentLayer.createModelLayerFromJSONObject(
         this,
         json.layers[layerCount]
@@ -281,7 +278,6 @@ export class Map {
     }
 
     jsonString = JSON.stringify(obj);
-    // mapwork.editor.environment.PostMapForDownload(jsonString);
   }
 
   destructModel() {
@@ -353,7 +349,7 @@ export class Map {
               cellCount < this.getTilesAccross();
               cellCount++
             ) {
-              newTile = new mapwork.model.Tile();
+              newTile = new Tile();
               newTile.createBlankModelTile();
               newRow.push(newTile);
             }
@@ -398,7 +394,7 @@ export class Map {
           ) {
             currentRow = currentLayer.getRow(rowCount);
             for (cellCount = 0; cellCount < tileDifference; cellCount++) {
-              newTile = new mapwork.model.Tile();
+              newTile = new Tile();
               newTile.createBlankModelTile();
               currentRow.push(newTile);
             }

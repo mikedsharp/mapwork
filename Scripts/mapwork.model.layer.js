@@ -1,14 +1,13 @@
-﻿//model class declarations
-/*START OF MAP */
+﻿import { Tile } from './mapwork.model.tile';
 
-/*check existence of mapwork.model in global namespace*/
-window.mapwork = window.mapwork || {};
-window.mapwork.model = window.mapwork.model || {};
 const tilesetsEndpoint =
   'https://mds-mapwork-tilesets.s3-eu-west-1.amazonaws.com';
 
 export class Layer {
-  constructor() {
+  constructor(EditorEnvironment) {
+    // injected dependencies
+    this.EditorEnvironment = EditorEnvironment;
+
     this.name = null;
     this.tilesetPath = null;
     this.tilesetImage = null;
@@ -58,7 +57,7 @@ export class Layer {
         this.tilesetWidth = this.getTilesetImage().width;
         this.tilesetHeight = this.getTilesetImage().height;
         // refresh tile palette when user changes tilesheet
-        mapwork.editor.environment.PalletCanvasResize();
+        this.EditorEnvironment.PalletCanvasResize();
 
         // remember to turn this handler 'off' once finished, this prevents a memory leak
         $(this.tilesetImage).off('load');
@@ -149,7 +148,7 @@ export class Layer {
     for (rows = 0; rows < map.getTilesDown(); rows++) {
       row = [];
       for (cols = 0; cols < map.getTilesAccross(); cols++) {
-        cell = new mapwork.model.Tile();
+        cell = new Tile();
         cell.createBlankModelTile();
         cell.setTileCode(-1);
         // append cell to row
@@ -182,7 +181,7 @@ export class Layer {
         cellCount < json.rows[rowCount].cells.length;
         cellCount++
       ) {
-        cell = new mapwork.model.Tile();
+        cell = new Tile();
         cell.setTileCode(json.rows[rowCount].cells[cellCount].tileCode);
 
         for (
