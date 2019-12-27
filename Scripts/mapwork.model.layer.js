@@ -4,44 +4,45 @@
 /*check existence of mapwork.model in global namespace*/
 window.mapwork = window.mapwork || {};
 window.mapwork.model = window.mapwork.model || {};
-var tilesetsEndpoint =
+const tilesetsEndpoint =
   'https://mds-mapwork-tilesets.s3-eu-west-1.amazonaws.com';
 
-window.mapwork.model.Layer = function() {
-  'use strict';
-  this.name = null;
-  this.tilesetPath = null;
-  this.tilesetImage = null;
-  this.rows = [];
-  this.zPosition = null;
-  this.properties = [];
-  this.tilesetHeight = null;
-  this.tilesetWidth = null;
-  this.setName = function(layerName) {
+export class Layer {
+  constructor() {
+    this.name = null;
+    this.tilesetPath = null;
+    this.tilesetImage = null;
+    this.rows = [];
+    this.zPosition = null;
+    this.properties = [];
+    this.tilesetHeight = null;
+    this.tilesetWidth = null;
+    this.visible = true;
+  }
+  setName(layerName) {
     this.name = layerName;
-  };
-  this.getName = function() {
+  }
+  getName() {
     return this.name;
-  };
-  this.visible = true;
-  this.setTilesetPath = function(path) {
+  }
+  setTilesetPath(path) {
     // set the new path in the model  to the given directory
     this.tilesetPath = path;
     this.setTilesetImage(this.tilesetPath);
-  };
-  this.getVisibility = function() {
+  }
+  getVisibility() {
     return this.visible;
-  };
-  this.setVisibility = function(visible) {
+  }
+  setVisibility(visible) {
     this.visible = visible;
-  };
-  this.getTilesetWidth = function() {
+  }
+  getTilesetWidth() {
     return this.tilesetWidth;
-  };
-  this.getTilesetHeight = function() {
+  }
+  getTilesetHeight() {
     return this.tilesetHeight;
-  };
-  this.setTilesetImage = function(path) {
+  }
+  setTilesetImage(path) {
     // load file into an img object for rendering
     this.tilesetImage = new Image();
     this.tilesetImage.src = tilesetsEndpoint + '/' + path;
@@ -63,41 +64,41 @@ window.mapwork.model.Layer = function() {
         $(this.tilesetImage).off('load');
       }, this)
     );
-  };
+  }
 
-  this.getTilesetPath = function() {
+  getTilesetPath() {
     return this.tilesetPath;
-  };
-  this.getTilesetImage = function() {
+  }
+  getTilesetImage() {
     return this.tilesetImage;
-  };
-  this.setZPosition = function(value) {
+  }
+  setZPosition(value) {
     this.zPosition = value;
-  };
-  this.getZPosition = function() {
+  }
+  getZPosition() {
     return this.zPosition;
-  };
-  this.addRow = function(row) {
+  }
+  addRow(row) {
     this.rows.push(row);
-  };
-  this.getRows = function() {
+  }
+  getRows() {
     return this.rows;
-  };
-  this.getTile = function(x, y) {
+  }
+  getTile(x, y) {
     try {
       return this.getRow(y)[x];
     } catch (ex) {
       return null;
     }
-  };
-  this.getRow = function(index) {
+  }
+  getRow(index) {
     try {
       return this.rows[index];
     } catch (ex) {
       return null;
     }
-  };
-  this.removeProperty = function(key) {
+  }
+  removeProperty(key) {
     var propCount;
 
     for (propCount = 0; propCount < this.properties.length; propCount++) {
@@ -105,9 +106,9 @@ window.mapwork.model.Layer = function() {
         this.getAllProperties().splice(propCount, 1);
       }
     }
-  };
+  }
 
-  this.setProperty = function(property) {
+  setProperty(property) {
     var propCount;
 
     for (propCount = 0; propCount < this.properties.length; propCount++) {
@@ -117,8 +118,8 @@ window.mapwork.model.Layer = function() {
         return;
       }
     }
-  };
-  this.getProperty = function(key) {
+  }
+  getProperty(key) {
     var propCount;
 
     for (propCount = 0; propCount < this.properties.length; propCount++) {
@@ -126,18 +127,18 @@ window.mapwork.model.Layer = function() {
         return this.properties[propCount].value;
       }
     }
-  };
-  this.addProperty = function(prop) {
+  }
+  addProperty(prop) {
     this.properties.push(prop);
-  };
-  this.getAllProperties = function() {
+  }
+  getAllProperties() {
     return this.properties;
-  };
-  this.addProperty = function(prop) {
+  }
+  addProperty(prop) {
     this.properties.push(prop);
-  };
+  }
 
-  this.createBlankModelLayer = function(map, layerName, tilesetPath) {
+  createBlankModelLayer(map, layerName, tilesetPath) {
     var rows, row, cell, cols;
 
     this.setName(layerName);
@@ -157,8 +158,8 @@ window.mapwork.model.Layer = function() {
       // apppend row to layer
       this.addRow(row);
     }
-  };
-  this.createModelLayerFromJSONObject = function(map, json) {
+  }
+  createModelLayerFromJSONObject(map, json) {
     var layerPropertyCount, rowCount, cell, cellCount, propertyCount, row;
 
     // this is where the layer parsing code will go
@@ -199,5 +200,5 @@ window.mapwork.model.Layer = function() {
       }
       this.addRow(row);
     }
-  };
-};
+  }
+}

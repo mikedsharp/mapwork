@@ -1,4 +1,5 @@
 ﻿import {Map} from './mapwork.model.map';
+import {Layer} from './mapwork.model.layer';
 window.mapwork.editor.environment = {
 
     Init: function () {
@@ -557,7 +558,7 @@ window.mapwork.editor.environment = {
             layerName = 'Untitled Layer ' + mapwork.viewcontroller.mapModel.getLayers().length;
 
             // adding the new layer to the model
-            newLayer = new mapwork.model.Layer();
+            newLayer = new Layer();
             newLayer.createBlankModelLayer(mapwork.viewcontroller.mapModel, layerName, 'default_tileset.png');
             newLayer.setZPosition(mapwork.viewcontroller.mapModel.getLayers().length);
             mapwork.editor.environment.selectedLayer = mapwork.viewcontroller.mapModel.getLayers().length;

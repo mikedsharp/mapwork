@@ -5,6 +5,8 @@
 window.mapwork = window.mapwork || {};
 window.mapwork.model = window.mapwork.model || {};
 
+import { Layer } from './mapwork.model.layer';
+
 export class Map {
   constructor() {
     this.properties = [];
@@ -163,7 +165,7 @@ export class Map {
 
     // create an initial layer
 
-    newLayer = new mapwork.model.Layer();
+    newLayer = new Layer();
     newLayer.createBlankModelLayer(
       this,
       'Untitled Layer',
@@ -188,7 +190,7 @@ export class Map {
 
     // layer-level assignment
     for (layerCount = 0; layerCount < json.layers.length; layerCount++) {
-      currentLayer = new mapwork.model.Layer();
+      currentLayer = new Layer();
       currentLayer.createModelLayerFromJSONObject(
         this,
         json.layers[layerCount]
