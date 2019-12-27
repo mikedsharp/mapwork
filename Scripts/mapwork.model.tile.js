@@ -60,15 +60,6 @@
       }
     }
   }
-  addProperty(prop) {
-    this.properties.push(prop);
-  }
-  getAllProperties() {
-    return this.properties;
-  }
-  addProperty(prop) {
-    this.properties.push(prop);
-  }
   getAllProperties() {
     return this.properties;
   }

@@ -56,4 +56,45 @@ describe('mapwork.model.tile.js Tile object', () => {
       expect(testTile.getTileCode()).toEqual(9999);
     });
   });
+  describe('setTilesheetX(value)', () => {});
+  describe('getTilesheetX()', () => {});
+  describe('setTilesheetY(value)', () => {});
+  describe('getTilesheetY()', () => {});
+  describe('addProperty(prop)', () => {
+    it(`should save 'prop' as a new tile property`, () => {
+      const singleTilePropertyFixture = {
+        key: 'a',
+        value: 3
+      };
+      testTile.addProperty(singleTilePropertyFixture);
+      expect(testTile.properties[0]).toEqual(singleTilePropertyFixture);
+      expect(testTile.properties.length).toEqual(1);
+    });
+    it(`should save 'prop' as a new tile property, there should be two items in properties`, () => {
+      const singleTilePropertyFixture = {
+        key: 'a',
+        value: 3
+      };
+      const singleTilePropertyFixtureTwo = {
+        key: 'b',
+        value: 1
+      };
+      testTile.addProperty(singleTilePropertyFixture);
+      testTile.addProperty(singleTilePropertyFixtureTwo);
+      expect(testTile.properties[1]).toEqual(singleTilePropertyFixtureTwo);
+      expect(testTile.properties.length).toEqual(2);
+    });
+  });
+  describe('removeProperty(key)', () => {});
+  describe('setProperty(property)', () => {});
+  describe('getProperty(key)', () => {});
+  describe('getAllProperties()', () => {});
+  describe('createBlankModelTile()', () => {
+    it(`should call setTileCode with an argument of '-1'`, () => {
+      const spy = jest.spyOn(testTile, 'setTileCode');
+      testTile.createBlankModelTile();
+      expect(spy).toHaveBeenCalledWith(-1);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
 });
