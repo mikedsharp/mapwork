@@ -1,4 +1,5 @@
-﻿window.mapwork.editor.environment = {
+﻿import {Map} from './mapwork.model.map';
+window.mapwork.editor.environment = {
 
     Init: function () {
         "use strict";
@@ -1105,7 +1106,7 @@
             $('.modalBlocker').hide();
 
 
-            mapwork.viewcontroller.mapModel = new mapwork.model.Map();
+            mapwork.viewcontroller.mapModel = new Map();
 
             //mapwork.viewcontroller.mapModel.createBlankModel($('#createNewMapName').val(),
             //    parseInt($('#inpCreateTileWidth').val(), 10),
