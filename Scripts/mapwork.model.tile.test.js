@@ -38,4 +38,22 @@ describe('mapwork.model.tile.js Tile object', () => {
       expect(testTile.tileCode).toEqual(originalValue);
     });
   });
+  describe('getTileCode()', () => {
+    it(`should return tilecode of a given tile (-1)`, () => {
+      testTile.tileCode = -1;
+      expect(testTile.getTileCode()).toEqual(-1);
+    });
+    it(`should return tilecode of a given tile (0)`, () => {
+      testTile.tileCode = 0;
+      expect(testTile.getTileCode()).toEqual(0);
+    });
+    it(`should return tilecode of a given tile (1)`, () => {
+      testTile.tileCode = 1;
+      expect(testTile.getTileCode()).toEqual(1);
+    });
+    it(`should return tilecode of a given tile (9999)`, () => {
+      testTile.tileCode = 9999;
+      expect(testTile.getTileCode()).toEqual(9999);
+    });
+  });
 });

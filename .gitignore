@@ -3,3 +3,6 @@ dist/
 dist
 /dist
 dist/*
+coverage
+coverage/
+coverage/*
