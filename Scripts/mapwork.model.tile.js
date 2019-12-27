@@ -1,40 +1,33 @@
-﻿//model class declarations
-/*START OF MAP */
-
-/*check existence of mapwork.model in global namespace*/
-window.mapwork = window.mapwork || {};
-window.mapwork.model = mapwork.model || {};
-
-window.mapwork.model.Tile = function() {
-  'use strict';
-  this.tileCode = -1;
-  this.tilesheetX = null;
-  this.tilesheetY = null;
-  this.properties = [];
-
-  this.setTileCode = function(code) {
+﻿export class Tile {
+  constructor() {
+    this.tileCode = -1;
+    this.tilesheetX = null;
+    this.tilesheetY = null;
+    this.properties = [];
+  }
+  setTileCode(code) {
     this.tileCode = code;
-  };
-  this.getTileCode = function() {
+  }
+  getTileCode() {
     return this.tileCode;
-  };
-  this.setTilesheetX = function(value) {
+  }
+  setTilesheetX(value) {
     this.tilesheetX = value;
-  };
-  this.getTilesheetX = function() {
+  }
+  getTilesheetX() {
     return this.tilesheetX;
-  };
-  this.setTilesheetY = function(value) {
+  }
+  setTilesheetY(value) {
     this.tilesheetY = value;
-  };
-  this.getTilesheetY = function() {
+  }
+  getTilesheetY() {
     return this.tilesheetY;
-  };
-  this.addProperty = function(prop) {
+  }
+  addProperty(prop) {
     this.properties.push(prop);
-  };
+  }
 
-  this.removeProperty = function(key) {
+  removeProperty(key) {
     var propCount;
 
     for (propCount = 0; propCount < this.properties.length; propCount++) {
@@ -42,9 +35,9 @@ window.mapwork.model.Tile = function() {
         this.getAllProperties().splice(propCount, 1);
       }
     }
-  };
+  }
 
-  this.setProperty = function(property) {
+  setProperty(property) {
     var propCount;
 
     for (propCount = 0; propCount < this.properties.length; propCount++) {
@@ -54,8 +47,8 @@ window.mapwork.model.Tile = function() {
         return;
       }
     }
-  };
-  this.getProperty = function(key) {
+  }
+  getProperty(key) {
     var propCount;
 
     for (propCount = 0; propCount < this.properties.length; propCount++) {
@@ -63,24 +56,22 @@ window.mapwork.model.Tile = function() {
         return this.properties[propCount].value;
       }
     }
-  };
-  this.addProperty = function(prop) {
+  }
+  addProperty(prop) {
     this.properties.push(prop);
-  };
-  this.getAllProperties = function() {
+  }
+  getAllProperties() {
     return this.properties;
-  };
-  this.addProperty = function(prop) {
+  }
+  addProperty(prop) {
     this.properties.push(prop);
-  };
-  this.getAllProperties = function() {
+  }
+  getAllProperties() {
     return this.properties;
-  };
+  }
 
   // other methods
-  this.createBlankModelTile = function() {
+  createBlankModelTile() {
     this.setTileCode(-1);
-  };
-};
-
-/* END OF TILE */
+  }
+}

@@ -1,4 +1,6 @@
-﻿window.mapwork.editor.environment = {
+﻿import {Map} from './mapwork.model.map';
+import {Layer} from './mapwork.model.layer';
+window.mapwork.editor.environment = {
 
     Init: function () {
         "use strict";
@@ -556,7 +558,7 @@
             layerName = 'Untitled Layer ' + mapwork.viewcontroller.mapModel.getLayers().length;
 
             // adding the new layer to the model
-            newLayer = new mapwork.model.Layer();
+            newLayer = new Layer(mapwork.editor.environment);
             newLayer.createBlankModelLayer(mapwork.viewcontroller.mapModel, layerName, 'default_tileset.png');
             newLayer.setZPosition(mapwork.viewcontroller.mapModel.getLayers().length);
             mapwork.editor.environment.selectedLayer = mapwork.viewcontroller.mapModel.getLayers().length;
@@ -1105,7 +1107,7 @@
             $('.modalBlocker').hide();
 
 
-            mapwork.viewcontroller.mapModel = new mapwork.model.Map();
+            mapwork.viewcontroller.mapModel = new Map(mapwork.editor.environment);
 
             //mapwork.viewcontroller.mapModel.createBlankModel($('#createNewMapName').val(),
             //    parseInt($('#inpCreateTileWidth').val(), 10),
@@ -1498,6 +1500,7 @@
         "use strict";
         $(this).parent().parent().data('zPosition');
         mapwork.viewcontroller.mapModel.getLayerByZPosition(parseInt($(this).parent().parent().data('zPosition'), 10)).setTilesetPath($(this).val());
+        mapwork.editor.environment.PalletCanvasResize();
     },
     DisplayNotification: function (message, colour) {
         "use strict";

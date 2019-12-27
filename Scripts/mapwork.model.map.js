@@ -1,22 +1,22 @@
-﻿//model class declarations
-/*START OF MAP */
+﻿import { Layer } from './mapwork.model.layer';
+import { Tile } from './mapwork.model.tile';
 
-/*check existence of mapwork.model in global namespace*/
-window.mapwork = window.mapwork || {};
-window.mapwork.model = window.mapwork.model || {};
+export class Map {
+  constructor(EditorEnvironment) {
+    // injected dependencies
+    this.EditorEnvironment = EditorEnvironment;
 
-window.mapwork.model.Map = function() {
-  'use strict';
-  this.properties = [];
-  this.name = null;
-  this.createdTimestamp = null;
-  this.tileWidth = null;
-  this.tileHeight = null;
-  this.tilesAccross = null;
-  this.tilesDown = null;
-  this.layers = [];
+    this.properties = [];
+    this.name = null;
+    this.createdTimestamp = null;
+    this.tileWidth = null;
+    this.tileHeight = null;
+    this.tilesAccross = null;
+    this.tilesDown = null;
+    this.layers = [];
+  }
 
-  this.removeProperty = function(key) {
+  removeProperty(key) {
     var propCount;
 
     for (propCount = 0; propCount < this.properties.length; propCount++) {
@@ -24,9 +24,8 @@ window.mapwork.model.Map = function() {
         this.getAllProperties().splice(propCount, 1);
       }
     }
-  };
-
-  this.setProperty = function(property) {
+  }
+  setProperty(property) {
     var propCount;
 
     for (propCount = 0; propCount < this.properties.length; propCount++) {
@@ -36,9 +35,8 @@ window.mapwork.model.Map = function() {
         return;
       }
     }
-  };
-
-  this.getProperty = function(key) {
+  }
+  getProperty(key) {
     var propCount;
 
     for (propCount = 0; propCount < this.properties.length; propCount++) {
@@ -46,11 +44,11 @@ window.mapwork.model.Map = function() {
         return this.properties[propCount].value;
       }
     }
-  };
-  this.addProperty = function(prop) {
+  }
+  addProperty(prop) {
     this.properties.push(prop);
-  };
-  this.getLayerByZPosition = function(zPosition) {
+  }
+  getLayerByZPosition(zPosition) {
     var layerCount;
 
     // find array element with given z co-ordinate, remove from model
@@ -59,21 +57,21 @@ window.mapwork.model.Map = function() {
         return this.getLayer(layerCount);
       }
     }
-  };
-  this.getLayer = function(index) {
+  }
+  getLayer(index) {
     try {
       return this.layers[index];
     } catch (ex) {
       return null;
     }
-  };
-  this.getLayers = function() {
+  }
+  getLayers() {
     return this.layers;
-  };
-  this.addLayer = function(layer) {
+  }
+  addLayer(layer) {
     this.layers.push(layer);
-  };
-  this.removeLayer = function(zPosition) {
+  }
+  removeLayer(zPosition) {
     var layerCount;
 
     // find array element with given z co-ordinate, remove from model
@@ -84,9 +82,8 @@ window.mapwork.model.Map = function() {
         break;
       }
     }
-  };
-
-  this.swapLayers = function(zPositionOne, zPositionTwo) {
+  }
+  swapLayers(zPositionOne, zPositionTwo) {
     var layerOne, layerTwo, layerOneIndex, layerTwoIndex, layerCount;
     for (layerCount = 0; layerCount < this.getLayers().length; layerCount++) {
       if (this.getLayer(layerCount).getZPosition() === zPositionOne) {
@@ -105,60 +102,53 @@ window.mapwork.model.Map = function() {
       this.setLayer(layerOne, layerTwoIndex);
       this.setLayer(layerTwo, layerOneIndex);
     }
-  };
-  this.setLayer = function(layer, index) {
+  }
+  setLayer(layer, index) {
     this.layers[index] = layer;
-  };
-  this.setName = function(mapName) {
+  }
+  setName(mapName) {
     this.name = mapName;
-  };
-  this.getName = function() {
+  }
+  getName() {
     return this.name;
-  };
-  this.setCreatedTimestamp = function(timestamp) {
+  }
+  setCreatedTimestamp(timestamp) {
     this.createdTimestamp = timestamp;
-  };
-  this.getCreatedTimestamp = function() {
+  }
+  getCreatedTimestamp() {
     return this.createdTimestamp;
-  };
-  this.setTileWidth = function(amount) {
+  }
+  setTileWidth(amount) {
     this.tileWidth = parseInt(amount, 10);
-  };
-  this.getTileWidth = function() {
+  }
+  getTileWidth() {
     return this.tileWidth;
-  };
+  }
   // tile height get/set
-  this.setTileHeight = function(amount) {
+  setTileHeight(amount) {
     this.tileHeight = parseInt(amount, 10);
-  };
-  this.getTileHeight = function() {
+  }
+  getTileHeight() {
     return this.tileHeight;
-  };
+  }
   // tiles accross get/set
-  this.setTilesAccross = function(amount) {
+  setTilesAccross(amount) {
     this.tilesAccross = amount;
-  };
-  this.getTilesAccross = function() {
+  }
+  getTilesAccross() {
     return this.tilesAccross;
-  };
+  }
   // tiles down get/set
-  this.setTilesDown = function(amount) {
+  setTilesDown(amount) {
     this.tilesDown = amount;
-  };
-  this.getTilesDown = function() {
+  }
+  getTilesDown() {
     return this.tilesDown;
-  };
-  this.getAllProperties = function() {
+  }
+  getAllProperties() {
     return this.properties;
-  };
-
-  this.createBlankModel = function(
-    name,
-    tileWidth,
-    tileHeight,
-    tilesAccross,
-    tilesDown
-  ) {
+  }
+  createBlankModel(name, tileWidth, tileHeight, tilesAccross, tilesDown) {
     var newLayer;
     // remove any existing model objects
     this.destructModel();
@@ -172,15 +162,15 @@ window.mapwork.model.Map = function() {
 
     // create an initial layer
 
-    newLayer = new mapwork.model.Layer();
+    newLayer = new Layer(this.EditorEnvironment);
     newLayer.createBlankModelLayer(
       this,
       'Untitled Layer',
       'default_tileset.png'
     );
     this.addLayer(newLayer);
-  };
-  this.createModelFromJSONString = function(json) {
+  }
+  createModelFromJSONString(json) {
     var layerCount, propertyCount, currentLayer;
     // remove any existing model objects
     this.destructModel();
@@ -197,7 +187,7 @@ window.mapwork.model.Map = function() {
 
     // layer-level assignment
     for (layerCount = 0; layerCount < json.layers.length; layerCount++) {
-      currentLayer = new mapwork.model.Layer();
+      currentLayer = new Layer(this.EditorEnvironment);
       currentLayer.createModelLayerFromJSONObject(
         this,
         json.layers[layerCount]
@@ -213,8 +203,8 @@ window.mapwork.model.Map = function() {
     ) {
       this.addProperty(json.properties[propertyCount]);
     }
-  };
-  this.serialize = function() {
+  }
+  serialize() {
     var obj,
       layerCount,
       layer,
@@ -288,53 +278,9 @@ window.mapwork.model.Map = function() {
     }
 
     jsonString = JSON.stringify(obj);
-    mapwork.editor.environment.PostMapForDownload(jsonString);
-  };
+  }
 
-  this.serializeCompact = function() {
-    var obj,
-      layerCount,
-      layer,
-      rowCount,
-      cellCount,
-      allLayers,
-      row,
-      currentRow,
-      cell,
-      jsonString;
-
-    // create an object that can be serialized cleanly into JSON
-    obj = {
-      layers: []
-    };
-
-    allLayers = mapwork.viewcontroller.mapModel.getLayers();
-    // start breaking down layers
-    for (layerCount = 0; layerCount < allLayers.length; layerCount++) {
-      // create neat layer object
-      layer = new Array();
-
-      // break down the rows and insert into neat layer object
-      for (
-        rowCount = 0;
-        rowCount < allLayers[layerCount].getRows().length;
-        rowCount++
-      ) {
-        currentRow = allLayers[layerCount].getRow(rowCount);
-        for (cellCount = 0; cellCount < currentRow.length; cellCount++) {
-          layer.push(currentRow[cellCount].getTileCode());
-        }
-      }
-      obj.layers.push(layer);
-    }
-
-    jsonString = JSON.stringify(obj);
-    // mapwork.editor.environment.PostMapForDownload(jsonString);
-    mapwork.editor.environment.PostMapForDownload(jsonString);
-    // return jsonString;
-  };
-
-  this.destructModel = function() {
+  destructModel() {
     this.layers = [];
     this.name = null;
     this.createdTimestamp = null;
@@ -343,9 +289,9 @@ window.mapwork.model.Map = function() {
     this.tilesAccross = null;
     this.tilesDown = null;
     this.properties = [];
-  };
+  }
 
-  this.modifyTile = function(layer, x, y, options) {
+  modifyTile(layer, x, y, options) {
     var optionCount, currentRow;
 
     for (optionCount = 0; optionCount < options.length; optionCount++) {
@@ -355,16 +301,16 @@ window.mapwork.model.Map = function() {
       } else {
       }
     }
-  };
+  }
 
-  this.getTile = function(layer, x, y) {
+  getTile(layer, x, y) {
     var currentRow;
 
     currentRow = this.getLayer(layer).getRow(y);
     return currentRow[x];
-  };
+  }
 
-  this.resizeMap = function(specifications) {
+  resizeMap(specifications) {
     var layerCount,
       rowCount,
       layers,
@@ -403,7 +349,7 @@ window.mapwork.model.Map = function() {
               cellCount < this.getTilesAccross();
               cellCount++
             ) {
-              newTile = new mapwork.model.Tile();
+              newTile = new Tile();
               newTile.createBlankModelTile();
               newRow.push(newTile);
             }
@@ -448,7 +394,7 @@ window.mapwork.model.Map = function() {
           ) {
             currentRow = currentLayer.getRow(rowCount);
             for (cellCount = 0; cellCount < tileDifference; cellCount++) {
-              newTile = new mapwork.model.Tile();
+              newTile = new Tile();
               newTile.createBlankModelTile();
               currentRow.push(newTile);
             }
@@ -458,13 +404,11 @@ window.mapwork.model.Map = function() {
       // change tiles accross and tiles down values at top level of map
       this.setTilesAccross(parseInt(specifications.tilesAccross, 10));
     }
-  };
-  this.getWorldWidth = function() {
+  }
+  getWorldWidth() {
     return this.getTilesAccross() * this.getTileWidth();
-  };
-  this.getWorldHeight = function() {
+  }
+  getWorldHeight() {
     return this.getTilesDown() * this.getTileHeight();
-  };
-};
-
-/*Additional Helper Methods*/
+  }
+}
