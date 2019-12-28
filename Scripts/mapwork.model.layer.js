@@ -92,7 +92,8 @@ export class Layer {
   }
   getRow(index) {
     try {
-      return this.rows[index];
+      const returnedRow = this.rows[index];
+      return returnedRow ? returnedRow : null;
     } catch (ex) {
       return null;
     }

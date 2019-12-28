@@ -59,21 +59,204 @@ describe(`mapwork.model.layer.js Layer object`, () => {
       expect(setTilesetImageSpy).toHaveBeenCalledTimes(1);
     });
   });
-  describe(`getVisibility()`, () => {});
-  describe(`setVisibility(visible)`, () => {});
-  describe(`getTilesetWidth()`, () => {});
-  describe(`getTilesetHeight()`, () => {});
-  describe(`setTilesetImage(path)`, () => {});
-  describe(`getTilesetPath()`, () => {});
-  describe(`getTilesetImage()`, () => {});
-  describe(`setZPosition(value)`, () => {});
-  describe(`getZPosition()`, () => {});
-  describe(`addRow(row)`, () => {});
-  describe(`getRows()`, () => {});
-  describe(`getTile(x, y)`, () => {});
-  describe(`getRow(index)`, () => {});
-  describe(`removeProperty(key)`, () => {});
-  describe(`setProperty(property)`, () => {});
+  describe(`getVisibility()`, () => {
+    it(`should return the visibility of the layer (false)`, () => {
+      testLayer.visible = false;
+      expect(testLayer.getVisibility()).toBe(false);
+    });
+    it(`should return the visibility of the layer (true)`, () => {
+      testLayer.visible = true;
+      expect(testLayer.getVisibility()).toBe(true);
+    });
+  });
+  describe(`setVisibility(visible)`, () => {
+    it(`should set the visibility to false`, () => {
+      testLayer.setVisibility(false);
+      expect(testLayer.visible).toBe(false);
+    });
+    it(`should set the visibility to true`, () => {
+      testLayer.setVisibility(true);
+      expect(testLayer.visible).toBe(true);
+    });
+  });
+  describe(`getTilesetWidth()`, () => {
+    it(`should return the tilesetWidth of the layer`, () => {
+      const expectedWidth = 32;
+      testLayer.tilesetWidth = expectedWidth;
+      expect(testLayer.getTilesetWidth()).toEqual(expectedWidth);
+    });
+  });
+  describe(`getTilesetHeight()`, () => {
+    it(`should return the tilesetWidth of the layer`, () => {
+      const expectedHeight = 32;
+      testLayer.tilesetHeight = expectedHeight;
+      expect(testLayer.getTilesetHeight()).toEqual(expectedHeight);
+    });
+  });
+  describe(`setTilesetImage(path)`, () => {
+    // TODO
+  });
+  describe(`getTilesetPath()`, () => {
+    it(`should return the tilesetPath of the layer`, () => {
+      const expectedTilesetPath = 'the/path.png';
+      testLayer.tilesetPath = expectedTilesetPath;
+      expect(testLayer.getTilesetPath()).toEqual(expectedTilesetPath);
+    });
+  });
+  describe(`getTilesetImage()`, () => {
+    it(`should return the layers tilesetImage`, () => {
+      const expectedImage = new Image();
+      testLayer.tilesetImage = expectedImage;
+      const result = testLayer.getTilesetImage();
+      expect(result).toBeDefined();
+      expect(result).toEqual(expectedImage);
+    });
+  });
+  describe(`setZPosition(value)`, () => {
+    it(`should set the Z position of the layer`, () => {
+      testLayer.setZPosition(2);
+      expect(testLayer.zPosition).toEqual(2);
+    });
+  });
+  describe(`getZPosition()`, () => {
+    it(`should return the zPosition of the layer`, () => {
+      testLayer.zPosition = 5;
+      expect(testLayer.getZPosition()).toEqual(5);
+    });
+  });
+  describe(`addRow(row)`, () => {
+    it(`should add a row to list of layers row of tiles`, () => {
+      testLayer.rows = [[{}, {}, {}]];
+      const expectedRow = [{}, {}, {}];
+      testLayer.addRow(expectedRow);
+      expect(testLayer.rows.length).toEqual(2);
+      expect(testLayer.rows[1]).toEqual(expectedRow);
+    });
+  });
+  describe(`getRows()`, () => {
+    it(`should retrieve rows for layer`, () => {
+      const expectedRows = [
+        [{}, {}, {}],
+        [{}, {}, {}],
+        [{}, {}, {}]
+      ];
+      testLayer.rows = expectedRows;
+      expect(testLayer.getRows().length).toEqual(3);
+      expect(testLayer.getRows()).toEqual(expectedRows);
+    });
+  });
+  describe(`getTile(x, y)`, () => {
+    it(`should retrieve a tile from the layer at a given (x,y) co-ordinate`, () => {
+      const expectedTile = {
+        a: 1,
+        b: 2
+      };
+      testLayer.rows = [
+        [{}, {}, {}],
+        [{}, {}, {}],
+        [{}, {}, {}],
+        [{}, {}, expectedTile]
+      ];
+      expect(testLayer.getTile(2, 3)).toEqual(expectedTile);
+    });
+    it(`should return null because the tile referenced is out of range`, () => {
+      testLayer.rows = [
+        [{}, {}, {}],
+        [{}, {}, {}],
+        [{}, {}, {}],
+        [{}, {}, {}]
+      ];
+      expect(testLayer.getTile(55, -777)).toBeNull();
+    });
+  });
+  describe(`getRow(index)`, () => {
+    it(`should return a row at a given index of the layers rows`, () => {
+      const expectedRow = [{ a: 1 }, { a: 2 }, { a: 3 }];
+      testLayer.rows = [[{}, {}, {}], [{}, {}, {}], expectedRow, [{}, {}, {}]];
+      expect(testLayer.getRow(2)).toEqual(expectedRow);
+    });
+
+    it(`should return null because the requested row is out of range`, () => {
+      testLayer.rows = [
+        [{}, {}, {}],
+        [{}, {}, {}],
+        [{}, {}, {}],
+        [{}, {}, {}]
+      ];
+      expect(testLayer.getRow(777)).toBeNull();
+    });
+  });
+  describe(`removeProperty(key)`, () => {
+    it(`should remove the property from the layer with a specified key`, () => {
+      const originalProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      const expectedProperties = [
+        { key: 'a', value: 1 },
+        { key: 'c', value: 3 }
+      ];
+      testLayer.properties = originalProperties;
+      testLayer.removeProperty('b');
+      expect(testLayer.properties).toEqual(expectedProperties);
+    });
+    it(`should not make any changes, as the key doesn't exist`, () => {
+      const originalProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      const expectedProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      testLayer.properties = originalProperties;
+      testLayer.removeProperty('f');
+      expect(testLayer.properties).toEqual(expectedProperties);
+    });
+  });
+  describe(`setProperty(property)`, () => {
+    it(`should change the value of an existing property within the layer`, () => {
+      const originalProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      const expectedProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 7 },
+        { key: 'c', value: 3 }
+      ];
+      testLayer.properties = originalProperties;
+      testLayer.setProperty({
+        oldKey: 'b',
+        newKey: 'b',
+        newValue: 7
+      });
+      expect(testLayer.properties).toEqual(expectedProperties);
+    });
+    it(`should not change any values because the key doesn't exist`, () => {
+      const originalProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      const expectedProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      testLayer.properties = originalProperties;
+      testLayer.setProperty({
+        oldKey: 'x',
+        newKey: 'x',
+        newValue: 7
+      });
+      expect(testLayer.properties).toEqual(expectedProperties);
+    });
+  });
   describe(`getProperty(key)`, () => {});
   describe(`addProperty(prop)`, () => {});
   describe(`getAllProperties()`, () => {});
