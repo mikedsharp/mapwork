@@ -44,9 +44,7 @@ describe(`mapwork.model.layer.js Layer object`, () => {
       jest.clearAllMocks();
       setTilesetImageSpy = jest
         .spyOn(testLayer, 'setTilesetImage')
-        .mockImplementation(() => {
-          return;
-        });
+        .mockImplementation(() => {});
     });
     it(`should set the path of the layers tileset image`, () => {
       const newPath = 'new/path.png';
@@ -96,6 +94,12 @@ describe(`mapwork.model.layer.js Layer object`, () => {
   });
   describe(`setTilesetImage(path)`, () => {
     // TODO
+    it(`should create a DOM image to render to the canvas`, () => {
+      const expectedPath = 'a/path.png';
+      testLayer.setTilesetImage(expectedPath);
+      expect(testLayer.tilesetImage).toBeDefined();
+      expect(testLayer.tilesetImage.src.endsWith).toBeTruthy();
+    });
   });
   describe(`getTilesetPath()`, () => {
     it(`should return the tilesetPath of the layer`, () => {
@@ -307,13 +311,7 @@ describe(`mapwork.model.layer.js Layer object`, () => {
   describe(`createBlankModelLayer(map, layerName, tilesetPath)`, () => {
     it(`set up a new layer with sensible defaults to start editing the layer`, () => {
       const setNameSpy = jest.spyOn(testLayer, 'setName');
-      const setTilesetPathSpy = jest
-        .spyOn(testLayer, 'setTilesetPath')
-        .mockImplementation(path => {
-          // stubbing out setTilesetPath so that we don't hit setTilesetImage and
-          // try and do DOM/JQuery type stuff (for now)
-          testLayer.tilesetPath = path;
-        });
+      const setTilesetPathSpy = jest.spyOn(testLayer, 'setTilesetPath');
       const setZPositionSpy = jest.spyOn(testLayer, 'setZPosition');
       const addRowSpy = jest.spyOn(testLayer, 'addRow');
 
@@ -332,5 +330,31 @@ describe(`mapwork.model.layer.js Layer object`, () => {
       expect(addRowSpy).toHaveBeenCalledTimes(4);
     });
   });
-  describe(`createModelLayerFromJSONObject(map, json)`, () => {});
+  describe(`createModelLayerFromJSONObject(map, json)`, () => {
+    it(`set up a new layer with sensible defaults to start editing the layer`, () => {
+      const setNameSpy = jest.spyOn(testLayer, 'setName');
+      const setTilesetPathSpy = jest.spyOn(testLayer, 'setTilesetPath');
+      const setZPositionSpy = jest.spyOn(testLayer, 'setZPosition');
+      const addRowSpy = jest.spyOn(testLayer, 'addRow');
+      const addPropertySpy = jest.spyOn(testLayer, 'addProperty');
+
+      const layerName = 'new-layer';
+      const tilesetPath = 'some/path.png';
+      const map = new Map(mockEditorEnvironment);
+      const json = {
+        tilesetPath: tilesetPath,
+        name: layerName,
+        zPosition: 2,
+        properties: [{ key: 'a', value: 'b' }],
+        rows: [{ cells: [] }, { cells: [] }, { cells: [] }]
+      };
+      testLayer.createModelLayerFromJSONObject(map, json);
+
+      expect(setNameSpy).toHaveBeenCalledWith(json.name);
+      expect(setTilesetPathSpy).toHaveBeenCalledWith(json.tilesetPath);
+      expect(setZPositionSpy).toHaveBeenCalledWith(json.zPosition);
+      expect(addRowSpy).toHaveBeenCalledTimes(3);
+      expect(addPropertySpy).toHaveBeenCalledTimes(1);
+    });
+  });
 });
