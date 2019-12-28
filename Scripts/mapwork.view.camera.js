@@ -1,57 +1,55 @@
-﻿/*check existence of mapwork.model in global namespace*/
-window.mapwork = mapwork || {};
-window.mapwork.view = mapwork.view || {};
-
-window.mapwork.view.Camera = function() {
-  'use strict';
-  this.x = 0;
-  this.y = 0;
-  this.width = 0;
-  this.height = 0;
-  this.maxY = null;
-  this.maxX = null;
-
-  this.setupCamera = function(x, y, width, height, maxX, maxY) {
+﻿export class Camera {
+  constructor(MapModel) {
+    // injected dependencies
+    this.MapModel = MapModel;
+    this.x = 0;
+    this.y = 0;
+    this.width = 0;
+    this.height = 0;
+    this.maxY = null;
+    this.maxX = null;
+  }
+  setupCamera(x, y, width, height, maxX, maxY) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
     this.maxX = maxX;
     this.maxY = maxY;
-  };
+  }
 
-  this.getX = function() {
+  getX() {
     return this.x;
-  };
-  this.getY = function() {
+  }
+  getY() {
     return this.y;
-  };
-  this.getWidth = function() {
+  }
+  getWidth() {
     return this.width;
-  };
-  this.getHeight = function() {
+  }
+  getHeight() {
     return this.height;
-  };
-  this.getMaxX = function() {
+  }
+  getMaxX() {
     return this.maxX;
-  };
-  this.getMaxY = function() {
+  }
+  getMaxY() {
     return this.maxY;
-  };
+  }
 
-  this.setX = function(x) {
+  setX(x) {
     this.x = x;
-  };
-  this.setY = function(y) {
+  }
+  setY(y) {
     this.y = y;
-  };
-  this.setWidth = function(width) {
+  }
+  setWidth(width) {
     this.width = width;
-  };
-  this.setHeight = function(height) {
+  }
+  setHeight(height) {
     this.height = height;
-  };
-  this.setPosition = function(x, y) {
+  }
+  setPosition(x, y) {
     this.x = x;
     this.y = y;
 
@@ -78,25 +76,25 @@ window.mapwork.view.Camera = function() {
     } else {
       this.y = y;
     }
-  };
-  this.setSize = function(width, height) {
-    if (width > mapwork.viewcontroller.mapModel.getWorldWidth()) {
-      this.width = mapwork.viewcontroller.mapModel.getWorldWidth();
+  }
+  setSize(width, height) {
+    if (width > this.MapModel.getWorldWidth()) {
+      this.width = this.MapModel.getWorldWidth();
     } else {
       this.width = width;
     }
 
-    if (height > mapwork.viewcontroller.mapModel.getWorldHeight()) {
-      this.height = mapwork.viewcontroller.mapModel.getWorldHeight();
+    if (height > this.MapModel.getWorldHeight()) {
+      this.height = this.MapModel.getWorldHeight();
     } else {
       this.height = height;
     }
-  };
-  this.setBounds = function(maxX, maxY) {
+  }
+  setBounds(maxX, maxY) {
     this.maxX = maxX;
     this.maxY = maxY;
-  };
-  this.move = function(direction, amount) {
+  }
+  move(direction, amount) {
     if (direction === 'left') {
       if (this.getMaxX() < this.getWidth()) {
         this.setX(0);
@@ -130,5 +128,5 @@ window.mapwork.view.Camera = function() {
         this.setY(0);
       }
     }
-  };
-};
+  }
+}

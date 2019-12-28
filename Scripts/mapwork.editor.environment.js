@@ -1,5 +1,6 @@
 ﻿import {Map} from './mapwork.model.map';
 import {Layer} from './mapwork.model.layer';
+import {Camera} from './mapwork.view.camera';
 window.mapwork.editor.environment = {
 
     Init: function () {
@@ -1126,7 +1127,7 @@ window.mapwork.editor.environment = {
 
 
             //build the camera and pass in the world and view coordinates
-            mapwork.viewcontroller.camera = new mapwork.view.Camera();
+            mapwork.viewcontroller.camera = new Camera(mapwork.viewcontroller.mapModel);
             mapwork.viewcontroller.camera.setPosition(0, 0);
             mapwork.viewcontroller.camera.setBounds(mapwork.viewcontroller.mapModel.getWorldWidth(), mapwork.viewcontroller.mapModel.getWorldHeight());
             mapwork.viewcontroller.camera.setSize($('#editorCanvas').width(), $('#editorCanvas').height());
