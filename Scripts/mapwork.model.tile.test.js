@@ -56,10 +56,54 @@ describe('mapwork.model.tile.js Tile object', () => {
       expect(testTile.getTileCode()).toEqual(9999);
     });
   });
-  describe('setTilesheetX(value)', () => {});
-  describe('getTilesheetX()', () => {});
-  describe('setTilesheetY(value)', () => {});
-  describe('getTilesheetY()', () => {});
+  describe('setTilesheetX(value)', () => {
+    it(`should set tilesheetX value to 0`, function() {
+      testTile.setTilesheetX(0);
+      expect(testTile.tilesheetX).toEqual(0);
+    });
+    it(`should set tilesheetX value to 1`, function() {
+      testTile.setTilesheetX(1);
+      expect(testTile.tilesheetX).toEqual(1);
+    });
+    it(`should set tilesheetX value to 999`, function() {
+      testTile.setTilesheetX(999);
+      expect(testTile.tilesheetX).toEqual(999);
+    });
+    it(`should set tilesheetX value to -1`, function() {
+      testTile.setTilesheetX(-1);
+      expect(testTile.tilesheetX).toEqual(-1);
+    });
+  });
+  describe('getTilesheetX()', () => {
+    it(`should return tilesheetX value`, () => {
+      testTile.tilesheetX = 999;
+      expect(testTile.getTilesheetX()).toEqual(999);
+    });
+  });
+  describe('setTilesheetY(value)', () => {
+    it(`should set tilesheetY value to 0`, function() {
+      testTile.setTilesheetY(0);
+      expect(testTile.tilesheetY).toEqual(0);
+    });
+    it(`should set tilesheetY value to 1`, function() {
+      testTile.setTilesheetY(1);
+      expect(testTile.tilesheetY).toEqual(1);
+    });
+    it(`should set tilesheetY value to 999`, function() {
+      testTile.setTilesheetY(999);
+      expect(testTile.tilesheetY).toEqual(999);
+    });
+    it(`should set tilesheetY value to -1`, function() {
+      testTile.setTilesheetY(-1);
+      expect(testTile.tilesheetY).toEqual(-1);
+    });
+  });
+  describe('getTilesheetY()', () => {
+    it(`should return tilesheetY value`, () => {
+      testTile.tilesheetY = 999;
+      expect(testTile.getTilesheetY()).toEqual(999);
+    });
+  });
   describe('addProperty(prop)', () => {
     it(`should save 'prop' as a new tile property`, () => {
       const singleTilePropertyFixture = {
@@ -85,10 +129,211 @@ describe('mapwork.model.tile.js Tile object', () => {
       expect(testTile.properties.length).toEqual(2);
     });
   });
-  describe('removeProperty(key)', () => {});
-  describe('setProperty(property)', () => {});
-  describe('getProperty(key)', () => {});
-  describe('getAllProperties()', () => {});
+  describe('removeProperty(key)', () => {
+    it(`should remove property with specified key (middle value removed)`, () => {
+      testTile.properties = [
+        {
+          key: 'a',
+          value: 'thing'
+        },
+        {
+          key: 'b',
+          value: 'other thing'
+        },
+        {
+          key: 'c',
+          value: 'third thing'
+        }
+      ];
+      const expectedProperties = [
+        {
+          key: 'a',
+          value: 'thing'
+        },
+        {
+          key: 'c',
+          value: 'third thing'
+        }
+      ];
+      testTile.removeProperty('b');
+      expect(testTile.properties.length).toEqual(2);
+      expect(testTile.properties).toEqual(expectedProperties);
+    });
+
+    it(`should remove property with specified key (last value removed)`, () => {
+      testTile.properties = [
+        {
+          key: 'a',
+          value: 'thing'
+        },
+        {
+          key: 'b',
+          value: 'other thing'
+        },
+        {
+          key: 'c',
+          value: 'third thing'
+        }
+      ];
+      const expectedProperties = [
+        {
+          key: 'a',
+          value: 'thing'
+        },
+        {
+          key: 'b',
+          value: 'other thing'
+        }
+      ];
+      testTile.removeProperty('c');
+      expect(testTile.properties.length).toEqual(2);
+      expect(testTile.properties).toEqual(expectedProperties);
+    });
+
+    it(`should remove property with specified key (first value removed)`, () => {
+      testTile.properties = [
+        {
+          key: 'a',
+          value: 'thing'
+        },
+        {
+          key: 'b',
+          value: 'other thing'
+        },
+        {
+          key: 'c',
+          value: 'third thing'
+        }
+      ];
+      const expectedProperties = [
+        {
+          key: 'b',
+          value: 'other thing'
+        },
+        {
+          key: 'c',
+          value: 'third thing'
+        }
+      ];
+      testTile.removeProperty('a');
+      expect(testTile.properties.length).toEqual(2);
+      expect(testTile.properties).toEqual(expectedProperties);
+    });
+  });
+  describe('setProperty(property)', () => {
+    it(`should change existing property 'b' with new value 'hello'`, () => {
+      testTile.properties = [
+        {
+          key: 'a',
+          value: 'thing'
+        },
+        {
+          key: 'b',
+          value: 'other thing'
+        },
+        {
+          key: 'c',
+          value: 'third thing'
+        }
+      ];
+      const expectedProperties = [
+        {
+          key: 'a',
+          value: 'thing'
+        },
+        {
+          key: 'b',
+          value: 'hello'
+        },
+        {
+          key: 'c',
+          value: 'third thing'
+        }
+      ];
+      testTile.setProperty({
+        oldKey: 'b',
+        newKey: 'b',
+        newValue: 'hello'
+      });
+      expect(testTile.properties).toEqual(expectedProperties);
+    });
+
+    it(`should change nothing, because the key doesn't exist`, () => {
+      testTile.properties = [
+        {
+          key: 'a',
+          value: 'thing'
+        },
+        {
+          key: 'b',
+          value: 'other thing'
+        },
+        {
+          key: 'c',
+          value: 'third thing'
+        }
+      ];
+      const expectedProperties = [
+        {
+          key: 'a',
+          value: 'thing'
+        },
+        {
+          key: 'b',
+          value: 'other thing'
+        },
+        {
+          key: 'c',
+          value: 'third thing'
+        }
+      ];
+      testTile.setProperty({
+        oldKey: 'z',
+        newKey: 'z',
+        newValue: 'hellouoooo'
+      });
+      expect(testTile.properties).toEqual(expectedProperties);
+    });
+  });
+  describe('getProperty(key)', () => {
+    it(`should retrieve the property requested by key`, () => {
+      testTile.properties = [
+        {
+          key: 'a',
+          value: 'thing'
+        },
+        {
+          key: 'b',
+          value: 'other thing'
+        },
+        {
+          key: 'c',
+          value: 'third thing'
+        }
+      ];
+      const expectedProperty = 'other thing';
+      expect(testTile.getProperty('b')).toEqual(expectedProperty);
+    });
+  });
+  describe('getAllProperties()', () => {
+    it(`should return all of a tiles properties, un transformed`, () => {
+      testTile.properties = [
+        {
+          key: 'a',
+          value: 'thing'
+        },
+        {
+          key: 'b',
+          value: 'other thing'
+        },
+        {
+          key: 'c',
+          value: 'third thing'
+        }
+      ];
+      expect(testTile.getAllProperties()).toEqual(testTile.properties);
+    });
+  });
   describe('createBlankModelTile()', () => {
     it(`should call setTileCode with an argument of '-1'`, () => {
       const spy = jest.spyOn(testTile, 'setTileCode');
