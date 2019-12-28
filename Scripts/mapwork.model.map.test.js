@@ -23,8 +23,73 @@ describe(`mapwork.model.map map object`, () => {
       expect(testMap.layers).toEqual([]);
     });
   });
-  describe(`removeProperty(key)`, () => {});
-  describe(`setProperty(property)`, () => {});
+  describe(`removeProperty(key)`, () => {
+    it(`should remove a property from the map object`, () => {
+      const originalProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      const expectedProperties = [
+        { key: 'a', value: 1 },
+        { key: 'c', value: 3 }
+      ];
+      testMap.properties = originalProperties;
+      testMap.removeProperty('b');
+      expect(testMap.properties.length).toEqual(2);
+      expect(testMap.properties).toEqual(expectedProperties);
+    });
+    it(`should not remove a property from the map object, because the property key requested doesn't exist`, () => {
+      const originalProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      const expectedProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      testMap.properties = originalProperties;
+      testMap.removeProperty('x');
+      expect(testMap.properties.length).toEqual(3);
+      expect(testMap.properties).toEqual(expectedProperties);
+    });
+  });
+  describe(`setProperty(property)`, () => {
+    it(`should update a property in the map object`, () => {
+      const originalProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      const expectedProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 4 },
+        { key: 'c', value: 3 }
+      ];
+      testMap.properties = originalProperties;
+      testMap.setProperty({ oldKey: 'b', newKey: 'b', newValue: 4 });
+      expect(testMap.properties.length).toEqual(3);
+      expect(testMap.properties).toEqual(expectedProperties);
+    });
+    it(`should remain unchanged because the property being set doesn't exist`, () => {
+      const originalProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      const expectedProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      testMap.properties = originalProperties;
+      testMap.setProperty({ oldKey: 'x', newKey: 'x', newValue: 4 });
+      expect(testMap.properties.length).toEqual(3);
+      expect(testMap.properties).toEqual(expectedProperties);
+    });
+  });
   describe(`getProperty(key)`, () => {});
   describe(`addProperty(prop)`, () => {});
   describe(`getLayerByZPosition(zPosition)`, () => {});
