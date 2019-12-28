@@ -1,4 +1,5 @@
 import { Layer } from './mapwork.model.layer';
+import { Map } from './mapwork.model.map';
 
 let testLayer = null;
 const mockEditorEnvironment = {
@@ -303,6 +304,33 @@ describe(`mapwork.model.layer.js Layer object`, () => {
       expect(testLayer.getAllProperties()).toEqual(expectedProperties);
     });
   });
-  describe(`createBlankModelLayer(map, layerName, tilesetPath)`, () => {});
+  describe(`createBlankModelLayer(map, layerName, tilesetPath)`, () => {
+    it(`set up a new layer with sensible defaults to start editing the layer`, () => {
+      const setNameSpy = jest.spyOn(testLayer, 'setName');
+      const setTilesetPathSpy = jest
+        .spyOn(testLayer, 'setTilesetPath')
+        .mockImplementation(path => {
+          // stubbing out setTilesetPath so that we don't hit setTilesetImage and
+          // try and do DOM/JQuery type stuff (for now)
+          testLayer.tilesetPath = path;
+        });
+      const setZPositionSpy = jest.spyOn(testLayer, 'setZPosition');
+      const addRowSpy = jest.spyOn(testLayer, 'addRow');
+
+      const layerName = 'new-layer';
+      const tilesetPath = 'some/path.png';
+      const map = new Map(mockEditorEnvironment);
+      map.setTilesAccross(3);
+      map.setTilesDown(4);
+      testLayer.createBlankModelLayer(map, layerName, tilesetPath);
+
+      expect(setNameSpy).toHaveBeenCalledWith(layerName);
+      expect(setTilesetPathSpy).toHaveBeenCalledWith(tilesetPath);
+      expect(setZPositionSpy).toHaveBeenCalledWith(0);
+      expect(testLayer.rows.length).toEqual(4);
+      expect(testLayer.rows[0].length).toEqual(3);
+      expect(addRowSpy).toHaveBeenCalledTimes(4);
+    });
+  });
   describe(`createModelLayerFromJSONObject(map, json)`, () => {});
 });
