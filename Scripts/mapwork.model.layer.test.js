@@ -257,10 +257,52 @@ describe(`mapwork.model.layer.js Layer object`, () => {
       expect(testLayer.properties).toEqual(expectedProperties);
     });
   });
-  describe(`getProperty(key)`, () => {});
-  describe(`addProperty(prop)`, () => {});
-  describe(`getAllProperties()`, () => {});
-  describe(`addProperty(prop)`, () => {});
+  describe(`getProperty(key)`, () => {
+    it(`should return a property on the layer with a given key`, () => {
+      testLayer.properties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      const expectedProperty = 2;
+      expect(testLayer.getProperty('b')).toEqual(expectedProperty);
+    });
+    it(`shouldn't return anything because the specified key doesn't exist`, () => {
+      testLayer.properties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      expect(testLayer.getProperty('x')).not.toBeDefined();
+    });
+  });
+  describe(`addProperty(prop)`, () => {
+    it(`should add a given property to the layer`, () => {
+      const originalProperties = [
+        { key: 'a', value: 1 },
+        { key: 'c', value: 3 }
+      ];
+      const expectedProperties = [
+        { key: 'a', value: 1 },
+        { key: 'c', value: 3 },
+        { key: 'b', value: 2 }
+      ];
+      testLayer.properties = originalProperties;
+      testLayer.addProperty({ key: 'b', value: 2 });
+      expect(testLayer.properties).toEqual(expectedProperties);
+    });
+  });
+  describe(`getAllProperties()`, () => {
+    it(`should return all properties of the layer untransformed`, () => {
+      const expectedProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      testLayer.properties = expectedProperties;
+      expect(testLayer.getAllProperties()).toEqual(expectedProperties);
+    });
+  });
   describe(`createBlankModelLayer(map, layerName, tilesetPath)`, () => {});
   describe(`createModelLayerFromJSONObject(map, json)`, () => {});
 });

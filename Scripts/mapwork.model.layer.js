@@ -134,10 +134,6 @@ export class Layer {
   getAllProperties() {
     return this.properties;
   }
-  addProperty(prop) {
-    this.properties.push(prop);
-  }
-
   createBlankModelLayer(map, layerName, tilesetPath) {
     var rows, row, cell, cols;
 
