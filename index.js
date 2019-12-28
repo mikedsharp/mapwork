@@ -9,7 +9,6 @@ import './Scripts/mapwork.model.layer.js';
 import './Scripts/mapwork.model.tile.js';
 
 import './Scripts/mapwork.editor.changes.js';
-import './Scripts/mapwork.view.camera.js';
 import './Scripts/mapwork.viewcontroller.js';
 import './Scripts/mapwork.editor.environment.js';
 import './Scripts/mapwork.helper.validation.js';
