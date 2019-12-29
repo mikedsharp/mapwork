@@ -5,9 +5,6 @@ pipeline {
             args '-u root:root -p 3000:3000'
         }
     }
-    options {
-        disableConcurrentBuilds()
-    }
     stages {
         stage('Build') {
             steps {
@@ -27,16 +24,16 @@ pipeline {
                         s3Upload(profileName: 'mikes-s3', entries: 
                             [[bucket: featureDir, sourceFile: "dist/*.*", selectedRegion: "eu-west-1"]],
                             userMetadata: [],
-                            dontWaitForConcurrentBuildCompletion: true, 
+                            dontWaitForConcurrentBuildCompletion: false, 
                             consoleLogLevel: "INFO",
                             pluginFailureResultConstraint: ""
                         )
                         if (env.BRANCH_NAME.equals("master")){
-                            featureDir = "mds-mapwork";
+                            def featureDirMaster = "mds-mapwork";
                             s3Upload(profileName: 'mikes-s3', entries: 
-                                [[bucket: featureDir, sourceFile: "dist/*.*", selectedRegion: "eu-west-1"]],
+                                [[bucket: featureDirMaster, sourceFile: "dist/*.*", selectedRegion: "eu-west-1"]],
                                 userMetadata: [],
-                                dontWaitForConcurrentBuildCompletion: true, 
+                                dontWaitForConcurrentBuildCompletion: false, 
                                 consoleLogLevel: "INFO",
                                 pluginFailureResultConstraint: ""
                             )
