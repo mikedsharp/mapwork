@@ -90,8 +90,42 @@ describe(`mapwork.model.map map object`, () => {
       expect(testMap.properties).toEqual(expectedProperties);
     });
   });
-  describe(`getProperty(key)`, () => {});
-  describe(`addProperty(prop)`, () => {});
+  describe(`getProperty(key)`, () => {
+    beforeEach(() => {
+      testMap.properties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 'thing' },
+        { key: 'c', value: 3 }
+      ];
+    });
+    it(`should return a property for a given key`, () => {
+      const expectedProperty = 'thing';
+      expect(testMap.getProperty('b')).toEqual(expectedProperty);
+    });
+    it(`should not return anything as the property doesn't exist`, () => {
+      expect(testMap.getProperty('x')).not.toBeDefined();
+    });
+  });
+  describe(`addProperty(prop)`, () => {
+    it(`should add a given property to the Map objects properties`, () => {
+      const originalProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 }
+      ];
+      const expectedProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      const newProperty = {
+        key: 'c',
+        value: 3
+      };
+      testMap.properties = originalProperties;
+      testMap.addProperty(newProperty);
+      expect(testMap.properties).toEqual(expectedProperties);
+    });
+  });
   describe(`getLayerByZPosition(zPosition)`, () => {});
   describe(`getLayer(index)`, () => {});
   describe(`getLayers()`, () => {});
