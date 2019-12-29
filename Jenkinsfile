@@ -21,11 +21,14 @@ pipeline {
             }
         }
         stage('Deliver') {
+            def featureDir = "mds-mapwork/${BRANCH_NAME}".replace("/", "-").replace("%20", "-") + "/${BUILD_NUMBER}"
+            if (env.BRANCH_NAME.equals("master")){
+                featureDir = "mds-mapwork";
+            }
             steps {
-                def featureDir = "mds-mapwork/${BRANCH_NAME}".replace("/", "-").replace("%20", "-")
                 sh 'echo "I dont know how to implement this yet lol"'
                 s3Upload(profileName: 'mikes-s3', entries: 
-                    [[bucket: "${featureDir}/${BUILD_NUMBER}", sourceFile: "dist/*.*", selectedRegion: "eu-west-1"]],
+                    [[bucket: featureDir, sourceFile: "dist/*.*", selectedRegion: "eu-west-1"]],
                      userMetadata: [],
                      dontWaitForConcurrentBuildCompletion: true, 
                      consoleLogLevel: "INFO",
