@@ -8,9 +8,6 @@ pipeline {
     options {
         disableConcurrentBuilds()
     }
-    environment { 
-        CI = 'true'
-    }
     stages {
         stage('Build') {
             steps {
