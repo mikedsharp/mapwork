@@ -23,9 +23,9 @@ pipeline {
         stage('Deliver') {
             steps {
                 sh 'echo "I dont know how to implement this yet lol"'
-                s3Upload(profileName: 'mikes-s3', entries: [
+                s3Upload(profileName: 'mikes-s3', entries: 
                     [bucket: "mds-mapwork", sourceFile: "dist", selectedRegion: "eu-west-1"]
-                ])
+                )
             }
         }
     }
