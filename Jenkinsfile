@@ -14,15 +14,15 @@ pipeline {
                 sh 'npm install'
                 sh 'npm run build'
             }
-            stage('Test') {
-                steps {
-                    sh 'npm run test'
-                }
+        }
+        stage('Test') {
+            steps {
+                sh 'npm run test'
             }
-            stage('Deliver') {
-                steps {
-                    sh 'echo "I dont know how to implement this yet lol"'
-                }
+        }
+        stage('Deliver') {
+            steps {
+                sh 'echo "I dont know how to implement this yet lol"'
             }
         }
     }
