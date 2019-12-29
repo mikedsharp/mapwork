@@ -24,7 +24,7 @@ pipeline {
             steps {
                 sh 'echo "I dont know how to implement this yet lol"'
                 s3Upload(profileName: 'mikes-s3', entries: [
-                    {bucket: 'mds-mapwork/' + env.BRANCH_NAME, sourceFile: 'dist', selectedRegion: 'eu-west-1'}
+                    {bucket: 'mds-mapwork/${BRANCH_NAME}/${BUILD_NUMBER}', sourceFile: 'dist', selectedRegion: 'eu-west-1'}
                 ])
             }
         }
