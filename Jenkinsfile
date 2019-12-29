@@ -27,15 +27,15 @@ pipeline {
                     if (env.BRANCH_NAME.equals("master")){
                         featureDir = "mds-mapwork";
                     }
+                        sh 'echo "I dont know how to implement this yet lol"'
+                        s3Upload(profileName: 'mikes-s3', entries: 
+                            [[bucket: featureDir, sourceFile: "dist/*.*", selectedRegion: "eu-west-1"]],
+                            userMetadata: [],
+                            dontWaitForConcurrentBuildCompletion: true, 
+                            consoleLogLevel: "INFO",
+                            pluginFailureResultConstraint: ""
+                        )
                 }
-                sh 'echo "I dont know how to implement this yet lol"'
-                s3Upload(profileName: 'mikes-s3', entries: 
-                    [[bucket: featureDir, sourceFile: "dist/*.*", selectedRegion: "eu-west-1"]],
-                     userMetadata: [],
-                     dontWaitForConcurrentBuildCompletion: true, 
-                     consoleLogLevel: "INFO",
-                     pluginFailureResultConstraint: ""
-                )
             }
         }
     }
