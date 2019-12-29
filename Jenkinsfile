@@ -8,6 +8,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+                sh 'rm -rf dist'
                 sh 'npm install --unsafe-perm'
                 sh 'npm run build --unsafe-perm'
             }
