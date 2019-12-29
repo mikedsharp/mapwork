@@ -23,7 +23,7 @@ pipeline {
         stage('Deliver') {
             steps {
                 script {
-                        def featureDir = "mds-mapwork-builds/" + "${BRANCH_NAME}".replace("/", "-").replace("%20", "-") + "/${BUILD_NUMBER}"
+                        def featureDir = "mds-mapwork-builds/" + "${BRANCH_NAME}".replace("%20", "-") + "/${BUILD_NUMBER}"
                         if (env.BRANCH_NAME.equals("master")){
                             featureDir = "mds-mapwork";
                         }
