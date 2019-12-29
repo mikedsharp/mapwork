@@ -23,8 +23,7 @@ pipeline {
         stage('Deliver') {
             steps {
                 sh 'echo "I dont know how to implement this yet lol"'
-                withAWS(region:'eu-west-1',credentials:'mikes-buckets') {
-                }
+                s3Upload(bucket: "mds-mapwork", workingDir: "dist", includePathPattern:'**/*')
             }
         }
     }
