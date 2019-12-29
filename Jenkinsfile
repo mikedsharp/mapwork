@@ -23,10 +23,10 @@ pipeline {
         stage('Deliver') {
             steps {
                 script {
-                    def featureDir = "mds-mapwork-builds/${BRANCH_NAME}".replace("/", "-").replace("%20", "-") + "/${BUILD_NUMBER}"
-                    if (env.BRANCH_NAME.equals("master")){
-                        featureDir = "mds-mapwork";
-                    }
+                        def featureDir = "mds-mapwork-builds/" + "${BRANCH_NAME}".replace("/", "-").replace("%20", "-") + "/${BUILD_NUMBER}"
+                        if (env.BRANCH_NAME.equals("master")){
+                            featureDir = "mds-mapwork";
+                        }
                         sh 'echo "I dont know how to implement this yet lol"'
                         s3Upload(profileName: 'mikes-s3', entries: 
                             [[bucket: featureDir, sourceFile: "dist/*.*", selectedRegion: "eu-west-1"]],
