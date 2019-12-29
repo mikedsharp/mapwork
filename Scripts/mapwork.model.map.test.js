@@ -1,4 +1,5 @@
 import { Map } from './mapwork.model.map';
+import { Layer } from './mapwork.model.layer';
 let testMap;
 
 const mockEditorEnvironment = {
@@ -126,7 +127,46 @@ describe(`mapwork.model.map map object`, () => {
       expect(testMap.properties).toEqual(expectedProperties);
     });
   });
-  describe(`getLayerByZPosition(zPosition)`, () => {});
+  describe(`getLayerByZPosition(zPosition)`, () => {
+    it(`[ordered list of layers] should retrieve correct layer by its Z-co-ordinate`, () => {
+      const layers = [];
+      layers.push(new Layer());
+      layers.push(new Layer());
+      layers.push(new Layer());
+      testMap.layers = layers;
+      layers[0].zPosition = 0;
+      layers[1].zPosition = 1;
+      layers[2].zPosition = 2;
+      const expectedLayer = layers[1];
+      const returnedLayer = testMap.getLayerByZPosition(1);
+      expect(returnedLayer).toEqual(expectedLayer);
+    });
+    it(`[unordered ordered list of layers] should retrieve correct layer by its Z-co-ordinate`, () => {
+      const layers = [];
+      layers.push(new Layer());
+      layers.push(new Layer());
+      layers.push(new Layer());
+      testMap.layers = layers;
+      layers[0].zPosition = 10;
+      layers[1].zPosition = 5;
+      layers[2].zPosition = 20;
+      const expectedLayer = layers[2];
+      const returnedLayer = testMap.getLayerByZPosition(20);
+      expect(returnedLayer).toEqual(expectedLayer);
+    });
+    it(`should return nothing, as no layer with specified z-index exists in Map object`, () => {
+      const layers = [];
+      layers.push(new Layer());
+      layers.push(new Layer());
+      layers.push(new Layer());
+      testMap.layers = layers;
+      layers[0].zPosition = 10;
+      layers[1].zPosition = 5;
+      layers[2].zPosition = 20;
+      const returnedLayer = testMap.getLayerByZPosition(-12);
+      expect(returnedLayer).not.toBeDefined();
+    });
+  });
   describe(`getLayer(index)`, () => {});
   describe(`getLayers()`, () => {});
   describe(`addLayer(layer)`, () => {});
