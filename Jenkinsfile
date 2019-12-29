@@ -5,6 +5,9 @@ pipeline {
             args '-u root:root -p 3000:3000'
         }
     }
+    options {
+        disableConcurrentBuilds()
+    }
     environment { 
         CI = 'true'
     }
