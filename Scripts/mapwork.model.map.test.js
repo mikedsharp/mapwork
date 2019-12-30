@@ -16,7 +16,6 @@ describe(`mapwork.model.map map object`, () => {
     it(`should provide some reasonable defaults when constructing the map object`, () => {
       expect(testMap.properties).toEqual([]);
       expect(testMap.name).toEqual(null);
-      expect(testMap.createdTimestamp).toEqual(null);
       expect(testMap.tileWidth).toEqual(null);
       expect(testMap.tileHeight).toEqual(null);
       expect(testMap.tilesAccross).toEqual(null);

@@ -8,7 +8,6 @@ export class Map {
 
     this.properties = [];
     this.name = null;
-    this.createdTimestamp = null;
     this.tileWidth = null;
     this.tileHeight = null;
     this.tilesAccross = null;
@@ -275,7 +274,6 @@ export class Map {
   destructModel() {
     this.layers = [];
     this.name = null;
-    this.createdTimestamp = null;
     this.tileWidth = null;
     this.tileHeight = null;
     this.tilesAccross = null;
