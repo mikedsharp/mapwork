@@ -260,11 +260,37 @@ describe(`mapwork.model.map map object`, () => {
       expect(testMap.layers[1].zPosition).toEqual(4);
     });
   });
-  describe(`setLayer(layer, index)`, () => {});
-  describe(`setName(mapName)`, () => {});
-  describe(`getName()`, () => {});
-  describe(`setCreatedTimestamp(timestamp)`, () => {});
-  describe(`getCreatedTimestamp()`, () => {});
+  describe(`setLayer(layer, index)`, () => {
+    it(`should replace a layer at a given index within a maps list of layers`, () => {
+      const originalLayers = [new Layer(), new Layer(), new Layer()];
+      const replacementLayer = new Layer();
+      originalLayers[0].name = 'one';
+      originalLayers[1].name = 'two';
+      originalLayers[2].name = 'three';
+      testMap.layers = originalLayers;
+      replacementLayer.zPosition = 2;
+      replacementLayer.name = 'replacement';
+      testMap.setLayer(replacementLayer, 1);
+      expect(testMap.layers.length).toEqual(3);
+      expect(testMap.layers[1]).toEqual(replacementLayer);
+    });
+  });
+  describe(`setName(mapName)`, () => {
+    it(`should change the name of the map`, () => {
+      const originalName = 'old map name';
+      const newName = 'new map name';
+      testMap.name = originalName;
+      testMap.setName(newName);
+      expect(testMap.name).toEqual(newName);
+    });
+  });
+  describe(`getName()`, () => {
+    it(`should return the name of the map`, () => {
+      const expectedName = 'map name';
+      testMap.name = expectedName;
+      expect(testMap.getName()).toEqual(expectedName);
+    });
+  });
   describe(`setTileWidth(amount)`, () => {});
   describe(`getTileWidth()`, () => {});
   describe(`setTileHeight(amount)`, () => {});

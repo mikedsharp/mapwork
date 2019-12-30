@@ -112,12 +112,6 @@ export class Map {
   getName() {
     return this.name;
   }
-  setCreatedTimestamp(timestamp) {
-    this.createdTimestamp = timestamp;
-  }
-  getCreatedTimestamp() {
-    return this.createdTimestamp;
-  }
   setTileWidth(amount) {
     this.tileWidth = parseInt(amount, 10);
   }
@@ -179,7 +173,6 @@ export class Map {
 
     // top level 'map' assignments from the JSON
     this.setName(json.name);
-    this.setCreatedTimestamp(json.createdTimestamp);
     this.setTileWidth(json.tileWidth);
     this.setTileHeight(json.tileHeight);
     this.setTilesAccross(json.tilesAccross);
@@ -219,7 +212,6 @@ export class Map {
     // create an object that can be serialized cleanly into JSON
     obj = {
       name: this.getName(),
-      createdTimestamp: this.getCreatedTimestamp(),
       tileWidth: this.getTileWidth(),
       tileHeight: this.getTileHeight(),
       tilesAccross: this.getTilesAccross(),
