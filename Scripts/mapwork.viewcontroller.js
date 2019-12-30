@@ -2,10 +2,6 @@
   Init: function() {
     'use strict';
     this.InitiateRenderLoop();
-    this.RandomNewFunction();
-  },
-  RandomNewFunction: function() {
-    console.log('woohoo!');
   },
   BindEvent: function() {
     'use strict';
