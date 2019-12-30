@@ -374,8 +374,42 @@ describe(`mapwork.model.map map object`, () => {
       expect(testMap.getTilesDown()).toEqual(expectedValue);
     });
   });
-  describe(`getAllProperties()`, () => {});
-  describe(`createBlankModel(name, tileWidth, tileHeight, tilesAccross, tilesDown)`, () => {});
+  describe(`getAllProperties()`, () => {
+    it(`should return all properties in the list of properties of the map`, () => {
+      const originalProperties = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'c', value: 3 }
+      ];
+      testMap.properties = originalProperties;
+      expect(testMap.getAllProperties()).toEqual(originalProperties);
+    });
+  });
+  describe(`createBlankModel(name, tileWidth, tileHeight, tilesAccross, tilesDown)`, () => {
+    it(`should create some sensible defaults for a blank map that is ready to edit`, () => {
+      const expectedName = 'test';
+      const expectedTileWidth = 32;
+      const expectedTileHeight = 64;
+      const expectedTilesAcross = 30;
+      const expectedTilesDown = 20;
+      testMap.createBlankModel(
+        expectedName,
+        expectedTileWidth,
+        expectedTileHeight,
+        expectedTilesAcross,
+        expectedTilesDown
+      );
+
+      expect(testMap.name).toEqual(expectedName);
+      expect(testMap.tileWidth).toEqual(expectedTileWidth);
+      expect(testMap.tileHeight).toEqual(expectedTileHeight);
+      expect(testMap.tilesAccross).toEqual(expectedTilesAcross);
+      expect(testMap.tilesDown).toEqual(expectedTilesDown);
+      expect(testMap.layers.length).toEqual(1);
+      expect(testMap.layers[0].name).toEqual('Untitled Layer');
+      expect(testMap.layers[0].tilesetPath).toEqual('default_tileset.png');
+    });
+  });
   describe(`createModelFromJSONString(json)`, () => {});
   describe(`serialize()`, () => {});
   describe(`destructModel()`, () => {});
