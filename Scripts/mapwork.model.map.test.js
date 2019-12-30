@@ -220,7 +220,46 @@ describe(`mapwork.model.map map object`, () => {
       expect(testMap.layers).toEqual(originalLayers);
     });
   });
-  describe(`swapLayers(zPositionOne, zPositionTwo)`, () => {});
+  describe(`swapLayers(zPositionOne, zPositionTwo)`, () => {
+    it(`should swap around the zPositions and indexes of two layers (layer 1 > layer 2)`, () => {
+      const layerOne = new Layer();
+      const layerTwo = new Layer();
+      layerOne.name = 'originalLayerOne';
+      layerTwo.name = 'originalLayerTwo';
+      layerOne.zPosition = 10;
+      layerTwo.zPosition = 4;
+      testMap.layers = [layerOne, layerTwo];
+      testMap.swapLayers(layerOne.zPosition, layerTwo.zPosition);
+      expect(testMap.layers[0].zPosition).toEqual(10);
+      expect(testMap.layers[1].zPosition).toEqual(4);
+      expect(testMap.layers[0].name).toEqual('originalLayerTwo');
+      expect(testMap.layers[1].name).toEqual('originalLayerOne');
+    });
+    it(`should swap around the zPositions and indexes of two layers (layer 1 < layer 2)`, () => {
+      const layerOne = new Layer();
+      const layerTwo = new Layer();
+      layerOne.name = 'originalLayerOne';
+      layerTwo.name = 'originalLayerTwo';
+      layerOne.zPosition = 4;
+      layerTwo.zPosition = 10;
+      testMap.layers = [layerOne, layerTwo];
+      testMap.swapLayers(layerOne.zPosition, layerTwo.zPosition);
+      expect(testMap.layers[0].zPosition).toEqual(4);
+      expect(testMap.layers[1].zPosition).toEqual(10);
+      expect(testMap.layers[0].name).toEqual('originalLayerTwo');
+      expect(testMap.layers[1].name).toEqual('originalLayerOne');
+    });
+    it(`layers should have the same position after swapLayers is called`, () => {
+      const layerOne = new Layer();
+      const layerTwo = new Layer();
+      layerOne.zPosition = 4;
+      layerTwo.zPosition = 4;
+      testMap.layers = [layerOne, layerTwo];
+      testMap.swapLayers(layerOne.zPosition, layerTwo.zPosition);
+      expect(testMap.layers[0].zPosition).toEqual(4);
+      expect(testMap.layers[1].zPosition).toEqual(4);
+    });
+  });
   describe(`setLayer(layer, index)`, () => {});
   describe(`setName(mapName)`, () => {});
   describe(`getName()`, () => {});
