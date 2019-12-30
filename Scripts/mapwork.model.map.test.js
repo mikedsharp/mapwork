@@ -493,6 +493,24 @@ describe(`mapwork.model.map map object`, () => {
     });
   });
   describe(`resizeMap(specifications)`, () => {});
-  describe(`getWorldWidth()`, () => {});
-  describe(`getWorldHeight()`, () => {});
+  describe(`getWorldWidth()`, () => {
+    it(`should calculate the world width (tileWidth * tiles across) and return result`, () => {
+      const expectedWorldWidth = 320;
+      const tilesAcross = 10;
+      const tileWidth = 32;
+      testMap.tilesAccross = tilesAcross;
+      testMap.tileWidth = tileWidth;
+      expect(testMap.getWorldWidth()).toEqual(expectedWorldWidth);
+    });
+  });
+  describe(`getWorldHeight()`, () => {
+    it(`should calculate the world height (tileHeigh * tiles down) and return result`, () => {
+      const expectedWorldHeight = 320;
+      const tilesDown = 10;
+      const tileHeight = 32;
+      testMap.tilesDown = tilesDown;
+      testMap.tileHeight = tileHeight;
+      expect(testMap.getWorldHeight()).toEqual(expectedWorldHeight);
+    });
+  });
 });
