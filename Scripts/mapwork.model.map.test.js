@@ -1,5 +1,6 @@
 import { Map } from './mapwork.model.map';
 import { Layer } from './mapwork.model.layer';
+import { Tile } from './mapwork.model.tile';
 let testMap;
 
 const mockEditorEnvironment = {
@@ -412,9 +413,85 @@ describe(`mapwork.model.map map object`, () => {
   });
   describe(`createModelFromJSONString(json)`, () => {});
   describe(`serialize()`, () => {});
-  describe(`destructModel()`, () => {});
-  describe(`modifyTile(layer, x, y, options)`, () => {});
-  describe(`getTile(layer, x, y)`, () => {});
+  describe(`destructModel()`, () => {
+    it(`should add some sensible values to the map model to make it blank`, () => {
+      testMap.layers.push(new Layer());
+      testMap.properties.push({ key: 'a', value: 1 });
+      testMap.name = 'name';
+      testMap.tileWidth = 32;
+      testMap.tileHeight = 64;
+      testMap.tilesAccross = 2;
+      testMap.tilesDown = 4;
+
+      testMap.destructModel();
+
+      expect(testMap.layers.length).toEqual(0);
+      expect(testMap.properties.length).toEqual(0);
+      expect(testMap.name).toEqual(null);
+      expect(testMap.tileWidth).toEqual(null);
+      expect(testMap.tileHeight).toEqual(null);
+      expect(testMap.tilesAccross).toEqual(null);
+      expect(testMap.tilesDown).toEqual(null);
+    });
+  });
+  describe(`modifyTile(layer, x, y, options)`, () => {
+    it(`should update a tiles tileCode in the map at a given x, y position on a given layer`, () => {
+      const expectedName = 'test';
+      const expectedTileWidth = 32;
+      const expectedTileHeight = 64;
+      const expectedTilesAcross = 30;
+      const expectedTilesDown = 20;
+      const yRow = 1;
+      const xCell = 2;
+      const zLayer = 0;
+      const expectedTileCode = 5;
+      testMap.createBlankModel(
+        expectedName,
+        expectedTileWidth,
+        expectedTileHeight,
+        expectedTilesAcross,
+        expectedTilesDown
+      );
+      testMap.modifyTile(0, 2, 1, [
+        {
+          key: 'tileCode',
+          value: expectedTileCode
+        }
+      ]);
+      expect(testMap.layers[zLayer].rows[yRow][xCell].tileCode).toEqual(
+        expectedTileCode
+      );
+    });
+  });
+  describe(`getTile(layer, x, y)`, () => {
+    let expectedTile;
+    const yRow = 1;
+    const xCell = 2;
+    const zLayer = 1;
+    beforeEach(() => {
+      const expectedName = 'test';
+      const expectedTileWidth = 32;
+      const expectedTileHeight = 64;
+      const expectedTilesAcross = 30;
+      const expectedTilesDown = 20;
+      testMap.createBlankModel(
+        expectedName,
+        expectedTileWidth,
+        expectedTileHeight,
+        expectedTilesAcross,
+        expectedTilesDown
+      );
+      const layer = new Layer();
+      layer.createBlankModelLayer(testMap, 'another layer', 'default_tileset');
+      testMap.addLayer(layer);
+      expectedTile = new Tile();
+      expectedTile.tileCode = 10;
+      testMap.layers[zLayer].rows[yRow][xCell] = expectedTile;
+    });
+    it(`should return a tile at a given x,y,z position on the map`, () => {
+      expect(testMap.getTile(zLayer, xCell, yRow)).toEqual(expectedTile);
+    });
+  });
   describe(`resizeMap(specifications)`, () => {});
   describe(`getWorldWidth()`, () => {});
   describe(`getWorldHeight()`, () => {});
