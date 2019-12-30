@@ -197,7 +197,29 @@ describe(`mapwork.model.map map object`, () => {
       expect(testMap.layers).toEqual(expectedLayers);
     });
   });
-  describe(`removeLayer(zPosition)`, () => {});
+  describe(`removeLayer(zPosition)`, () => {
+    it(`should remove a layer from the map with a given zPosition`, () => {
+      const originalLayers = [new Layer(), new Layer(), new Layer()];
+      originalLayers[0].zPosition = 0;
+      originalLayers[1].zPosition = 1;
+      originalLayers[2].zPosition = 2;
+      testMap.layers = originalLayers;
+      const expectedLayers = [originalLayers[0], originalLayers[2]];
+      testMap.removeLayer(1);
+      expect(testMap.layers.length).toEqual(2);
+      expect(testMap.layers).toEqual(expectedLayers);
+    });
+    it(`should do nothing, as there are no layers with the specified z position`, () => {
+      const originalLayers = [new Layer(), new Layer(), new Layer()];
+      originalLayers[0].zPosition = 0;
+      originalLayers[1].zPosition = 1;
+      originalLayers[2].zPosition = 2;
+      testMap.layers = originalLayers;
+      testMap.removeLayer(55);
+      expect(testMap.layers.length).toEqual(3);
+      expect(testMap.layers).toEqual(originalLayers);
+    });
+  });
   describe(`swapLayers(zPositionOne, zPositionTwo)`, () => {});
   describe(`setLayer(layer, index)`, () => {});
   describe(`setName(mapName)`, () => {});
