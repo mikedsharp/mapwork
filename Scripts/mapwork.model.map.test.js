@@ -179,8 +179,24 @@ describe(`mapwork.model.map map object`, () => {
       expect(returnedLayer).not.toBeDefined();
     });
   });
-  describe(`getLayers()`, () => {});
-  describe(`addLayer(layer)`, () => {});
+  describe(`getLayers()`, () => {
+    it(`should return all layers of the map untransformed`, () => {
+      const originalLayers = [new Layer(), new Layer(), new Layer()];
+      testMap.layers = originalLayers;
+      expect(testMap.getLayers()).toEqual(originalLayers);
+    });
+  });
+  describe(`addLayer(layer)`, () => {
+    it(`should add a layer to list of maps layers`, () => {
+      const originalLayers = [new Layer(), new Layer(), new Layer()];
+      const newLayer = new Layer();
+      newLayer.setZPosition(33);
+      const expectedLayers = [...originalLayers, newLayer];
+      testMap.layers = originalLayers;
+      testMap.addLayer(newLayer);
+      expect(testMap.layers).toEqual(expectedLayers);
+    });
+  });
   describe(`removeLayer(zPosition)`, () => {});
   describe(`swapLayers(zPositionOne, zPositionTwo)`, () => {});
   describe(`setLayer(layer, index)`, () => {});
