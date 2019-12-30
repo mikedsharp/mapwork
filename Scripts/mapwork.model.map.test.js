@@ -411,8 +411,6 @@ describe(`mapwork.model.map map object`, () => {
       expect(testMap.layers[0].tilesetPath).toEqual('default_tileset.png');
     });
   });
-  describe(`createModelFromJSONString(json)`, () => {});
-  describe(`serialize()`, () => {});
   describe(`destructModel()`, () => {
     it(`should add some sensible values to the map model to make it blank`, () => {
       testMap.layers.push(new Layer());
@@ -492,7 +490,6 @@ describe(`mapwork.model.map map object`, () => {
       expect(testMap.getTile(zLayer, xCell, yRow)).toEqual(expectedTile);
     });
   });
-  describe(`resizeMap(specifications)`, () => {});
   describe(`getWorldWidth()`, () => {
     it(`should calculate the world width (tileWidth * tiles across) and return result`, () => {
       const expectedWorldWidth = 320;
@@ -513,4 +510,93 @@ describe(`mapwork.model.map map object`, () => {
       expect(testMap.getWorldHeight()).toEqual(expectedWorldHeight);
     });
   });
+  describe(`resizeMap(specifications)`, () => {
+    const originalTileWidth = 32;
+    const originalTileHeight = 64;
+    const originalTilesAcross = 30;
+    const originalTilesDown = 20;
+
+    beforeEach(() => {
+      const name = 'test';
+
+      testMap.createBlankModel(
+        name,
+        originalTileWidth,
+        originalTileHeight,
+        originalTilesAcross,
+        originalTilesDown
+      );
+    });
+    it(`should expand the size of the map, increasing the width`, () => {
+      const expectedTilesAccross = 42;
+      testMap.resizeMap({
+        tilesAccross: expectedTilesAccross
+      });
+      expect(testMap.tilesAccross).toEqual(expectedTilesAccross);
+    });
+    it(`should contract the size of the map, decreasing the width`, () => {
+      const expectedTilesAccross = 22;
+      testMap.resizeMap({
+        tilesAccross: expectedTilesAccross
+      });
+      expect(testMap.tilesAccross).toEqual(expectedTilesAccross);
+    });
+    it(`should expand the size of the map, increasing the height`, () => {
+      const expectedTilesDown = 42;
+      testMap.resizeMap({
+        tilesDown: expectedTilesDown
+      });
+      expect(testMap.tilesDown).toEqual(expectedTilesDown);
+    });
+    it(`should contract the size of the map, decreasing the height`, () => {
+      const expectedTilesDown = 22;
+      testMap.resizeMap({
+        tilesDown: expectedTilesDown
+      });
+      expect(testMap.tilesDown).toEqual(expectedTilesDown);
+    });
+    it(`should increase the width of the map but decrease the height`, () => {
+      const expectedTilesDown = 22;
+      const expectedTilesAccross = 42;
+      testMap.resizeMap({
+        tilesAccross: expectedTilesAccross,
+        tilesDown: expectedTilesDown
+      });
+      expect(testMap.tilesDown).toEqual(expectedTilesDown);
+      expect(testMap.tilesAccross).toEqual(expectedTilesAccross);
+    });
+    it(`should decrease the width of the map but increase the height`, () => {
+      const expectedTilesDown = 42;
+      const expectedTilesAccross = 22;
+      testMap.resizeMap({
+        tilesAccross: expectedTilesAccross,
+        tilesDown: expectedTilesDown
+      });
+      expect(testMap.tilesDown).toEqual(expectedTilesDown);
+      expect(testMap.tilesAccross).toEqual(expectedTilesAccross);
+    });
+    it(`should increase both the height and width of the map`, () => {
+      const expectedTilesDown = 42;
+      const expectedTilesAccross = 42;
+      testMap.resizeMap({
+        tilesAccross: expectedTilesAccross,
+        tilesDown: expectedTilesDown
+      });
+      expect(testMap.tilesDown).toEqual(expectedTilesDown);
+      expect(testMap.tilesAccross).toEqual(expectedTilesAccross);
+    });
+    it(`should decrease both the height and width of the map`, () => {
+      const expectedTilesDown = 22;
+      const expectedTilesAccross = 22;
+      testMap.resizeMap({
+        tilesAccross: expectedTilesAccross,
+        tilesDown: expectedTilesDown
+      });
+      expect(testMap.tilesDown).toEqual(expectedTilesDown);
+      expect(testMap.tilesAccross).toEqual(expectedTilesAccross);
+    });
+  });
+  // going to exclude these tests until next version (features aren't officially supported in app right now)
+  xdescribe(`createModelFromJSONString(json)`, () => {});
+  xdescribe(`serialize()`, () => {});
 });
