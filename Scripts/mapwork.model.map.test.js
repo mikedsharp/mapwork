@@ -290,14 +290,90 @@ describe(`mapwork.model.map map object`, () => {
       expect(testMap.getName()).toEqual(expectedName);
     });
   });
-  describe(`setTileWidth(amount)`, () => {});
-  describe(`getTileWidth()`, () => {});
-  describe(`setTileHeight(amount)`, () => {});
-  describe(`getTileHeight()`, () => {});
-  describe(`setTilesAccross(amount)`, () => {});
-  describe(`getTilesAccross()`, () => {});
-  describe(`setTilesDown(amount)`, () => {});
-  describe(`getTilesDown()`, () => {});
+  describe(`setTileWidth(amount)`, () => {
+    it(`should set the width of tiles within the map with a given integer value`, () => {
+      testMap.tileWidth = 32;
+      const expectedValue = 16;
+      testMap.setTileWidth(16);
+      expect(testMap.tileWidth).toEqual(expectedValue);
+    });
+    it(`should set the width of tiles within the map with a given floating point value, but will remove fractional component`, () => {
+      testMap.tileWidth = 32;
+      const expectedValue = 16;
+      testMap.setTileWidth(16.65);
+      expect(testMap.tileWidth).toEqual(expectedValue);
+    });
+    it(`should set the width of tiles within the map with a given number string value, but will parse the string to an int`, () => {
+      testMap.tileWidth = 32;
+      const expectedValue = 16;
+      testMap.setTileWidth('16');
+      expect(testMap.tileWidth).toEqual(expectedValue);
+    });
+  });
+  describe(`getTileWidth()`, () => {
+    it(`should return the current tileWidth of tiles on the map`, () => {
+      const expectedValue = 32;
+      testMap.tileWidth = 32;
+      expect(testMap.getTileWidth()).toEqual(expectedValue);
+    });
+  });
+  describe(`setTileHeight(amount)`, () => {
+    it(`should set the height of tiles within the map with a given integer value`, () => {
+      testMap.tileHeight = 32;
+      const expectedValue = 16;
+      testMap.setTileHeight(16);
+      expect(testMap.tileHeight).toEqual(expectedValue);
+    });
+    it(`should set the height of tiles within the map with a given floating point value, but will remove fractional component`, () => {
+      testMap.tileHeight = 32;
+      const expectedValue = 16;
+      testMap.setTileHeight(16.65);
+      expect(testMap.tileHeight).toEqual(expectedValue);
+    });
+    it(`should set the height of tiles within the map with a given number string value, but will parse the string to an int`, () => {
+      testMap.tileHeight = 32;
+      const expectedValue = 16;
+      testMap.setTileHeight('16');
+      expect(testMap.tileHeight).toEqual(expectedValue);
+    });
+  });
+  describe(`getTileHeight()`, () => {
+    it(`should return the current tileHeight of tiles on the map`, () => {
+      const expectedValue = 32;
+      testMap.tileHeight = 32;
+      expect(testMap.getTileHeight()).toEqual(expectedValue);
+    });
+  });
+  describe(`setTilesAccross(amount)`, () => {
+    it(`should set the number of tiles horizontally across the map with a given integer value`, () => {
+      testMap.tilesAccross = 32;
+      const expectedValue = 16;
+      testMap.setTilesAccross(16);
+      expect(testMap.tilesAccross).toEqual(expectedValue);
+    });
+  });
+  describe(`getTilesAccross()`, () => {
+    it(`should return the current number of tiles across on the map`, () => {
+      const expectedValue = 32;
+      testMap.tilesAccross = 32;
+      expect(testMap.getTilesAccross()).toEqual(expectedValue);
+    });
+  });
+  describe(`setTilesDown(amount)`, () => {
+    it(`should set the number of tiles vertically down the map with a given integer value`, () => {
+      testMap.tilesDown = 32;
+      const expectedValue = 16;
+      testMap.setTilesDown(16);
+      expect(testMap.tilesDown).toEqual(expectedValue);
+    });
+  });
+  describe(`getTilesDown()`, () => {
+    it(`should return the current number of tiles across on the map`, () => {
+      const expectedValue = 32;
+      testMap.tilesDown = 32;
+      expect(testMap.getTilesDown()).toEqual(expectedValue);
+    });
+  });
   describe(`getAllProperties()`, () => {});
   describe(`createBlankModel(name, tileWidth, tileHeight, tilesAccross, tilesDown)`, () => {});
   describe(`createModelFromJSONString(json)`, () => {});
