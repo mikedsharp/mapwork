@@ -1,7 +1,9 @@
-﻿window.mapwork.editor.changes = {
-  description: 'MapWork Changes API',
-  v: 0.01,
-  PushChange: function(data) {
+﻿export class ChangeRecorder {
+  constructor() {
+    this.reversions = [];
+    this.changes = [];
+  }
+  pushChange(data) {
     this.changes.push(data);
     if (data.verb == 'PaintSingleTile') {
       console.log(
@@ -48,8 +50,9 @@
           data.endY
       );
     }
-  },
-  PushReversion: function(data) {
+  }
+
+  pushReversion(data) {
     this.reversions.push(data);
     if (data.verb == 'PaintSingleTile') {
       console.log(
@@ -96,17 +99,15 @@
           data.endY
       );
     }
-  },
-  CommitChanges: function() {
+  }
+  commitChanges() {
     // commit changes to the server
-  },
-  PopRevision: function() {
+  }
+  popRevision() {
     if (this.changes > 1) {
       this.changes.pop();
       return this.reversions.pop();
     }
     return null;
-  },
-  changes: [],
-  reversions: []
-};
+  }
+}

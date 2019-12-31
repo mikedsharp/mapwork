@@ -1,6 +1,10 @@
 ﻿import {Map} from './mapwork.model.map';
 import {Layer} from './mapwork.model.layer';
 import {Camera} from './mapwork.view.camera';
+import {ChangeRecorder} from './mapwork.editor.changes';
+
+const changeRecorder = new ChangeRecorder();
+
 window.mapwork.editor.environment = {
 
     Init: function () {
@@ -751,7 +755,7 @@ window.mapwork.editor.environment = {
 
                     if (mapwork.viewcontroller.mapModel.getTile(mapwork.editor.environment.selectedLayer, selectedTileX, selectedTileY).getTileCode() != mapwork.editor.environment.selectedPalleteTile) {
                         mapwork.viewcontroller.mapModel.modifyTile(mapwork.editor.environment.selectedLayer, selectedTileX, selectedTileY, [{ key: 'tileCode', value: mapwork.editor.environment.selectedPalleteTile }]);
-                        mapwork.editor.changes.PushChange({ verb: 'PaintSingleTile', x: selectedTileX, y: selectedTileY, z: mapwork.editor.environment.selectedLayer, tileCode: mapwork.editor.environment.selectedPalleteTile });
+                        changeRecorder.pushChange({ verb: 'PaintSingleTile', x: selectedTileX, y: selectedTileY, z: mapwork.editor.environment.selectedLayer, tileCode: mapwork.editor.environment.selectedPalleteTile });
                     }
 
 
@@ -771,7 +775,7 @@ window.mapwork.editor.environment = {
                 if ((selectedTileX < mapwork.viewcontroller.mapModel.getTilesAccross()) && (selectedTileY < mapwork.viewcontroller.mapModel.getTilesDown())) {
                     if (mapwork.viewcontroller.mapModel.getTile(mapwork.editor.environment.selectedLayer, selectedTileX, selectedTileY).getTileCode() != -1) {
                         mapwork.viewcontroller.mapModel.modifyTile(mapwork.editor.environment.selectedLayer, selectedTileX, selectedTileY, [{ key: 'tileCode', value: -1 }]);
-                        mapwork.editor.changes.PushChange({ verb: 'EraseSingleTile', x: selectedTileX, y: selectedTileY, z: mapwork.editor.environment.selectedLayer, tileCode: mapwork.editor.environment.selectedPalleteTile });
+                        changeRecorder.pushChange({ verb: 'EraseSingleTile', x: selectedTileX, y: selectedTileY, z: mapwork.editor.environment.selectedLayer, tileCode: mapwork.editor.environment.selectedPalleteTile });
                     }
                 }
             }
@@ -816,7 +820,7 @@ window.mapwork.editor.environment = {
                 // if the chosen tile differs from the selected tile from the palette, begin to fill it in (and its adjacent neighbours)
                 if (selectedTileType !== mapwork.editor.environment.selectedPalleteTile) {
 
-                    mapwork.editor.changes.PushChange({ verb: 'BucketFill', x: selectedTileX, y: selectedTileY, z: mapwork.editor.environment.selectedLayer, tileCode: selectedTileType });
+                    changeRecorder.pushChange({ verb: 'BucketFill', x: selectedTileX, y: selectedTileY, z: mapwork.editor.environment.selectedLayer, tileCode: selectedTileType });
 
                     // add the processed tile to the queue
                     queue.push({
@@ -927,7 +931,7 @@ window.mapwork.editor.environment = {
                     if ((tilePasteX < mapwork.viewcontroller.mapModel.getTilesAccross()) && (tilePasteY < mapwork.viewcontroller.mapModel.getTilesDown())
                         && (tilePasteX >= 0) && (tilePasteY >= 0)) {
                         mapwork.viewcontroller.mapModel.getLayerByZPosition(mapwork.editor.environment.selectedLayer).getRow(startTileY + rowCount)[startTileX + cellCount].setTileCode(currentTile);
-                        mapwork.editor.changes.PushChange({ verb: 'PaintSingleTile', x: tilePasteX, y: tilePasteY, z: mapwork.editor.environment.selectedLayer, tileCode: currentTile});
+                        changeRecorder.pushChange({ verb: 'PaintSingleTile', x: tilePasteX, y: tilePasteY, z: mapwork.editor.environment.selectedLayer, tileCode: currentTile});
 
                     }
 
@@ -978,7 +982,7 @@ window.mapwork.editor.environment = {
 
                     mapwork.editor.environment.selectedAreaTiles = { rows: [] };
 
-                    mapwork.editor.changes.PushChange({ verb: 'AreaSelect', startX: firstCodeX, startY: firstCodeY, endX: lastCodeX-1, endY: lastCodeY-1});
+                    changeRecorder.pushChange({ verb: 'AreaSelect', startX: firstCodeX, startY: firstCodeY, endX: lastCodeX-1, endY: lastCodeY-1});
 
 
                     for (rowCount = firstCodeY; rowCount < lastCodeY; rowCount++) {
@@ -1542,6 +1546,6 @@ window.mapwork.editor.environment = {
     downloadToken: null,
     downloadInterval: null,
     tilesets: null,
-    notificationTimeout: null
-
+    notificationTimeout: null,
+    changeRecorder: new ChangeRecorder()
 };
