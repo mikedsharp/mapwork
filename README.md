@@ -27,7 +27,7 @@ This project uses Jest for unit testing, I've dedicated quite a lot of time to a
 
 ### Running tests
 
-Just type `npm run test` to get started, this should run all of the test suites and let know whether everything is working correctly 🔧
+Just type `npm run test` to get started, this should run all of the test suites and let know whether everything is working correctly 🛠️
 
 ### To write tests
 
