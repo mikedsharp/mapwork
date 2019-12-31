@@ -1,4 +1,4 @@
-﻿window.mapwork.viewcontroller = {
+﻿window.mapwork.rendermanager = {
   Init: function() {
     'use strict';
     this.InitiateRenderLoop();
@@ -9,8 +9,8 @@
   InitiateRenderLoop: function() {
     'use strict';
     setTimeout(
-      mapwork.viewcontroller.DrawMap,
-      1000 / mapwork.viewcontroller.DrawMap.viewFPS
+      mapwork.rendermanager.DrawMap,
+      1000 / mapwork.rendermanager.DrawMap.viewFPS
     );
   },
   DrawMap: function() {
@@ -41,45 +41,45 @@
     canvas = document.getElementById('editorCanvas');
     context = canvas.getContext('2d');
 
-    requestAnimationFrame(mapwork.viewcontroller.InitiateRenderLoop);
+    requestAnimationFrame(mapwork.rendermanager.InitiateRenderLoop);
     // Drawing code goes here
-    if (mapwork.viewcontroller.mapModel && mapwork.viewcontroller.renderFlag) {
+    if (mapwork.rendermanager.mapModel && mapwork.rendermanager.renderFlag) {
       context.fillStyle = '#fff';
       context.fillRect(0, 0, canvas.width, canvas.height);
 
       endRow =
-        (mapwork.viewcontroller.camera.getY() +
-          mapwork.viewcontroller.camera.getHeight()) /
-        mapwork.viewcontroller.mapModel.getTileHeight();
+        (mapwork.rendermanager.camera.getY() +
+          mapwork.rendermanager.camera.getHeight()) /
+        mapwork.rendermanager.mapModel.getTileHeight();
       endRow = Math.ceil(parseFloat(endRow));
       endColumn =
-        (mapwork.viewcontroller.camera.getX() +
-          mapwork.viewcontroller.camera.getWidth()) /
-        mapwork.viewcontroller.mapModel.getTileWidth();
+        (mapwork.rendermanager.camera.getX() +
+          mapwork.rendermanager.camera.getWidth()) /
+        mapwork.rendermanager.mapModel.getTileWidth();
       endColumn = Math.ceil(parseFloat(endColumn));
       startRow =
-        mapwork.viewcontroller.camera.getY() /
-        mapwork.viewcontroller.mapModel.getTileHeight();
+        mapwork.rendermanager.camera.getY() /
+        mapwork.rendermanager.mapModel.getTileHeight();
       startRow = Math.floor(parseFloat(startRow));
       startColumn =
-        mapwork.viewcontroller.camera.getX() /
-        mapwork.viewcontroller.mapModel.getTileWidth();
+        mapwork.rendermanager.camera.getX() /
+        mapwork.rendermanager.mapModel.getTileWidth();
       startColumn = Math.floor(parseFloat(startColumn));
       // run render the map
       for (
         layerCount = 0;
-        layerCount < mapwork.viewcontroller.mapModel.getLayers().length;
+        layerCount < mapwork.rendermanager.mapModel.getLayers().length;
         layerCount++
       ) {
-        currentLayer = mapwork.viewcontroller.mapModel.getLayerByZPosition(
+        currentLayer = mapwork.rendermanager.mapModel.getLayerByZPosition(
           layerCount
         );
 
         totalLayerTiles =
           (currentLayer.getTilesetWidth() /
-            mapwork.viewcontroller.mapModel.getTileWidth()) *
+            mapwork.rendermanager.mapModel.getTileWidth()) *
           (currentLayer.getTilesetHeight() /
-            mapwork.viewcontroller.mapModel.getTileHeight());
+            mapwork.rendermanager.mapModel.getTileHeight());
 
         if (currentLayer.getVisibility() === true) {
           for (rowCount = startRow; rowCount < endRow; rowCount++) {
@@ -95,24 +95,24 @@
                   currentLayer.getTilesetImage(),
                   parseInt(
                     (currentTile.getTileCode() *
-                      mapwork.viewcontroller.mapModel.getTileWidth()) %
+                      mapwork.rendermanager.mapModel.getTileWidth()) %
                       currentLayer.getTilesetWidth(),
                     10
                   ),
                   parseInt(
                     (currentTile.getTileCode() *
-                      mapwork.viewcontroller.mapModel.getTileWidth()) /
+                      mapwork.rendermanager.mapModel.getTileWidth()) /
                       currentLayer.getTilesetWidth(),
                     10
-                  ) * mapwork.viewcontroller.mapModel.getTileWidth(),
-                  mapwork.viewcontroller.mapModel.getTileWidth(),
-                  mapwork.viewcontroller.mapModel.getTileHeight(),
-                  cellCount * mapwork.viewcontroller.mapModel.getTileWidth() -
-                    mapwork.viewcontroller.camera.getX(),
-                  rowCount * mapwork.viewcontroller.mapModel.getTileHeight() -
-                    mapwork.viewcontroller.camera.getY(),
-                  mapwork.viewcontroller.mapModel.getTileWidth(),
-                  mapwork.viewcontroller.mapModel.getTileHeight()
+                  ) * mapwork.rendermanager.mapModel.getTileWidth(),
+                  mapwork.rendermanager.mapModel.getTileWidth(),
+                  mapwork.rendermanager.mapModel.getTileHeight(),
+                  cellCount * mapwork.rendermanager.mapModel.getTileWidth() -
+                    mapwork.rendermanager.camera.getX(),
+                  rowCount * mapwork.rendermanager.mapModel.getTileHeight() -
+                    mapwork.rendermanager.camera.getY(),
+                  mapwork.rendermanager.mapModel.getTileWidth(),
+                  mapwork.rendermanager.mapModel.getTileHeight()
                 );
               }
             }
@@ -182,19 +182,19 @@
               ] !== -1 &&
               mapwork.editor.environment.selectedAreaTiles.rows[rowCount][
                 cellCount
-              ] < mapwork.viewcontroller.totalPickerTiles
+              ] < mapwork.rendermanager.totalPickerTiles
             ) {
               // draw each tile in sequence to represent the stencil
               context.drawImage(
-                mapwork.viewcontroller.mapModel
+                mapwork.rendermanager.mapModel
                   .getLayerByZPosition(mapwork.editor.environment.selectedLayer)
                   .getTilesetImage(),
                 parseInt(
                   (mapwork.editor.environment.selectedAreaTiles.rows[rowCount][
                     cellCount
                   ] *
-                    mapwork.viewcontroller.mapModel.getTileWidth()) %
-                    mapwork.viewcontroller.mapModel
+                    mapwork.rendermanager.mapModel.getTileWidth()) %
+                    mapwork.rendermanager.mapModel
                       .getLayerByZPosition(
                         mapwork.editor.environment.selectedLayer
                       )
@@ -205,29 +205,29 @@
                   (mapwork.editor.environment.selectedAreaTiles.rows[rowCount][
                     cellCount
                   ] *
-                    mapwork.viewcontroller.mapModel.getTileWidth()) /
-                    mapwork.viewcontroller.mapModel
+                    mapwork.rendermanager.mapModel.getTileWidth()) /
+                    mapwork.rendermanager.mapModel
                       .getLayerByZPosition(
                         mapwork.editor.environment.selectedLayer
                       )
                       .getTilesetWidth(),
                   10
-                ) * mapwork.viewcontroller.mapModel.getTileWidth(),
-                mapwork.viewcontroller.mapModel.getTileWidth(),
-                mapwork.viewcontroller.mapModel.getTileHeight(),
+                ) * mapwork.rendermanager.mapModel.getTileWidth(),
+                mapwork.rendermanager.mapModel.getTileWidth(),
+                mapwork.rendermanager.mapModel.getTileHeight(),
                 mapwork.editor.environment.mouseX +
-                  mapwork.viewcontroller.mapModel.getTileWidth() * cellCount -
-                  (mapwork.viewcontroller.mapModel.getTileWidth() *
+                  mapwork.rendermanager.mapModel.getTileWidth() * cellCount -
+                  (mapwork.rendermanager.mapModel.getTileWidth() *
                     mapwork.editor.environment.selectedAreaTiles.rows[rowCount]
                       .length) /
                     2,
                 mapwork.editor.environment.mouseY +
-                  mapwork.viewcontroller.mapModel.getTileHeight() * rowCount -
-                  (mapwork.viewcontroller.mapModel.getTileHeight() *
+                  mapwork.rendermanager.mapModel.getTileHeight() * rowCount -
+                  (mapwork.rendermanager.mapModel.getTileHeight() *
                     mapwork.editor.environment.selectedAreaTiles.rows.length) /
                     2,
-                mapwork.viewcontroller.mapModel.getTileWidth(),
-                mapwork.viewcontroller.mapModel.getTileHeight()
+                mapwork.rendermanager.mapModel.getTileWidth(),
+                mapwork.rendermanager.mapModel.getTileHeight()
               );
             }
           }
@@ -237,24 +237,24 @@
 
         context.strokeRect(
           mapwork.editor.environment.mouseX -
-            (mapwork.viewcontroller.mapModel.getTileWidth() *
+            (mapwork.rendermanager.mapModel.getTileWidth() *
               mapwork.editor.environment.selectedAreaTiles.rows[0].length) /
               2,
           mapwork.editor.environment.mouseY -
-            (mapwork.viewcontroller.mapModel.getTileHeight() *
+            (mapwork.rendermanager.mapModel.getTileHeight() *
               mapwork.editor.environment.selectedAreaTiles.rows.length) /
               2,
           mapwork.editor.environment.selectedAreaTiles.rows[0].length *
-            mapwork.viewcontroller.mapModel.getTileWidth(),
+            mapwork.rendermanager.mapModel.getTileWidth(),
           mapwork.editor.environment.selectedAreaTiles.rows.length *
-            mapwork.viewcontroller.mapModel.getTileHeight()
+            mapwork.rendermanager.mapModel.getTileHeight()
         );
       }
 
       // now the tile picker
       if (
         $('#paletteDialog').is(':visible') &&
-        mapwork.viewcontroller.mapModel.getLayers().length > 0 &&
+        mapwork.rendermanager.mapModel.getLayers().length > 0 &&
         mapwork.editor.environment.selectedLayer !== null
       ) {
         //draw the tiles in the palette
@@ -272,40 +272,38 @@
         pickerContext.fill();
 
         tileCode = 0;
-        currentLayer = mapwork.viewcontroller.mapModel.getLayerByZPosition(
+        currentLayer = mapwork.rendermanager.mapModel.getLayerByZPosition(
           mapwork.editor.environment.selectedLayer
         );
         for (
           pickerRowCount = 0;
-          pickerRowCount < mapwork.viewcontroller.pickerRowCount;
+          pickerRowCount < mapwork.rendermanager.pickerRowCount;
           pickerRowCount++
         ) {
           for (
             pickerCellCount = 0;
-            pickerCellCount < mapwork.viewcontroller.pickerTilesPerRow;
+            pickerCellCount < mapwork.rendermanager.pickerTilesPerRow;
             pickerCellCount++
           ) {
-            if (tileCode < mapwork.viewcontroller.totalPickerTiles) {
+            if (tileCode < mapwork.rendermanager.totalPickerTiles) {
               pickerContext.drawImage(
                 currentLayer.getTilesetImage(),
                 parseInt(
-                  (tileCode * mapwork.viewcontroller.mapModel.getTileWidth()) %
+                  (tileCode * mapwork.rendermanager.mapModel.getTileWidth()) %
                     currentLayer.getTilesetWidth(),
                   10
                 ),
                 parseInt(
-                  (tileCode * mapwork.viewcontroller.mapModel.getTileWidth()) /
+                  (tileCode * mapwork.rendermanager.mapModel.getTileWidth()) /
                     currentLayer.getTilesetWidth(),
                   10
-                ) * mapwork.viewcontroller.mapModel.getTileWidth(),
-                mapwork.viewcontroller.mapModel.getTileWidth(),
-                mapwork.viewcontroller.mapModel.getTileHeight(),
-                pickerCellCount *
-                  mapwork.viewcontroller.mapModel.getTileWidth(),
-                pickerRowCount *
-                  mapwork.viewcontroller.mapModel.getTileHeight(),
-                mapwork.viewcontroller.mapModel.getTileWidth(),
-                mapwork.viewcontroller.mapModel.getTileHeight()
+                ) * mapwork.rendermanager.mapModel.getTileWidth(),
+                mapwork.rendermanager.mapModel.getTileWidth(),
+                mapwork.rendermanager.mapModel.getTileHeight(),
+                pickerCellCount * mapwork.rendermanager.mapModel.getTileWidth(),
+                pickerRowCount * mapwork.rendermanager.mapModel.getTileHeight(),
+                mapwork.rendermanager.mapModel.getTileWidth(),
+                mapwork.rendermanager.mapModel.getTileHeight()
               );
             }
 
@@ -317,22 +315,22 @@
       if (mapwork.editor.environment.gridEnabled) {
         // render tile grid
         endRow =
-          (mapwork.viewcontroller.camera.getY() +
-            mapwork.viewcontroller.camera.getHeight()) /
-          mapwork.viewcontroller.mapModel.getTileHeight();
+          (mapwork.rendermanager.camera.getY() +
+            mapwork.rendermanager.camera.getHeight()) /
+          mapwork.rendermanager.mapModel.getTileHeight();
         endRow = Math.ceil(parseFloat(endRow));
         endColumn =
-          (mapwork.viewcontroller.camera.getX() +
-            mapwork.viewcontroller.camera.getWidth()) /
-          mapwork.viewcontroller.mapModel.getTileWidth();
+          (mapwork.rendermanager.camera.getX() +
+            mapwork.rendermanager.camera.getWidth()) /
+          mapwork.rendermanager.mapModel.getTileWidth();
         endColumn = Math.ceil(parseFloat(endColumn));
         startRow =
-          mapwork.viewcontroller.camera.getY() /
-          mapwork.viewcontroller.mapModel.getTileHeight();
+          mapwork.rendermanager.camera.getY() /
+          mapwork.rendermanager.mapModel.getTileHeight();
         startRow = Math.floor(parseFloat(startRow));
         startColumn =
-          mapwork.viewcontroller.camera.getX() /
-          mapwork.viewcontroller.mapModel.getTileWidth();
+          mapwork.rendermanager.camera.getX() /
+          mapwork.rendermanager.mapModel.getTileWidth();
         startColumn = Math.floor(parseFloat(startColumn));
 
         for (rowCount = startRow; rowCount < endRow; rowCount++) {
@@ -341,13 +339,13 @@
           context.beginPath();
           context.moveTo(
             0,
-            rowCount * mapwork.viewcontroller.mapModel.getTileHeight() -
-              mapwork.viewcontroller.camera.getY()
+            rowCount * mapwork.rendermanager.mapModel.getTileHeight() -
+              mapwork.rendermanager.camera.getY()
           );
           context.lineTo(
-            mapwork.viewcontroller.camera.getWidth(),
-            rowCount * mapwork.viewcontroller.mapModel.getTileHeight() -
-              mapwork.viewcontroller.camera.getY()
+            mapwork.rendermanager.camera.getWidth(),
+            rowCount * mapwork.rendermanager.mapModel.getTileHeight() -
+              mapwork.rendermanager.camera.getY()
           );
           context.stroke();
         }
@@ -357,14 +355,14 @@
           context.lineWidth = 1;
           context.beginPath();
           context.moveTo(
-            cellCount * mapwork.viewcontroller.mapModel.getTileWidth() -
-              mapwork.viewcontroller.camera.getX(),
+            cellCount * mapwork.rendermanager.mapModel.getTileWidth() -
+              mapwork.rendermanager.camera.getX(),
             0
           );
           context.lineTo(
-            cellCount * mapwork.viewcontroller.mapModel.getTileWidth() -
-              mapwork.viewcontroller.camera.getX(),
-            mapwork.viewcontroller.camera.getHeight()
+            cellCount * mapwork.rendermanager.mapModel.getTileWidth() -
+              mapwork.rendermanager.camera.getX(),
+            mapwork.rendermanager.camera.getHeight()
           );
           context.stroke();
         }
@@ -374,15 +372,15 @@
   getPickerTileCode: function(x, y) {
     'use strict';
     var row, col;
-    row = Math.floor(y / mapwork.viewcontroller.mapModel.getTileHeight());
-    col = Math.floor(x / mapwork.viewcontroller.mapModel.getTileWidth());
+    row = Math.floor(y / mapwork.rendermanager.mapModel.getTileHeight());
+    col = Math.floor(x / mapwork.rendermanager.mapModel.getTileWidth());
 
     if (
-      row * mapwork.viewcontroller.pickerTilesPerRow + col <
-      mapwork.viewcontroller.totalPickerTiles
+      row * mapwork.rendermanager.pickerTilesPerRow + col <
+      mapwork.rendermanager.totalPickerTiles
     ) {
       mapwork.editor.environment.selectedPalleteTile =
-        row * mapwork.viewcontroller.pickerTilesPerRow + col;
+        row * mapwork.rendermanager.pickerTilesPerRow + col;
     }
   },
   mapModel: null,

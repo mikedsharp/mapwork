@@ -5,10 +5,8 @@ require('./Scripts/jquery.cookie.js');
 
 import './Scripts/mapwork.namespace.js';
 
-import './Scripts/mapwork.viewcontroller.js';
+import './Scripts/mapwork.rendermanager.js';
 import './Scripts/mapwork.editor.environment.js';
-import './Scripts/mapwork.helper.validation.js';
-
 import './Scripts/mapwork.editor.entrypoint.js';
 
 import './Content/reset.scss';

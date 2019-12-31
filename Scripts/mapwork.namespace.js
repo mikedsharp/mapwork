@@ -5,4 +5,4 @@ window.mapwork = window.mapwork || {};
 // window.mapwork.worker = window.mapwork.worker || {};
 window.mapwork.editor = window.mapwork.editor || {};
 window.mapwork.model = window.mapwork.model || {};
-window.mapwork.viewcontroller = window.mapwork.viewcontroller || {};
+window.mapwork.rendermanager = window.mapwork.rendermanager || {};
