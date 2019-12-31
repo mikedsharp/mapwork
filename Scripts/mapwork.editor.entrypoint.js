@@ -1,7 +1,11 @@
-﻿window.$ = window.jQuery = require('jquery');
-window.mapwork = window.mapwork || {};
+﻿import { EditorEnvironment } from './mapwork.editor.environment';
+import { ChangeRecorder } from './mapwork.editor.changes';
+
+window.$ = window.jQuery = require('jquery');
+const changeRecorder = new ChangeRecorder();
+const editor = new EditorEnvironment(changeRecorder);
 $(document).ready(function() {
   'use strict';
   //Init Environment
-  mapwork.editor.environment.Init();
+  editor.Init();
 });

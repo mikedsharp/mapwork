@@ -3,8 +3,8 @@ require('./Scripts/jquery.jscrollpane.min.js');
 require('./Scripts/jquery.mousewheel.js');
 require('./Scripts/jquery.cookie.js');
 
-import './Scripts/mapwork.namespace.js';
-
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 import './Scripts/mapwork.rendermanager.js';
 import './Scripts/mapwork.editor.environment.js';
 import './Scripts/mapwork.editor.entrypoint.js';

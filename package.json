@@ -28,5 +28,9 @@
     "coveragePathIgnorePatterns": [
       "/node_modules/"
     ]
+  },
+  "dependencies": {
+    "core-js": "^3.6.1",
+    "regenerator-runtime": "^0.13.3"
   }
 }

@@ -42,28 +42,22 @@ export class Layer {
   getTilesetHeight() {
     return this.tilesetHeight;
   }
-  setTilesetImage(path) {
-    // load file into an img object for rendering
-    this.tilesetImage = new Image();
-    this.tilesetImage.src = tilesetsEndpoint + '/' + path;
-    // this warrants explanation...
-    // we need to get the width and height of the tileset
-    // we can only do this when the image has loaded
-    // unforunately, this closure prevents us getting at
-    // the object we're assigning to, so proxy allows us
-    // to access it as 'this' instead of the image itself
-    $(this.tilesetImage).on(
-      'load',
-      $.proxy(function() {
-        this.tilesetWidth = this.getTilesetImage().width;
-        this.tilesetHeight = this.getTilesetImage().height;
-        // refresh tile palette when user changes tilesheet
-        this.EditorEnvironment.PalletCanvasResize();
 
-        // remember to turn this handler 'off' once finished, this prevents a memory leak
-        $(this.tilesetImage).off('load');
-      }, this)
-    );
+  loadImage(path) {
+    return new Promise((resolve, reject) => {
+      this.tilesetImage = new Image();
+      this.tilesetImage.onload = resolve;
+      this.tilesetImage.onerror = reject;
+      this.tilesetImage.src = path;
+    });
+  }
+
+  async setTilesetImage(path) {
+    // load file into an img object for rendering
+    await this.loadImage(tilesetsEndpoint + '/' + path);
+    this.tilesetWidth = this.getTilesetImage().width;
+    this.tilesetHeight = this.getTilesetImage().height;
+    this.EditorEnvironment.PalletCanvasResize();
   }
 
   getTilesetPath() {
