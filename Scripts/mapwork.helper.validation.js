@@ -1,5 +1,5 @@
-﻿mapwork.helper.validation = {
-  ValidateInput: function(obj, options) {
+﻿export class ValidationHelper {
+  static validateInput(obj, options) {
     'use strict';
     obj = $(obj);
     var errors, optionCount;
@@ -36,4 +36,4 @@
 
     return errors;
   }
-};
+}
