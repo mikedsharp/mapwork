@@ -1,145 +1,174 @@
 ﻿import {Map} from './mapwork.model.map';
 import {Layer} from './mapwork.model.layer';
 import {Camera} from './mapwork.view.camera';
-window.mapwork.editor.environment = {
+import {ChangeRecorder} from './mapwork.editor.changes';
+import {ValidationHelper} from './mapwork.helper.validation';
+import {RenderManager} from './mapwork.rendermanager';
 
-    Init: function () {
+const changeRecorder = new ChangeRecorder();
+let scope;
+export class EditorEnvironment {
+    constructor(ChangeRecorder) {
+        scope = this;
+        scope.editorMoveInterval = null;
+        scope.editorClickInterval = null;
+        scope.selectedLayer = null;
+        scope.selectedTool = null;
+        scope.selectedPalleteTile = 0;
+        scope.selectedTile = null;
+        scope.leftMouseButtonDown = false;
+        scope.arrowKeyDown = false;
+        scope.mouseX = null;
+        scope.mouseY = null;
+        scope.areaSelectEnabled = false;
+        scope.areaSelectX = null;
+        scope.areaSelectY = null;
+        scope.selectedAreaTiles = null;
+        scope.gridEnabled = true;
+        scope.downloadToken = null;
+        scope.downloadInterval = null;
+        scope.tilesets = null;
+        scope.notificationTimeout = null;
+        scope.changeRecorder = ChangeRecorder;
+        scope.renderManager = new RenderManager(scope);
+    }
+    Init () {
         "use strict";
-
         // bind all JQuery event handlers
-        this.BindEvent();
+        scope.BindEvent();
 
         // add custom decoration to elements
         $('.layerScroll').jScrollPane();
         $('.propertiesScroll').jScrollPane();
 
         // Trigger a window resize to make canvas fit into page
-        this.Window_Resize();
-        mapwork.editor.environment.LoadTilesetList();
+        scope.Window_Resize();
+        scope.LoadTilesetList();
+        scope.renderManager.Init();
 
-    },
-    BindEvent: function () {
+    }
+    BindEvent () {
         "use strict";
 
-        $(window).resize(this.Window_Resize);
-        $('#editorCanvas').mousedown(this.EditorCanvas_MouseDown);
-        $('#editorCanvas').mouseup(this.EditorCanvas_MouseUp);
-        $('#editorCanvas').mouseout(this.EditorCanvas_MouseOut);
-        $('#editorCanvas').mousemove(this.EditorCanvas_MouseMove);
+        $(window).resize(scope.Window_Resize.bind(scope));
+        $('#editorCanvas').mousedown(scope.EditorCanvas_MouseDown.bind(scope));
+        $('#editorCanvas').mouseup(scope.EditorCanvas_MouseUp.bind(scope));
+        $('#editorCanvas').mouseout(scope.EditorCanvas_MouseOut.bind(scope));
+        $('#editorCanvas').mousemove(scope.EditorCanvas_MouseMove.bind(scope));
 
 
-        $('#paletteCanvas').click(this.PaletteCanvas_Click);
+        $('#paletteCanvas').click(scope.PaletteCanvas_Click.bind(scope));
         // left ribbon events
-        $('#createItem').click(this.CreateItem_Click);
-        $('#buildItem').click(this.BuildItem_Click);
-        $('#saveItem').click(this.SaveItem_Click);
-        $('#publishItem').click(this.PublishItem_Click);
+        $('#createItem').click(scope.CreateItem_Click.bind(scope));
+        $('#buildItem').click(scope.BuildItem_Click.bind(scope));
+        $('#saveItem').click(scope.SaveItem_Click.bind(scope));
+        $('#publishItem').click(scope.PublishItem_Click.bind(scope));
         // right ribbon events (toolbox context)
-        $('#paletteItem').click(this.PaletteItem_Click);
-        $('#layersItem').click(this.LayersItem_Click);
-        $('#propertiesItem').click(this.PropertiesItem_Click);
-        $('#settingsItem').click(this.SettingsItem_Click);
+        $('#paletteItem').click(scope.PaletteItem_Click.bind(scope));
+        $('#layersItem').click(scope.LayersItem_Click.bind(scope));
+        $('#propertiesItem').click(scope.PropertiesItem_Click.bind(scope));
+        $('#settingsItem').click(scope.SettingsItem_Click.bind(scope));
 
-        $('#createButtonNext').click(this.CreateButtonNext_Click);
-        $('#createButtonOK').click(this.CreateButtonOK_Click);
-        $('#createButtonCancel').click(this.CreateButtonCancel_Click);
-        $('#createButtonCancelTwo').click(this.CreateButtonCancel_Click);
+        $('#createButtonNext').click(scope.CreateButtonNext_Click.bind(scope));
+        $('#createButtonOK').click(scope.CreateButtonOK_Click.bind(scope));
+        $('#createButtonCancel').click(scope.CreateButtonCancel_Click.bind(scope));
+        $('#createButtonCancelTwo').click(scope.CreateButtonCancel_Click.bind(scope));
 
-        $('#publishButtonOK').click(this.PublishButtonOK_Click);
-        $('#publishButtonCancel').click(this.PublishButtonCancel_Click);
-        $('#publishButtonCancelPublish').click(this.PublishButtonCancelPublish_Click);
-        $('#publishButtonSuccessOK').click(this.PublishButtonSuccessOK_Click);
+        $('#publishButtonOK').click(scope.PublishButtonOK_Click.bind(scope));
+        $('#publishButtonCancel').click(scope.PublishButtonCancel_Click.bind(scope));
+        $('#publishButtonCancelPublish').click(scope.PublishButtonCancelPublish_Click.bind(scope));
+        $('#publishButtonSuccessOK').click(scope.PublishButtonSuccessOK_Click.bind(scope));
 
 
         //toolbox items
-        $('#toolboxItemAreaselect').click(this.ToolboxItemAreaselect_Click);
-        $('#toolboxItemInspect').click(this.ToolboxItemInspect_Click);
-        $('#toolboxItemBrush').click(this.ToolboxItemBrush_Click);
-        $('#toolboxItemBucket').click(this.ToolboxItemBucket_Click);
-        $('#toolboxItemEraser').click(this.ToolboxItemEraser_Click);
+        $('#toolboxItemAreaselect').click(scope.ToolboxItemAreaselect_Click.bind(scope));
+        $('#toolboxItemInspect').click(scope.ToolboxItemInspect_Click.bind(scope));
+        $('#toolboxItemBrush').click(scope.ToolboxItemBrush_Click.bind(scope));
+        $('#toolboxItemBucket').click(scope.ToolboxItemBucket_Click.bind(scope));
+        $('#toolboxItemEraser').click(scope.ToolboxItemEraser_Click.bind(scope));
 
         //change events for dialogs
-        $('#createExistingProjectName').change(this.CreateExistingProjectName_Change);
+        $('#createExistingProjectName').change(scope.CreateExistingProjectName_Change);
 
         //layer selection click event (accounts for appended list elements)
-        $("#layerList").on("click", '.layerListItemDescription', this.LayerListItemDescription_Click);
-        $("#layerList").on("click", '.renameLayer', this.RenameLayer_Click);
-        $("#layerList").on("click", '.toggleLayerVisibility', this.ToggleLayerVisibility_Click);
-        $("#layerList").on("click", '.deleteLayer', this.DeleteLayer_Click);
+        $("#layerList").on("click", '.layerListItemDescription', scope.LayerListItemDescription_Click);
+        $("#layerList").on("click", '.renameLayer', scope.RenameLayer_Click.bind(scope));
+        $("#layerList").on("click", '.toggleLayerVisibility', scope.ToggleLayerVisibility_Click.bind(scope));
+        $("#layerList").on("click", '.deleteLayer', scope.DeleteLayer_Click.bind(scope));
 
 
-        $("#layerList").on("change", '.layerSelectTileset ', this.LayerSelectTileset_Change);
+        $("#layerList").on("change", '.layerSelectTileset ', scope.LayerSelectTileset_Change.bind(scope));
 
 
-        $('#layerCreateNewLayer').click(this.LayerCreateNewLayer_Click);
-        $('#layerMoveUp').click(this.LayerMoveUp_Click);
-        $('#layerMoveDown').click(this.LayerMoveDown_Click);
-        $('#propertyTable').on('blur', '.propertiesInput', this.PropertiesInput_Blur);
+        $('#layerCreateNewLayer').click(scope.LayerCreateNewLayer_Click.bind(scope));
+        $('#layerMoveUp').click(scope.LayerMoveUp_Click.bind(scope));
+        $('#layerMoveDown').click(scope.LayerMoveDown_Click.bind(scope));
+        $('#propertyTable').on('blur', '.propertiesInput', scope.PropertiesInput_Blur.bind(scope));
 
         //binders for map properties section
-        $('#selectPropertyScope').change(this.SelectPropertyScope_Change);
-        $('#selectLayerScope').change(this.SelectLayerScope_Change);
+        $('#selectPropertyScope').change(scope.SelectPropertyScope_Change);
+        $('#selectLayerScope').change(scope.SelectLayerScope_Change);
 
         // settings menu binders
-        $('#settingsToggleGrid').click(this.SettingsToggleGrid_Change);
-        $('#settingsSaveChanges').click(this.SettingsSaveChanges_Click);
+        $('#settingsToggleGrid').click(scope.SettingsToggleGrid_Change.bind(scope));
+        $('#settingsSaveChanges').click(scope.SettingsSaveChanges_Click.bind(scope));
 
         // navigation key handlers
-        $(window).keydown(this.Editor_KeyDown);
-        $(window).keyup(this.Editor_KeyUp);
-    },
-    Editor_KeyDown: function (event) {
+        $(window).keydown(scope.Editor_KeyDown.bind(scope));
+        $(window).keyup(scope.Editor_KeyUp.bind(scope));
+    }
+    Editor_KeyDown(event) {
         "use strict";
         //move the camera around the map with given directional arrow key
-        if (mapwork.viewcontroller.camera) {
+        if (scope.renderManager.camera) {
             event = event || window.event;
-            if (window.opera && !mapwork.editor.environment.arrowKeyDown) {
+            if (window.opera && !scope.arrowKeyDown) {
                 switch (event.keyCode) {
-                    case 37: mapwork.editor.environment.editorMoveInterval = setInterval(mapwork.viewcontroller.camera.move("left", 16), 10); mapwork.editor.environment.arrowKeyDown = true; break;
-                    case 39: mapwork.editor.environment.editorMoveInterval = setInterval(mapwork.viewcontroller.camera.move("right", 16), 10); mapwork.editor.environment.arrowKeyDown = true; break;
-                    case 40: mapwork.editor.environment.editorMoveInterval = setInterval(mapwork.viewcontroller.camera.move("down", 16), 10); mapwork.editor.environment.arrowKeyDown = true; break;
-                    case 38: mapwork.editor.environment.editorMoveInterval = setInterval(mapwork.viewcontroller.camera.move("up", 16), 10); mapwork.editor.environment.arrowKeyDown = true; break;
+                    case 37: scope.editorMoveInterval = setInterval(scope.renderManager.camera.move("left", 16), 10); scope.arrowKeyDown = true; break;
+                    case 39: scope.editorMoveInterval = setInterval(scope.renderManager.camera.move("right", 16), 10); scope.arrowKeyDown = true; break;
+                    case 40: scope.editorMoveInterval = setInterval(scope.renderManager.camera.move("down", 16), 10); scope.arrowKeyDown = true; break;
+                    case 38: scope.editorMoveInterval = setInterval(scope.renderManager.camera.move("up", 16), 10); scope.arrowKeyDown = true; break;
                     default: break;
                 }
             }
             else {
                 switch (event.keyCode) {
-                    case 37: mapwork.viewcontroller.camera.move("left", 16); break;
-                    case 39: mapwork.viewcontroller.camera.move("right", 16); break;
-                    case 40: mapwork.viewcontroller.camera.move("down", 16); break;
-                    case 38: mapwork.viewcontroller.camera.move("up", 16); break;
+                    case 37: scope.renderManager.camera.move("left", 16); break;
+                    case 39: scope.renderManager.camera.move("right", 16); break;
+                    case 40: scope.renderManager.camera.move("down", 16); break;
+                    case 38: scope.renderManager.camera.move("up", 16); break;
                 }
             }
 
-            if (mapwork.editor.environment.selectedTool === 'pasteTiles') {
+            if (scope.selectedTool === 'pasteTiles') {
                 if (event.keyCode === 27) {
-                    mapwork.editor.environment.selectedAreaTiles = null;
-                    mapwork.editor.environment.selectedTool = 'areaSelect';
+                    scope.selectedAreaTiles = null;
+                    scope.selectedTool = 'areaSelect';
                 }
             }
 
         }
-    },
-    Editor_KeyUp: function (event) {
+    }
+    Editor_KeyUp(event) {
         "use strict";
         // resolve repeating keys issue in opera
         if (window.opera) {
-            clearInterval(mapwork.editor.environment.editorMoveInterval);
-            mapwork.editor.environment.arrowKeyDown = false;
-            mapwork.editor.environment.editorMoveInterval = null;
+            clearInterval(scope.editorMoveInterval);
+            scope.arrowKeyDown = false;
+            scope.editorMoveInterval = null;
         }
-    },
-    SettingsToggleGrid_Change: function (event) {
+    }
+    SettingsToggleGrid_Change(event) {
         "use strict";
         if ($('#settingsToggleGrid:checked').length > 0) {
-            mapwork.editor.environment.gridEnabled = true;
+            scope.gridEnabled = true;
         }
         else {
-            mapwork.editor.environment.gridEnabled = false;
+            scope.gridEnabled = false;
         }
         //user toggles on-screen grid
-    },
-    SettingsSaveChanges_Click: function (event) {
+    }
+    SettingsSaveChanges_Click(event) {
         "use strict";
         var result, valid;
         valid = true;
@@ -155,7 +184,7 @@ window.mapwork.editor.environment = {
 
         // validate each field an add error borders where appropriate
 
-        result = mapwork.helper.validation.ValidateInput($('#settingsMapName'),
+        result = ValidationHelper.validateInput($('#settingsMapName'),
                  [{ kind: 'required' },
                 { kind: 'istext' }]);
 
@@ -164,7 +193,7 @@ window.mapwork.editor.environment = {
             valid = false;
         }
 
-        result = mapwork.helper.validation.ValidateInput($('#settingsTilesAccross'),
+        result = ValidationHelper.validateInput($('#settingsTilesAccross'),
             [{ kind: 'required' },
                 { kind: 'isnumeric' },
                 { kind: 'min', value: 1 }]);
@@ -174,7 +203,7 @@ window.mapwork.editor.environment = {
             valid = false;
 
         }
-        result = mapwork.helper.validation.ValidateInput($('#settingsTilesDown'),
+        result = ValidationHelper.validateInput($('#settingsTilesDown'),
            [{ kind: 'required' },
                { kind: 'isnumeric' },
                { kind: 'min', value: 1 }]);
@@ -183,7 +212,7 @@ window.mapwork.editor.environment = {
             $('#settingsTilesDown').addClass('errorBorder');
             valid = false;
         }
-        //result = mapwork.helper.validation.ValidateInput($('#settingsTileWidth'),
+        //result = ValidationHelper.validateInput($('#settingsTileWidth'),
         //    [{ kind: 'required' },
         //        { kind: 'isnumeric' },
         //        { kind: 'min', value: 1 }]);
@@ -192,7 +221,7 @@ window.mapwork.editor.environment = {
         //    $('#settingsTileWidth').addClass('errorBorder');
         //    valid = false;
         //}
-        //result = mapwork.helper.validation.ValidateInput($('#settingsTileHeight'),
+        //result = ValidationHelper.validateInput($('#settingsTileHeight'),
         //    [{ kind: 'required' },
         //        { kind: 'isnumeric' },
         //        { kind: 'min', value: 1 }]);
@@ -207,68 +236,68 @@ window.mapwork.editor.environment = {
         //}
 
         if ((parseInt($('#settingsTilesAccross').val(), 10) * parseInt($('#settingsTilesDown').val(), 10)) > 16384) {
-            mapwork.editor.environment.DisplayNotification('Tiles per layer must not exceed 16384 (e.g 128x128 or 512x32 etc)', 'red');
+            scope.DisplayNotification('Tiles per layer must not exceed 16384 (e.g 128x128 or 512x32 etc)', 'red');
             valid = false;
         }
 
 
         if (valid) {
             //check if any changes have occured
-            if ($('#settingsMapName').val() !== mapwork.viewcontroller.mapModel.getName()) {
+            if ($('#settingsMapName').val() !== scope.renderManager.mapModel.getName()) {
                 // update the model
-                mapwork.viewcontroller.mapModel.setName($('#settingsMapName').val());
+                scope.renderManager.mapModel.setName($('#settingsMapName').val());
             }
             //check if any changes have occured
-            if ($('#settingsTilesAccross').val() !== mapwork.viewcontroller.mapModel.getTilesAccross()) {
+            if ($('#settingsTilesAccross').val() !== scope.renderManager.mapModel.getTilesAccross()) {
                 // update the model
-                mapwork.viewcontroller.renderFlag = false;
-                mapwork.viewcontroller.mapModel.resizeMap({ tilesAccross: $('#settingsTilesAccross').val() });
+                scope.renderManager.renderFlag = false;
+                scope.renderManager.mapModel.resizeMap({ tilesAccross: $('#settingsTilesAccross').val() });
                 //update the camera
-                mapwork.viewcontroller.camera.setBounds(mapwork.viewcontroller.mapModel.getWorldWidth(), mapwork.viewcontroller.mapModel.getWorldHeight());
-                //mapwork.viewcontroller.camera.setSize(mapwork.viewcontroller.camera.getWidth(), mapwork.viewcontroller.camera.getHeight());
-                mapwork.viewcontroller.camera.setSize($('#editorCanvas').width(), $('#editorCanvas').height());
-                mapwork.viewcontroller.camera.setPosition(mapwork.viewcontroller.camera.getX(), mapwork.viewcontroller.camera.getY());
+                scope.renderManager.camera.setBounds(scope.renderManager.mapModel.getWorldWidth(), scope.renderManager.mapModel.getWorldHeight());
+                //scope.renderManager.camera.setSize(scope.renderManager.camera.getWidth(), scope.renderManager.camera.getHeight());
+                scope.renderManager.camera.setSize($('#editorCanvas').width(), $('#editorCanvas').height());
+                scope.renderManager.camera.setPosition(scope.renderManager.camera.getX(), scope.renderManager.camera.getY());
 
-                mapwork.viewcontroller.renderFlag = true;
+                scope.renderManager.renderFlag = true;
             }
             //check if any changes have occured
-            if ($('#settingsTilesDown').val() !== mapwork.viewcontroller.mapModel.getTilesDown()) {
+            if ($('#settingsTilesDown').val() !== scope.renderManager.mapModel.getTilesDown()) {
                 // update the model
-                mapwork.viewcontroller.renderFlag = false;
-                mapwork.viewcontroller.mapModel.resizeMap({ tilesDown: $('#settingsTilesDown').val() });
-                mapwork.viewcontroller.camera.setBounds(mapwork.viewcontroller.mapModel.getWorldWidth(), mapwork.viewcontroller.mapModel.getWorldHeight());
-                mapwork.viewcontroller.camera.setSize($('#editorCanvas').width(), $('#editorCanvas').height());
-                mapwork.viewcontroller.camera.setPosition(mapwork.viewcontroller.camera.getX(), mapwork.viewcontroller.camera.getY());
+                scope.renderManager.renderFlag = false;
+                scope.renderManager.mapModel.resizeMap({ tilesDown: $('#settingsTilesDown').val() });
+                scope.renderManager.camera.setBounds(scope.renderManager.mapModel.getWorldWidth(), scope.renderManager.mapModel.getWorldHeight());
+                scope.renderManager.camera.setSize($('#editorCanvas').width(), $('#editorCanvas').height());
+                scope.renderManager.camera.setPosition(scope.renderManager.camera.getX(), scope.renderManager.camera.getY());
 
-                mapwork.viewcontroller.renderFlag = true;
+                scope.renderManager.renderFlag = true;
 
             }
             ////check if any changes have occured
-            //if ($('#settingsTileWidth').val() !== mapwork.viewcontroller.mapModel.getTileWidth()) {
+            //if ($('#settingsTileWidth').val() !== scope.renderManager.mapModel.getTileWidth()) {
             //    // update the model
-            //    mapwork.viewcontroller.renderFlag = false;
-            //    mapwork.viewcontroller.mapModel.setTileWidth($('#settingsTileWidth').val());
+            //    scope.renderManager.renderFlag = false;
+            //    scope.renderManager.mapModel.setTileWidth($('#settingsTileWidth').val());
 
-            //    mapwork.viewcontroller.camera.setBounds(mapwork.viewcontroller.mapModel.getWorldWidth(), mapwork.viewcontroller.mapModel.getWorldHeight());
-            //    mapwork.viewcontroller.camera.setSize($('#editorCanvas').width(), $('#editorCanvas').height());
-            //    mapwork.viewcontroller.camera.setPosition(mapwork.viewcontroller.camera.getX(), mapwork.viewcontroller.camera.getY());
-            //    mapwork.viewcontroller.renderFlag = true;
+            //    scope.renderManager.camera.setBounds(scope.renderManager.mapModel.getWorldWidth(), scope.renderManager.mapModel.getWorldHeight());
+            //    scope.renderManager.camera.setSize($('#editorCanvas').width(), $('#editorCanvas').height());
+            //    scope.renderManager.camera.setPosition(scope.renderManager.camera.getX(), scope.renderManager.camera.getY());
+            //    scope.renderManager.renderFlag = true;
             //}
             ////check if any changes have occured
-            //if ($('#settingsTileHeight').val() !== mapwork.viewcontroller.mapModel.getTileHeight()) {
+            //if ($('#settingsTileHeight').val() !== scope.renderManager.mapModel.getTileHeight()) {
             //    // update the model
-            //    mapwork.viewcontroller.renderFlag = false;
-            //    mapwork.viewcontroller.mapModel.setTileHeight($('#settingsTileHeight').val());
-            //    mapwork.viewcontroller.camera.setBounds(mapwork.viewcontroller.mapModel.getWorldWidth(), mapwork.viewcontroller.mapModel.getWorldHeight());
-            //    mapwork.viewcontroller.camera.setSize($('#editorCanvas').width(), $('#editorCanvas').height());
-            //    mapwork.viewcontroller.camera.setPosition(mapwork.viewcontroller.camera.getX(), mapwork.viewcontroller.camera.getY());
-            //    mapwork.viewcontroller.renderFlag = true;
+            //    scope.renderManager.renderFlag = false;
+            //    scope.renderManager.mapModel.setTileHeight($('#settingsTileHeight').val());
+            //    scope.renderManager.camera.setBounds(scope.renderManager.mapModel.getWorldWidth(), scope.renderManager.mapModel.getWorldHeight());
+            //    scope.renderManager.camera.setSize($('#editorCanvas').width(), $('#editorCanvas').height());
+            //    scope.renderManager.camera.setPosition(scope.renderManager.camera.getX(), scope.renderManager.camera.getY());
+            //    scope.renderManager.renderFlag = true;
             //}
-            mapwork.editor.environment.DisplayNotification('Changes Saved', 'green');
+            scope.DisplayNotification('Changes Saved', 'green');
 
         }
-    },
-    PropertiesInput_Blur: function (event) {
+    }
+    PropertiesInput_Blur(event) {
         "use strict";
         var scopeValue, layerValue, tileValue, html, properties, x, y;
 
@@ -276,32 +305,32 @@ window.mapwork.editor.environment = {
         layerValue = parseInt($('#selectLayerScope').val(), 10);
 
         if (scopeValue === 0) {
-            properties = mapwork.viewcontroller.mapModel;
+            properties = scope.renderManager.mapModel;
         }
         else if (scopeValue === 1) {
-            properties = mapwork.viewcontroller.mapModel.getLayer(layerValue);
+            properties = scope.renderManager.mapModel.getLayer(layerValue);
         }
         else if (scopeValue === 2) {
-            properties = mapwork.editor.environment.selectedTile;
+            properties = scope.selectedTile;
         }
 
 
-        if ($(this).parent().parent().hasClass('lastRow')) {
+        if ($(event.target).parent().parent().hasClass('lastRow')) {
             // last row gets appended if user addes something to previous last row, otherwise, row stays the same
-            if ($(this).parent().parent().children().find('.propertyKey').val() !== '') {
+            if ($(event.target).parent().parent().children().find('.propertyKey').val() !== '') {
                 // add the property to the model
 
-                $(this).parent().parent().data('key', $(this).parent().parent().children().find('.propertyKey').val());
-                $(this).parent().parent().data('value', $(this).parent().parent().children().find('.propertyValue').val());
+                $(event.target).parent().parent().data('key', $(event.target).parent().parent().children().find('.propertyKey').val());
+                $(event.target).parent().parent().data('value', $(event.target).parent().parent().children().find('.propertyValue').val());
 
                 properties.addProperty({
-                    key: $(this).parent().parent().children().find('.propertyKey').val(),
-                    value: $(this).parent().parent().children().find('.propertyValue').val()
+                    key: $(event.target).parent().parent().children().find('.propertyKey').val(),
+                    value: $(event.target).parent().parent().children().find('.propertyValue').val()
                 });
 
 
                 // remove the 'last row class'
-                $(this).parent().parent().removeClass('lastRow');
+                $(event.target).parent().parent().removeClass('lastRow');
                 html = ' <div class="tableRow border lastRow">' +
                           '<div class="tableCell border">' +
                             '<input type="text"   class="noPadding propertyKey propertiesInput" />' +
@@ -310,53 +339,54 @@ window.mapwork.editor.environment = {
                           '<input type="text"  class="noPadding propertyValue propertiesInput" />' +
                        ' </div>';
 
-                $(html).insertAfter($(this).parent().parent());
-                mapwork.editor.environment.RefreshScrollpane('propertiesScroll');
+                $(html).insertAfter($(event.target).parent().parent());
+                scope.RefreshScrollpane('propertiesScroll');
             }
         }
         else {
-            // this isnt the bottom row, but does need to be removed from the DOM
-            if ($(this).parent().parent().children().find('.propertyKey').val() === '') {
+            // scope isnt the bottom row, but does need to be removed from the DOM
+            if ($(event.target).parent().parent().children().find('.propertyKey').val() === '') {
 
-                properties.removeProperty($(this).parent().parent().data('key'));
-                $(this).parent().parent().remove();
-                mapwork.editor.environment.RefreshScrollpane('propertiesScroll');
+                properties.removeProperty($(event.target).parent().parent().data('key'));
+                $(event.target).parent().parent().remove();
+                scope.RefreshScrollpane('propertiesScroll');
             }
             else {
                 // property exists, lets modify it
                 properties.setProperty({
-                    oldKey: $(this).parent().parent().data('key'),
-                    newKey: $(this).parent().parent().children().find('.propertyKey').val(),
-                    newValue: $(this).parent().parent().children().find('.propertyValue').val()
+                    oldKey: $(event.target).parent().parent().data('key'),
+                    newKey: $(event.target).parent().parent().children().find('.propertyKey').val(),
+                    newValue: $(event.target).parent().parent().children().find('.propertyValue').val()
                 });
             }
         }
 
-    },
-    SelectLayerScope_Change: function (event) {
+    }
+    SelectLayerScope_Change(event) {
         "use strict";
 
         var inputValue, scopeValue, propertyCount, layerProperties, html;
 
         scopeValue = parseInt($('#selectPropertyScope').val(), 10);
-        inputValue = parseInt($(this).val(), 10);
+        inputValue = parseInt($(event.target).val(), 10);
 
         if (inputValue === -1) {
-            $('#propertiesInspectTile').off('click', mapwork.editor.environment.PropertiesInspectTile_Click);
+            $('#propertiesInspectTile').off('click', scope.PropertiesInspectTile_Click.bind(scope));
         }
         else {
             if (scopeValue === 2) {
                 //Tile-level scope
-                $('#propertiesInspectTile').on('click', mapwork.editor.environment.PropertiesInspectTile_Click);
+                $('#propertiesInspectTile').on('click', scope.PropertiesInspectTile_Click.bind(scope));
             }
             else if (scopeValue === 1) {
-                mapwork.editor.environment.BuildPropertyTable('layer');
+                scope.BuildPropertyTable('layer');
                 $('#propertyTable').show();
 
             }
         }
-    },
-    BuildPropertyTable: function (scope) {
+    }
+
+    BuildPropertyTable(propertyType) {
         "use strict";
         var properties, html, propertyCount, inputValue;
 
@@ -375,17 +405,17 @@ window.mapwork.editor.environment = {
         $('#propertyTable').append(html);
 
         // add property data
-        if (scope === 'map') {
-            properties = mapwork.viewcontroller.mapModel.getAllProperties();
+        if (propertyType === 'map') {
+            properties = scope.renderManager.mapModel.getAllProperties();
 
         }
-        else if (scope === 'layer') {
+        else if (propertyType === 'layer') {
             inputValue = parseInt($('#selectLayerScope').val(), 10);
-            properties = mapwork.viewcontroller.mapModel.getLayer(inputValue).getAllProperties();
+            properties = scope.renderManager.mapModel.getLayer(inputValue).getAllProperties();
             //add properties from the model
         }
-        else if (scope === 'tile') {
-            properties = mapwork.editor.environment.selectedTile.getAllProperties();
+        else if (propertyType === 'tile') {
+            properties = scope.selectedTile.getAllProperties();
         }
 
         for (propertyCount = 0; propertyCount < properties.length; propertyCount++) {
@@ -415,8 +445,9 @@ window.mapwork.editor.environment = {
         $('#propertyTable').append(html);
 
 
-    },
-    SelectPropertyScope_Change: function (event) {
+    }
+
+    SelectPropertyScope_Change(event) {
         "use strict";
 
         var inputValue, html, layerCount;
@@ -438,7 +469,7 @@ window.mapwork.editor.environment = {
 
         // set layer scope dropdown to default again
         $('#selectLayerScope').val('-1');
-        $('#propertiesInspectTile').off('click', mapwork.editor.environment.PropertiesInspectTile_Click);
+        $('#propertiesInspectTile').off('click', scope.PropertiesInspectTile_Click);
 
         switch (inputValue) {
             case 0: $('#selectLayerScope').attr('disabled', true); break;
@@ -449,7 +480,7 @@ window.mapwork.editor.environment = {
         }
         // map-level logic
         if (inputValue === 0) {
-            mapwork.editor.environment.BuildPropertyTable('map');
+            scope.BuildPropertyTable('map');
             $('#propertyTable').show();
         }
         else if (inputValue === -1) {
@@ -457,7 +488,7 @@ window.mapwork.editor.environment = {
             $('#propertyTable').hide();
         }
         else if (inputValue === 2) {
-            $('#propertiesInspectTile').on('click', mapwork.editor.environment.PropertiesInspectTile_Click);
+            $('#propertiesInspectTile').on('click', scope.PropertiesInspectTile_Click);
             $('#propertyTable').show();
         }
         if ($('#selectLayerScope').attr('disabled') !== 'disabled') {
@@ -465,82 +496,84 @@ window.mapwork.editor.environment = {
             $('#selectLayerScope').empty();
             html = '<option value="-1">--Select Layer--</option>';
             $('#selectLayerScope').append(html);
-            for (layerCount = 0; layerCount < mapwork.viewcontroller.mapModel.getLayers().length; layerCount++) {
-                html = '<option value="' + layerCount + '"> ' + mapwork.viewcontroller.mapModel.getLayer(layerCount).getName() + ' </option>';
+            for (layerCount = 0; layerCount < scope.renderManager.mapModel.getLayers().length; layerCount++) {
+                html = '<option value="' + layerCount + '"> ' + scope.renderManager.mapModel.getLayer(layerCount).getName() + ' </option>';
                 $('#selectLayerScope').append(html);
             }
         }
 
 
-    },
-    PropertiesInspectTile_Click: function (event) {
+    }
+
+    PropertiesInspectTile_Click(event) {
         "use strict";
-        mapwork.editor.environment.selectedTool = 'inspectTile';
-    },
-    ToggleLayerVisibility_Click: function (event) {
+        scope.selectedTool = 'inspectTile';
+    }
+    ToggleLayerVisibility_Click(event) {
         "use strict";
 
         // code for changing the sprite from/to visible or hidden
-        if ($(this).hasClass('layerVisibilityIconVisible')) {
-            $(this).removeClass('layerVisibilityIconVisible');
-            $(this).addClass('layerVisibilityIconHidden');
-            mapwork.viewcontroller.mapModel.getLayerByZPosition($(this).parent().parent().data('zPosition')).setVisibility(false);
+        if ($(event.target).hasClass('layerVisibilityIconVisible')) {
+            $(event.target).removeClass('layerVisibilityIconVisible');
+            $(event.target).addClass('layerVisibilityIconHidden');
+            scope.renderManager.mapModel.getLayerByZPosition($(event.target).parent().parent().data('zPosition')).setVisibility(false);
         }
         else {
-            $(this).addClass('layerVisibilityIconVisible');
-            $(this).removeClass('layerVisibilityIconHidden');
-            mapwork.viewcontroller.mapModel.getLayerByZPosition($(this).parent().parent().data('zPosition')).setVisibility(true);
+            $(event.target).addClass('layerVisibilityIconVisible');
+            $(event.target).removeClass('layerVisibilityIconHidden');
+            scope.renderManager.mapModel.getLayerByZPosition($(event.target).parent().parent().data('zPosition')).setVisibility(true);
         }
-    },
-    RenameLayer_Click: function (event) {
+    }
+    RenameLayer_Click(event) {
         "use strict";
         var result;
         // dummy code for renaming a layer
-        $(this).parent().parent().find('.layerNameInput').removeClass('errorBorder');
+        $(event.target).parent().parent().find('.layerNameInput').removeClass('errorBorder');
 
-        if ($(this).parent().parent().find('.layerNameInput').is(':visible')) {
+        if ($(event.target).parent().parent().find('.layerNameInput').is(':visible')) {
             // validate selection
-            result = mapwork.helper.validation.ValidateInput($(this).parent().parent().find('.layerNameInput'),
+            result = ValidationHelper.validateInput($(event.target).parent().parent().find('.layerNameInput'),
              [{ kind: 'required' },
              { kind: 'istext' }]);
 
             if (result.length < 1) {
-                $(this).parent().parent().find('.layerName').show();
-                $(this).parent().parent().find('.layerNameInput').hide();
-                $(this).parent().parent().find('.layerName').first().text($(this).parent().parent().find('.layerNameInput').val());
-                mapwork.viewcontroller.mapModel.getLayer($(this).parent().parent().data('zPosition'))
-                    .setName($(this).parent().parent().find('.layerNameInput').val());
+                $(event.target).parent().parent().find('.layerName').show();
+                $(event.target).parent().parent().find('.layerNameInput').hide();
+                $(event.target).parent().parent().find('.layerName').first().text($(event.target).parent().parent().find('.layerNameInput').val());
+                scope.renderManager.mapModel.getLayer($(event.target).parent().parent().data('zPosition'))
+                    .setName($(event.target).parent().parent().find('.layerNameInput').val());
             }
             else {
-                $(this).parent().parent().find('.layerNameInput').addClass('errorBorder');
+                $(event.target).parent().parent().find('.layerNameInput').addClass('errorBorder');
             }
 
         }
         else {
-            $(this).parent().parent().find('.layerName').hide();
-            $(this).parent().parent().find('.layerNameInput').val($(this).parent().parent().find('.layerName').text());
-            $(this).parent().parent().find('.layerNameInput').show();
+            $(event.target).parent().parent().find('.layerName').hide();
+            $(event.target).parent().parent().find('.layerNameInput').val($(event.target).parent().parent().find('.layerName').text());
+            $(event.target).parent().parent().find('.layerNameInput').show();
         }
 
-        mapwork.editor.environment.RefreshScrollpane('layerScroll');
-    },
-    DeleteLayer_Click: function (event) {
+        scope.RefreshScrollpane('layerScroll');
+    }
+    DeleteLayer_Click(event) {
         "use strict";
         var layerCount;
         // code for physically removing the layer element from the DOM
-        mapwork.viewcontroller.mapModel.removeLayer($(this).parent().parent().data('zPosition'));
+        scope.renderManager.mapModel.removeLayer($(event.target).parent().parent().data('zPosition'));
 
         // if layer is selected layer, remove selected layer
-        mapwork.editor.environment.selectedLayer = null;
+        scope.selectedLayer = null;
         // re-order array
-        for (layerCount = 0; layerCount < mapwork.viewcontroller.mapModel.getLayers().length; layerCount++) {
-            mapwork.viewcontroller.mapModel.getLayer(layerCount).setZPosition(layerCount);
+        for (layerCount = 0; layerCount < scope.renderManager.mapModel.getLayers().length; layerCount++) {
+            scope.renderManager.mapModel.getLayer(layerCount).setZPosition(layerCount);
         }
-        mapwork.editor.environment.RefreshScrollpane('layerScroll');
+        scope.RefreshScrollpane('layerScroll');
         // rebuild the View
-        mapwork.editor.environment.LoadLayersFromModel();
-    },
-    RefreshScrollpane: function (element) {
+        scope.LoadLayersFromModel();
+    }
+
+    RefreshScrollpane(element) {
         "use strict";
 
         var pane, api;
@@ -548,60 +581,60 @@ window.mapwork.editor.environment = {
         pane = $($('.' + element));
         api = pane.data('jsp');
         api.reinitialise();
-    },
-    LayerCreateNewLayer_Click: function (event) {
+    }
+    LayerCreateNewLayer_Click(event) {
         "use strict";
 
         var html, layerName, newLayer;
 
-        if (mapwork.viewcontroller.mapModel.getLayers().length < 5) {
+        if (scope.renderManager.mapModel.getLayers().length < 5) {
             //create new layer
-            layerName = 'Untitled Layer ' + mapwork.viewcontroller.mapModel.getLayers().length;
+            layerName = 'Untitled Layer ' + scope.renderManager.mapModel.getLayers().length;
 
             // adding the new layer to the model
-            newLayer = new Layer(mapwork.editor.environment);
-            newLayer.createBlankModelLayer(mapwork.viewcontroller.mapModel, layerName, 'default_tileset.png');
-            newLayer.setZPosition(mapwork.viewcontroller.mapModel.getLayers().length);
-            mapwork.editor.environment.selectedLayer = mapwork.viewcontroller.mapModel.getLayers().length;
-            mapwork.viewcontroller.mapModel.addLayer(newLayer);
+            newLayer = new Layer(scope);
+            newLayer.createBlankModelLayer(scope.renderManager.mapModel, layerName, 'default_tileset.png');
+            newLayer.setZPosition(scope.renderManager.mapModel.getLayers().length);
+            scope.selectedLayer = scope.renderManager.mapModel.getLayers().length;
+            scope.renderManager.mapModel.addLayer(newLayer);
 
             // refresh layers view
-            mapwork.editor.environment.LoadLayersFromModel();
+            scope.LoadLayersFromModel();
             //refresh the scrollpane
-            mapwork.editor.environment.RefreshScrollpane('layerScroll');
+            scope.RefreshScrollpane('layerScroll');
         }
         else {
-            mapwork.editor.environment.DisplayNotification('A map may only have up to 5 layers', 'red');
+            scope.DisplayNotification('A map may only have up to 5 layers', 'red');
         }
+    }
 
-
-
-    },
-    LoadPropertiesFromModel: function () {
+    LoadPropertiesFromModel() {
         "use strict";
         if ($('#selectPropertyScope').val() === '2') {
-            mapwork.editor.environment.BuildPropertyTable('tile');
+            scope.BuildPropertyTable('tile');
         }
-    },
-    LoadSettingsFromModel: function () {
+    }
+
+    LoadSettingsFromModel() {
         "use strict";
-        $('#settingsMapName').val(mapwork.viewcontroller.mapModel.getName());
-        $('#settingsTilesAccross').val(mapwork.viewcontroller.mapModel.getTilesAccross());
-        $('#settingsTilesDown').val(mapwork.viewcontroller.mapModel.getTilesDown());
-        $('#settingsTileWidth').val(mapwork.viewcontroller.mapModel.getTileWidth());
-        $('#settingsTileHeight').val(mapwork.viewcontroller.mapModel.getTileHeight());
-    },
-    LoadLayersFromModel: function () {
+        $('#settingsMapName').val(scope.renderManager.mapModel.getName());
+        $('#settingsTilesAccross').val(scope.renderManager.mapModel.getTilesAccross());
+        $('#settingsTilesDown').val(scope.renderManager.mapModel.getTilesDown());
+        $('#settingsTileWidth').val(scope.renderManager.mapModel.getTileWidth());
+        $('#settingsTileHeight').val(scope.renderManager.mapModel.getTileHeight());
+    }
+
+    LoadLayersFromModel() {
         "use strict";
         var layerCount, html, layerName, visible, tilesetSelect, tileset, tilesetCount;
 
         //update list of layers with contents of model, starting with emptying previous contents
         $('#layerList').empty();
 
-        for (layerCount = 0; layerCount < mapwork.viewcontroller.mapModel.getLayers().length; layerCount++) {
-            tileset = mapwork.viewcontroller.mapModel.getLayer(layerCount).getTilesetPath();
-            layerName = mapwork.viewcontroller.mapModel.getLayer(layerCount).getName();
-            visible = mapwork.viewcontroller.mapModel.getLayer(layerCount).getVisibility();
+        for (layerCount = 0; layerCount < scope.renderManager.mapModel.getLayers().length; layerCount++) {
+            tileset = scope.renderManager.mapModel.getLayer(layerCount).getTilesetPath();
+            layerName = scope.renderManager.mapModel.getLayer(layerCount).getName();
+            visible = scope.renderManager.mapModel.getLayer(layerCount).getVisibility();
             html = $('<li class="layerListItem layerUnselected">' +
                   '<div class="layerListItemDescription">' +
                      '<span class="layerName">' + layerName + '</span>' +
@@ -614,20 +647,20 @@ window.mapwork.editor.environment = {
                      '<a class="deleteLayer"></a>' +
                   '</div>' +
               '</li>');
-            $(html).data('zPosition', mapwork.viewcontroller.mapModel.getLayer(layerCount).getZPosition());
+            $(html).data('zPosition', scope.renderManager.mapModel.getLayer(layerCount).getZPosition());
 
             // append tileset data to the selected list element
             tilesetSelect = $(html).find('.layerSelectTileset');
 
-            if (mapwork.editor.environment.tilesets !== null) {
-                for (tilesetCount = 0; tilesetCount < mapwork.editor.environment.tilesets.length; tilesetCount++) {
-                    tilesetSelect.append('<option value=' + mapwork.editor.environment.tilesets[tilesetCount] + '>' + mapwork.editor.environment.tilesets[tilesetCount] + '</option>');
+            if (scope.tilesets !== null) {
+                for (tilesetCount = 0; tilesetCount < scope.tilesets.length; tilesetCount++) {
+                    tilesetSelect.append('<option value=' + scope.tilesets[tilesetCount] + '>' + scope.tilesets[tilesetCount] + '</option>');
                 }
             }
             tilesetSelect.val(tileset);
 
             // check whether layer was previously selected and which layer was
-            if ($(html).data('zPosition') === mapwork.editor.environment.selectedLayer) {
+            if ($(html).data('zPosition') === scope.selectedLayer) {
                 $(html).removeClass('layerUnselected');
                 $(html).addClass('layerSelected');
             }
@@ -635,34 +668,37 @@ window.mapwork.editor.environment = {
 
 
         }
-    },
-    LayerMoveUp_Click: function (event) {
+    }
+
+    LayerMoveUp_Click(event) {
         "use strict";
 
         var target;
         target = $('#layerList').find('.layerSelected').prev();
         if (target.length > 0) {
             // move list element up above preceeding list element
-            mapwork.viewcontroller.mapModel.swapLayers($(target).data('zPosition'), $(target).next().data('zPosition'));
-            mapwork.editor.environment.selectedLayer = $(target).data('zPosition');
-            mapwork.editor.environment.LoadLayersFromModel();
-            mapwork.editor.environment.RefreshScrollpane('layerScroll');
+            scope.renderManager.mapModel.swapLayers($(target).data('zPosition'), $(target).next().data('zPosition'));
+            scope.selectedLayer = $(target).data('zPosition');
+            scope.LoadLayersFromModel();
+            scope.RefreshScrollpane('layerScroll');
         }
-    },
-    LayerMoveDown_Click: function (event) {
+    }
+
+    LayerMoveDown_Click(event) {
         "use strict";
 
         var target;
         target = $('#layerList').find('.layerSelected').next();
         if (target.length > 0) {
             // move the layer down after next element in list
-            mapwork.viewcontroller.mapModel.swapLayers($(target).data('zPosition'), $(target).prev().data('zPosition'));
-            mapwork.editor.environment.selectedLayer = $(target).data('zPosition');
-            mapwork.editor.environment.LoadLayersFromModel();
-            mapwork.editor.environment.RefreshScrollpane('layerScroll');
+            scope.renderManager.mapModel.swapLayers($(target).data('zPosition'), $(target).prev().data('zPosition'));
+            scope.selectedLayer = $(target).data('zPosition');
+            scope.LoadLayersFromModel();
+            scope.RefreshScrollpane('layerScroll');
         }
-    },
-    LayerListItemDescription_Click: function (event) {
+    }
+
+    LayerListItemDescription_Click(event) {
         "use strict";
 
 
@@ -675,40 +711,47 @@ window.mapwork.editor.environment = {
 
         $(this).parent().addClass('layerSelected');
         $(this).parent().removeClass('layerUnselected');
-        mapwork.editor.environment.selectedLayer = $(this).parent().data('zPosition');
-        mapwork.editor.environment.selectedPalleteTile = 0;
-    },
-    CreateExistingProjectName_Change: function (event) {
+        scope.selectedLayer = $(this).parent().data('zPosition');
+        scope.selectedPalleteTile = 0;
+    }
+
+    CreateExistingProjectName_Change(event) {
         "use strict";
 
-        if ($(this).val() === '0') {
+        if ($(event.target).val() === '0') {
             $('#createProjectOptions').show();
         }
         else {
             $('#createProjectOptions').hide();
         }
-    },
-    ToolboxItemAreaselect_Click: function (event) {
+    }
+
+    ToolboxItemAreaselect_Click(event) {
         "use strict";
-        mapwork.editor.environment.selectedTool = 'areaSelect';
-    },
-    ToolboxItemInspect_Click: function (event) {
+        scope.selectedTool = 'areaSelect';
+    }
+
+    ToolboxItemInspect_Click (event) {
         "use strict";
-        mapwork.editor.environment.selectedTool = 'inspectTile';
-    },
-    ToolboxItemBrush_Click: function (event) {
+        scope.selectedTool = 'inspectTile';
+    }
+
+    ToolboxItemBrush_Click (event) {
         "use strict";
-        mapwork.editor.environment.selectedTool = 'singleTileBrush';
-    },
-    ToolboxItemBucket_Click: function (event) {
+        scope.selectedTool = 'singleTileBrush';
+    }
+
+    ToolboxItemBucket_Click(event) {
         "use strict";
-        mapwork.editor.environment.selectedTool = 'bucketFill';
-    },
-    ToolboxItemEraser_Click: function (event) {
+        scope.selectedTool = 'bucketFill';
+    }
+
+    ToolboxItemEraser_Click(event) {
         "use strict";
-        mapwork.editor.environment.selectedTool = 'eraser';
-    },
-    Window_Resize: function () {
+        scope.selectedTool = 'eraser';
+    }
+
+    Window_Resize() {
         "use strict";
         //let's resize the canvas to the size of the window space
         document.getElementById('editorCanvas').width = $('#canvasContainer').width();
@@ -723,35 +766,35 @@ window.mapwork.editor.environment = {
         $('#createDialog').css('top', ((($('#leftBar').height() / 2) - $('#createDialog').height() / 2) + "px"));
         $('#publishDialog').css('top', ((($('#leftBar').height() / 2) - $('#publishDialog').height() / 2) + "px"));
 
-        //inform viewcontroller of update
-        if (mapwork.viewcontroller.camera) {
-            mapwork.viewcontroller.camera.setSize($('#editorCanvas').width(), $('#editorCanvas').height());
-            mapwork.viewcontroller.camera.setPosition(mapwork.viewcontroller.camera.getX(), mapwork.viewcontroller.camera.getY());
+        //inform mapwork.rendermanager of update
+        if (scope.renderManager.camera) {
+            scope.renderManager.camera.setSize($('#editorCanvas').width(), $('#editorCanvas').height());
+            scope.renderManager.camera.setPosition(scope.renderManager.camera.getX(), scope.renderManager.camera.getY());
         }
 
         // refresh all scrollbars
-        mapwork.editor.environment.RefreshScrollpane('layerScroll');
-        mapwork.editor.environment.RefreshScrollpane('propertiesScroll');
-    },
-    ModifyTile: function () {
+        scope.RefreshScrollpane('layerScroll');
+        scope.RefreshScrollpane('propertiesScroll');
+    }
+    ModifyTile() {
         "use strict";
         var selectedTileX, selectedTileY, queue, currTile, selectedTileType;
 
 
-        if (mapwork.editor.environment.selectedTool === 'singleTileBrush') {
+        if (scope.selectedTool === 'singleTileBrush') {
 
-            if (mapwork.editor.environment.selectedLayer !== null) {
-                selectedTileX = (mapwork.editor.environment.mouseX) + mapwork.viewcontroller.camera.getX();
-                selectedTileX = parseInt(selectedTileX / mapwork.viewcontroller.mapModel.getTileWidth(), 10);
+            if (scope.selectedLayer !== null) {
+                selectedTileX = (scope.mouseX) + scope.renderManager.camera.getX();
+                selectedTileX = parseInt(selectedTileX / scope.renderManager.mapModel.getTileWidth(), 10);
 
-                selectedTileY = (mapwork.editor.environment.mouseY) + mapwork.viewcontroller.camera.getY();
-                selectedTileY = parseInt(selectedTileY / mapwork.viewcontroller.mapModel.getTileHeight(), 10);
+                selectedTileY = (scope.mouseY) + scope.renderManager.camera.getY();
+                selectedTileY = parseInt(selectedTileY / scope.renderManager.mapModel.getTileHeight(), 10);
 
-                if ((selectedTileX < mapwork.viewcontroller.mapModel.getTilesAccross()) && (selectedTileY < mapwork.viewcontroller.mapModel.getTilesDown())) {
+                if ((selectedTileX < scope.renderManager.mapModel.getTilesAccross()) && (selectedTileY < scope.renderManager.mapModel.getTilesDown())) {
 
-                    if (mapwork.viewcontroller.mapModel.getTile(mapwork.editor.environment.selectedLayer, selectedTileX, selectedTileY).getTileCode() != mapwork.editor.environment.selectedPalleteTile) {
-                        mapwork.viewcontroller.mapModel.modifyTile(mapwork.editor.environment.selectedLayer, selectedTileX, selectedTileY, [{ key: 'tileCode', value: mapwork.editor.environment.selectedPalleteTile }]);
-                        mapwork.editor.changes.PushChange({ verb: 'PaintSingleTile', x: selectedTileX, y: selectedTileY, z: mapwork.editor.environment.selectedLayer, tileCode: mapwork.editor.environment.selectedPalleteTile });
+                    if (scope.renderManager.mapModel.getTile(scope.selectedLayer, selectedTileX, selectedTileY).getTileCode() != scope.selectedPalleteTile) {
+                        scope.renderManager.mapModel.modifyTile(scope.selectedLayer, selectedTileX, selectedTileY, [{ key: 'tileCode', value: scope.selectedPalleteTile }]);
+                        changeRecorder.pushChange({ verb: 'PaintSingleTile', x: selectedTileX, y: selectedTileY, z: scope.selectedLayer, tileCode: scope.selectedPalleteTile });
                     }
 
 
@@ -759,50 +802,50 @@ window.mapwork.editor.environment = {
             }
 
         }
-        else if (mapwork.editor.environment.selectedTool === 'eraser') {
+        else if (scope.selectedTool === 'eraser') {
 
-            if (mapwork.editor.environment.selectedLayer !== null) {
-                selectedTileX = (mapwork.editor.environment.mouseX) + mapwork.viewcontroller.camera.getX();
-                selectedTileX = parseInt(selectedTileX / mapwork.viewcontroller.mapModel.getTileWidth(), 10);
+            if (scope.selectedLayer !== null) {
+                selectedTileX = (scope.mouseX) + scope.renderManager.camera.getX();
+                selectedTileX = parseInt(selectedTileX / scope.renderManager.mapModel.getTileWidth(), 10);
 
-                selectedTileY = (mapwork.editor.environment.mouseY) + mapwork.viewcontroller.camera.getY();
-                selectedTileY = parseInt(selectedTileY / mapwork.viewcontroller.mapModel.getTileHeight(), 10);
+                selectedTileY = (scope.mouseY) + scope.renderManager.camera.getY();
+                selectedTileY = parseInt(selectedTileY / scope.renderManager.mapModel.getTileHeight(), 10);
 
-                if ((selectedTileX < mapwork.viewcontroller.mapModel.getTilesAccross()) && (selectedTileY < mapwork.viewcontroller.mapModel.getTilesDown())) {
-                    if (mapwork.viewcontroller.mapModel.getTile(mapwork.editor.environment.selectedLayer, selectedTileX, selectedTileY).getTileCode() != -1) {
-                        mapwork.viewcontroller.mapModel.modifyTile(mapwork.editor.environment.selectedLayer, selectedTileX, selectedTileY, [{ key: 'tileCode', value: -1 }]);
-                        mapwork.editor.changes.PushChange({ verb: 'EraseSingleTile', x: selectedTileX, y: selectedTileY, z: mapwork.editor.environment.selectedLayer, tileCode: mapwork.editor.environment.selectedPalleteTile });
+                if ((selectedTileX < scope.renderManager.mapModel.getTilesAccross()) && (selectedTileY < scope.renderManager.mapModel.getTilesDown())) {
+                    if (scope.renderManager.mapModel.getTile(scope.selectedLayer, selectedTileX, selectedTileY).getTileCode() != -1) {
+                        scope.renderManager.mapModel.modifyTile(scope.selectedLayer, selectedTileX, selectedTileY, [{ key: 'tileCode', value: -1 }]);
+                        changeRecorder.pushChange({ verb: 'EraseSingleTile', x: selectedTileX, y: selectedTileY, z: scope.selectedLayer, tileCode: scope.selectedPalleteTile });
                     }
                 }
             }
 
         }
-        else if (mapwork.editor.environment.selectedTool === 'inspectTile') {
+        else if (scope.selectedTool === 'inspectTile') {
 
 
-            if (mapwork.editor.environment.selectedLayer !== null) {
-                selectedTileX = (mapwork.editor.environment.mouseX) + mapwork.viewcontroller.camera.getX();
-                selectedTileX = parseInt(selectedTileX / mapwork.viewcontroller.mapModel.getTileWidth(), 10);
+            if (scope.selectedLayer !== null) {
+                selectedTileX = (scope.mouseX) + scope.renderManager.camera.getX();
+                selectedTileX = parseInt(selectedTileX / scope.renderManager.mapModel.getTileWidth(), 10);
 
-                selectedTileY = (mapwork.editor.environment.mouseY) + mapwork.viewcontroller.camera.getY();
-                selectedTileY = parseInt(selectedTileY / mapwork.viewcontroller.mapModel.getTileHeight(), 10);
+                selectedTileY = (scope.mouseY) + scope.renderManager.camera.getY();
+                selectedTileY = parseInt(selectedTileY / scope.renderManager.mapModel.getTileHeight(), 10);
 
 
-                if ((selectedTileX < mapwork.viewcontroller.mapModel.getTilesAccross()) && (selectedTileY < mapwork.viewcontroller.mapModel.getTilesDown())) {
-                    mapwork.editor.environment.selectedTile = mapwork.viewcontroller.mapModel.getLayerByZPosition(mapwork.editor.environment.selectedLayer).getRow(selectedTileY)[selectedTileX];
-                    mapwork.editor.environment.LoadPropertiesFromModel();
+                if ((selectedTileX < scope.renderManager.mapModel.getTilesAccross()) && (selectedTileY < scope.renderManager.mapModel.getTilesDown())) {
+                    scope.selectedTile = scope.renderManager.mapModel.getLayerByZPosition(scope.selectedLayer).getRow(selectedTileY)[selectedTileX];
+                    scope.LoadPropertiesFromModel();
                 }
             }
         }
-        else if (mapwork.editor.environment.selectedTool === 'bucketFill') {
+        else if (scope.selectedTool === 'bucketFill') {
 
-            if (mapwork.editor.environment.selectedLayer !== null) {
+            if (scope.selectedLayer !== null) {
                 // identify world (map) co-ordinates by converting mouse co-ordinates
-                selectedTileX = (mapwork.editor.environment.mouseX) + mapwork.viewcontroller.camera.getX();
-                selectedTileX = parseInt(selectedTileX / mapwork.viewcontroller.mapModel.getTileWidth(), 10);
+                selectedTileX = (scope.mouseX) + scope.renderManager.camera.getX();
+                selectedTileX = parseInt(selectedTileX / scope.renderManager.mapModel.getTileWidth(), 10);
 
-                selectedTileY = (mapwork.editor.environment.mouseY) + mapwork.viewcontroller.camera.getY();
-                selectedTileY = parseInt(selectedTileY / mapwork.viewcontroller.mapModel.getTileHeight(), 10);
+                selectedTileY = (scope.mouseY) + scope.renderManager.camera.getY();
+                selectedTileY = parseInt(selectedTileY / scope.renderManager.mapModel.getTileHeight(), 10);
 
 
                 // queue of filled tiles (used in the 4-neighbour algorithm)
@@ -810,17 +853,17 @@ window.mapwork.editor.environment = {
                 currTile = null;
 
                 // determine the tilecode for selected tile
-                selectedTileType = mapwork.viewcontroller.mapModel.getLayerByZPosition(mapwork.editor.environment.selectedLayer)
+                selectedTileType = scope.renderManager.mapModel.getLayerByZPosition(scope.selectedLayer)
                     .getRow(selectedTileY)[selectedTileX].getTileCode();
 
                 // if the chosen tile differs from the selected tile from the palette, begin to fill it in (and its adjacent neighbours)
-                if (selectedTileType !== mapwork.editor.environment.selectedPalleteTile) {
+                if (selectedTileType !== scope.selectedPalleteTile) {
 
-                    mapwork.editor.changes.PushChange({ verb: 'BucketFill', x: selectedTileX, y: selectedTileY, z: mapwork.editor.environment.selectedLayer, tileCode: selectedTileType });
+                    changeRecorder.pushChange({ verb: 'BucketFill', x: selectedTileX, y: selectedTileY, z: scope.selectedLayer, tileCode: selectedTileType });
 
                     // add the processed tile to the queue
                     queue.push({
-                        data: mapwork.viewcontroller.mapModel.getLayerByZPosition(mapwork.editor.environment.selectedLayer)
+                        data: scope.renderManager.mapModel.getLayerByZPosition(scope.selectedLayer)
                             .getRow(selectedTileY)[selectedTileX], x: selectedTileX, y: selectedTileY
                     });
 
@@ -830,30 +873,30 @@ window.mapwork.editor.environment = {
 
                         if (currTile.data.getTileCode() === selectedTileType) {
                             // modify tile code to match the one selected in the palette
-                            currTile.data.setTileCode(mapwork.editor.environment.selectedPalleteTile);
+                            currTile.data.setTileCode(scope.selectedPalleteTile);
 
                             // record all neighbours (iterating through to check them also)
                             if (currTile.x > 0) {
                                 queue.push({
-                                    data: mapwork.viewcontroller.mapModel.getLayerByZPosition(mapwork.editor.environment.selectedLayer)
+                                    data: scope.renderManager.mapModel.getLayerByZPosition(scope.selectedLayer)
                                         .getRow(currTile.y)[currTile.x - 1], x: currTile.x - 1, y: currTile.y
                                 });
                             }
-                            if ((currTile.x) < (mapwork.viewcontroller.mapModel.getTilesAccross() - 1)) {
+                            if ((currTile.x) < (scope.renderManager.mapModel.getTilesAccross() - 1)) {
                                 queue.push({
-                                    data: mapwork.viewcontroller.mapModel.getLayerByZPosition(mapwork.editor.environment.selectedLayer)
+                                    data: scope.renderManager.mapModel.getLayerByZPosition(scope.selectedLayer)
                                         .getRow(currTile.y)[currTile.x + 1], x: currTile.x + 1, y: currTile.y
                                 });
                             }
                             if (currTile.y > 0) {
                                 queue.push({
-                                    data: mapwork.viewcontroller.mapModel.getLayerByZPosition(mapwork.editor.environment.selectedLayer)
+                                    data: scope.renderManager.mapModel.getLayerByZPosition(scope.selectedLayer)
                                         .getRow(currTile.y - 1)[currTile.x], x: currTile.x, y: currTile.y - 1
                                 });
                             }
-                            if (currTile.y < (mapwork.viewcontroller.mapModel.getTilesDown() - 1)) {
+                            if (currTile.y < (scope.renderManager.mapModel.getTilesDown() - 1)) {
                                 queue.push({
-                                    data: mapwork.viewcontroller.mapModel.getLayerByZPosition(mapwork.editor.environment.selectedLayer)
+                                    data: scope.renderManager.mapModel.getLayerByZPosition(scope.selectedLayer)
                                         .getRow(currTile.y + 1)[currTile.x], x: currTile.x, y: currTile.y + 1
                                 });
 
@@ -865,69 +908,65 @@ window.mapwork.editor.environment = {
 
             }
         }
-
-
-
-
-    },
-    EditorCanvas_MouseMove: function (event) {
+    }
+    EditorCanvas_MouseMove(event) {
         "use strict";
-        if (mapwork.viewcontroller.mapModel) {
-            mapwork.editor.environment.mouseX = (event.pageX - $('#editorCanvas').offset().left);
-            mapwork.editor.environment.mouseY = (event.pageY - $('#editorCanvas').offset().top);
+        if (scope.renderManager.mapModel) {
+            scope.mouseX = (event.pageX - $('#editorCanvas').offset().left);
+            scope.mouseY = (event.pageY - $('#editorCanvas').offset().top);
         }
 
-    },
-    EditorCanvas_MouseDown: function (event) {
+    }
+    EditorCanvas_MouseDown(event) {
         "use strict";
         var rowCount, cellCount, currentTile, startTileX, startTileY, tilePasteX, tilePasteY;
 
-        mapwork.editor.environment.ModifyTile();
-        if (!mapwork.editor.environment.leftMouseButtonDown && mapwork.editor.environment.selectedTool === 'singleTileBrush') {
-            mapwork.editor.environment.editorClickInterval = setInterval(mapwork.editor.environment.ModifyTile, 10);
-            mapwork.editor.environment.leftMouseButtonDown = true;
+        scope.ModifyTile();
+        if (!scope.leftMouseButtonDown && scope.selectedTool === 'singleTileBrush') {
+            scope.editorClickInterval = setInterval(scope.ModifyTile, 10);
+            scope.leftMouseButtonDown = true;
         }
-        if (!mapwork.editor.environment.leftMouseButtonDown && mapwork.editor.environment.selectedTool === 'eraser') {
-            mapwork.editor.environment.editorClickInterval = setInterval(mapwork.editor.environment.ModifyTile, 10);
-            mapwork.editor.environment.leftMouseButtonDown = true;
+        if (!scope.leftMouseButtonDown && scope.selectedTool === 'eraser') {
+            scope.editorClickInterval = setInterval(scope.ModifyTile, 10);
+            scope.leftMouseButtonDown = true;
         }
 
 
-        if (!mapwork.editor.environment.leftMouseButtonDown && mapwork.editor.environment.selectedTool === 'areaSelect') {
+        if (!scope.leftMouseButtonDown && scope.selectedTool === 'areaSelect') {
             // grab mouse co-ordinates for start point of area selection
-            mapwork.editor.environment.areaSelectX = (event.pageX - $('#editorCanvas').offset().left);
-            mapwork.editor.environment.areaSelectY = (event.pageY - $('#editorCanvas').offset().top);
-            mapwork.editor.environment.mouseX = (event.pageX - $('#editorCanvas').offset().left);
-            mapwork.editor.environment.mouseY = (event.pageY - $('#editorCanvas').offset().top);
+            scope.areaSelectX = (event.pageX - $('#editorCanvas').offset().left);
+            scope.areaSelectY = (event.pageY - $('#editorCanvas').offset().top);
+            scope.mouseX = (event.pageX - $('#editorCanvas').offset().left);
+            scope.mouseY = (event.pageY - $('#editorCanvas').offset().top);
             // trigger drawing of the selection box and stop capturing any additional co-ordinates until mouse button is released
-            mapwork.editor.environment.leftMouseButtonDown = true;
-            mapwork.editor.environment.areaSelectEnabled = true;
-            mapwork.editor.environment.selectedAreaTiles = null;
+            scope.leftMouseButtonDown = true;
+            scope.areaSelectEnabled = true;
+            scope.selectedAreaTiles = null;
         }
-        else if (!mapwork.editor.environment.leftMouseButtonDown && mapwork.editor.environment.selectedTool === 'pasteTiles') {
+        else if (!scope.leftMouseButtonDown && scope.selectedTool === 'pasteTiles') {
             // begin pasting tiles to map
 
-            startTileX = (event.pageX - $('#editorCanvas').offset().left) + (mapwork.viewcontroller.mapModel.getTileWidth() / 2) + mapwork.viewcontroller.camera.getX()
-                - ((mapwork.editor.environment.selectedAreaTiles.rows[0].length * mapwork.viewcontroller.mapModel.getTileWidth()) / 2);
-            startTileY = (event.pageY - $('#editorCanvas').offset().top) + (mapwork.viewcontroller.mapModel.getTileHeight() / 2) + mapwork.viewcontroller.camera.getY()
-                - ((mapwork.editor.environment.selectedAreaTiles.rows.length * mapwork.viewcontroller.mapModel.getTileHeight()) / 2);
+            startTileX = (event.pageX - $('#editorCanvas').offset().left) + (scope.renderManager.mapModel.getTileWidth() / 2) + scope.renderManager.camera.getX()
+                - ((scope.selectedAreaTiles.rows[0].length * scope.renderManager.mapModel.getTileWidth()) / 2);
+            startTileY = (event.pageY - $('#editorCanvas').offset().top) + (scope.renderManager.mapModel.getTileHeight() / 2) + scope.renderManager.camera.getY()
+                - ((scope.selectedAreaTiles.rows.length * scope.renderManager.mapModel.getTileHeight()) / 2);
 
-            startTileX = Math.floor(startTileX / mapwork.viewcontroller.mapModel.getTileWidth());
-            startTileY = Math.floor(startTileY / mapwork.viewcontroller.mapModel.getTileHeight());
+            startTileX = Math.floor(startTileX / scope.renderManager.mapModel.getTileWidth());
+            startTileY = Math.floor(startTileY / scope.renderManager.mapModel.getTileHeight());
 
 
-            for (rowCount = 0; rowCount < mapwork.editor.environment.selectedAreaTiles.rows.length; rowCount++) {
-                for (cellCount = 0; cellCount < mapwork.editor.environment.selectedAreaTiles.rows[rowCount].length; cellCount++) {
-                    currentTile = mapwork.editor.environment.selectedAreaTiles.rows[rowCount][cellCount];
-                    // verify that this tile is being placed onto a part of the map that actually exists
+            for (rowCount = 0; rowCount < scope.selectedAreaTiles.rows.length; rowCount++) {
+                for (cellCount = 0; cellCount < scope.selectedAreaTiles.rows[rowCount].length; cellCount++) {
+                    currentTile = scope.selectedAreaTiles.rows[rowCount][cellCount];
+                    // verify that scope tile is being placed onto a part of the map that actually exists
 
                     tilePasteX = (startTileX + cellCount);
                     tilePasteY = (startTileY + rowCount);
 
-                    if ((tilePasteX < mapwork.viewcontroller.mapModel.getTilesAccross()) && (tilePasteY < mapwork.viewcontroller.mapModel.getTilesDown())
+                    if ((tilePasteX < scope.renderManager.mapModel.getTilesAccross()) && (tilePasteY < scope.renderManager.mapModel.getTilesDown())
                         && (tilePasteX >= 0) && (tilePasteY >= 0)) {
-                        mapwork.viewcontroller.mapModel.getLayerByZPosition(mapwork.editor.environment.selectedLayer).getRow(startTileY + rowCount)[startTileX + cellCount].setTileCode(currentTile);
-                        mapwork.editor.changes.PushChange({ verb: 'PaintSingleTile', x: tilePasteX, y: tilePasteY, z: mapwork.editor.environment.selectedLayer, tileCode: currentTile});
+                        scope.renderManager.mapModel.getLayerByZPosition(scope.selectedLayer).getRow(startTileY + rowCount)[startTileX + cellCount].setTileCode(currentTile);
+                        changeRecorder.pushChange({ verb: 'PaintSingleTile', x: tilePasteX, y: tilePasteY, z: scope.selectedLayer, tileCode: currentTile});
 
                     }
 
@@ -935,64 +974,64 @@ window.mapwork.editor.environment = {
             }
 
             // clear the array of copied tiles
-            mapwork.editor.environment.leftMouseButtonDown = true;
-            mapwork.editor.environment.selectedAreaTiles = null;
-            mapwork.editor.environment.selectedTool = 'areaSelect';
+            scope.leftMouseButtonDown = true;
+            scope.selectedAreaTiles = null;
+            scope.selectedTool = 'areaSelect';
         }
 
-    },
-    EditorCanvas_MouseUp: function (event) {
+    }
+    EditorCanvas_MouseUp(event) {
         "use strict";
         var eventCount, startX, startY, endX, endY, selectedTiles, firstTile, lastTile, firstCodeX, firstCodeY, lastCodeX, lastCodeY, row, rowCount, cellCount;
-        if (mapwork.editor.environment.leftMouseButtonDown) {
-            clearInterval(mapwork.editor.environment.editorClickInterval);
-            mapwork.editor.environment.editorClickInterval = null;
+        if (scope.leftMouseButtonDown) {
+            clearInterval(scope.editorClickInterval);
+            scope.editorClickInterval = null;
         }
-        if (mapwork.editor.environment.leftMouseButtonDown && mapwork.editor.environment.selectedTool === 'areaSelect') {
-            if (mapwork.editor.environment.areaSelectEnabled) {
+        if (scope.leftMouseButtonDown && scope.selectedTool === 'areaSelect') {
+            if (scope.areaSelectEnabled) {
 
-                if (mapwork.editor.environment.areaSelectX > mapwork.editor.environment.mouseX) {
-                    startX = mapwork.editor.environment.mouseX;
-                    endX = mapwork.editor.environment.areaSelectX;
+                if (scope.areaSelectX > scope.mouseX) {
+                    startX = scope.mouseX;
+                    endX = scope.areaSelectX;
                 }
                 else {
-                    startX = mapwork.editor.environment.areaSelectX;
-                    endX = mapwork.editor.environment.mouseX;
+                    startX = scope.areaSelectX;
+                    endX = scope.mouseX;
                 }
-                if (mapwork.editor.environment.areaSelectY > mapwork.editor.environment.mouseY) {
-                    startY = mapwork.editor.environment.mouseY;
-                    endY = mapwork.editor.environment.areaSelectY;
+                if (scope.areaSelectY > scope.mouseY) {
+                    startY = scope.mouseY;
+                    endY = scope.areaSelectY;
                 }
                 else {
-                    startY = mapwork.editor.environment.areaSelectY;
-                    endY = mapwork.editor.environment.mouseY;
+                    startY = scope.areaSelectY;
+                    endY = scope.mouseY;
                 }
 
-                if ((endX <= (mapwork.viewcontroller.camera.getWidth() + (mapwork.viewcontroller.camera.getX()))) && (endY <= (mapwork.viewcontroller.camera.getHeight() + (mapwork.viewcontroller.camera.getY())))) {
-                    firstCodeX = Math.floor((startX + mapwork.viewcontroller.camera.getX()) / mapwork.viewcontroller.mapModel.getTileWidth());
-                    firstCodeY = Math.floor((startY + mapwork.viewcontroller.camera.getY()) / mapwork.viewcontroller.mapModel.getTileHeight());
+                if ((endX <= (scope.renderManager.camera.getWidth() + (scope.renderManager.camera.getX()))) && (endY <= (scope.renderManager.camera.getHeight() + (scope.renderManager.camera.getY())))) {
+                    firstCodeX = Math.floor((startX + scope.renderManager.camera.getX()) / scope.renderManager.mapModel.getTileWidth());
+                    firstCodeY = Math.floor((startY + scope.renderManager.camera.getY()) / scope.renderManager.mapModel.getTileHeight());
 
-                    lastCodeX = Math.ceil((endX + mapwork.viewcontroller.camera.getX()) / mapwork.viewcontroller.mapModel.getTileWidth());
-                    lastCodeY = Math.ceil((endY + mapwork.viewcontroller.camera.getY()) / mapwork.viewcontroller.mapModel.getTileHeight());
+                    lastCodeX = Math.ceil((endX + scope.renderManager.camera.getX()) / scope.renderManager.mapModel.getTileWidth());
+                    lastCodeY = Math.ceil((endY + scope.renderManager.camera.getY()) / scope.renderManager.mapModel.getTileHeight());
 
 
-                    mapwork.editor.environment.selectedAreaTiles = { rows: [] };
+                    scope.selectedAreaTiles = { rows: [] };
 
-                    mapwork.editor.changes.PushChange({ verb: 'AreaSelect', startX: firstCodeX, startY: firstCodeY, endX: lastCodeX-1, endY: lastCodeY-1});
+                    changeRecorder.pushChange({ verb: 'AreaSelect', startX: firstCodeX, startY: firstCodeY, endX: lastCodeX-1, endY: lastCodeY-1});
 
 
                     for (rowCount = firstCodeY; rowCount < lastCodeY; rowCount++) {
                         row = [];
                         for (cellCount = firstCodeX; cellCount < lastCodeX; cellCount++) {
-                            row.push(mapwork.viewcontroller.mapModel.getLayerByZPosition(mapwork.editor.environment.selectedLayer).getRow(rowCount)[cellCount].getTileCode());
+                            row.push(scope.renderManager.mapModel.getLayerByZPosition(scope.selectedLayer).getRow(rowCount)[cellCount].getTileCode());
                         }
-                        mapwork.editor.environment.selectedAreaTiles.rows.push(row);
+                        scope.selectedAreaTiles.rows.push(row);
                     }
-                    mapwork.editor.environment.selectedTool = 'pasteTiles';
+                    scope.selectedTool = 'pasteTiles';
                 }
 
                 // find out which tiles fall within these bounds
-                mapwork.editor.environment.areaSelectEnabled = false;
+                scope.areaSelectEnabled = false;
             }
 
 
@@ -1000,30 +1039,30 @@ window.mapwork.editor.environment = {
         }
 
 
-        mapwork.editor.environment.leftMouseButtonDown = false;
-    },
-    EditorCanvas_MouseOut: function (event) {
+        scope.leftMouseButtonDown = false;
+    }
+    EditorCanvas_MouseOut(event) {
         "use strict";
         var eventCount;
-        if (mapwork.editor.environment.leftMouseButtonDown) {
-            clearInterval(mapwork.editor.environment.editorClickInterval);
-            mapwork.editor.environment.editorClickInterval = null;
+        if (scope.leftMouseButtonDown) {
+            clearInterval(scope.editorClickInterval);
+            scope.editorClickInterval = null;
         }
-        if (mapwork.editor.environment.leftMouseButtonDown && mapwork.editor.environment.selectedTool === 'areaSelect') {
-            mapwork.editor.environment.areaSelectEnabled = false;
+        if (scope.leftMouseButtonDown && scope.selectedTool === 'areaSelect') {
+            scope.areaSelectEnabled = false;
 
         }
-        mapwork.editor.environment.leftMouseButtonDown = false;
+        scope.leftMouseButtonDown = false;
 
-    },
-    PaletteCanvas_Click: function (event) {
+    }
+    PaletteCanvas_Click(event) {
         "use strict";
 
-        mapwork.viewcontroller.getPickerTileCode(parseInt(event.pageX - $('#paletteCanvas').offset().left, 10), parseInt(event.pageY - $('#paletteCanvas').offset().top, 10));
-    },
-    CreateItem_Click: function (event) {
+        scope.renderManager.getPickerTileCode(parseInt(event.pageX - $('#paletteCanvas').offset().left, 10), parseInt(event.pageY - $('#paletteCanvas').offset().top, 10));
+    }
+    CreateItem_Click(event) {
         "use strict";
-        mapwork.editor.environment.PresentRibbonContextMenu('create');
+        scope.PresentRibbonContextMenu('create');
         // centre the create dialog
         $('#createDialog').css('top', ((($('#leftBar').height() / 2) - $('#createDialog').height() / 2) + "px"));
         $('#createDialog').show();
@@ -1040,8 +1079,8 @@ window.mapwork.editor.environment = {
         $('#createNewProjectName').removeClass('errorBorder');
         $('#createNewProjectDescription').removeClass('errorBorder');
         $('#createExistingProjectName').removeClass('errorBorder');
-    },
-    CreateButtonOK_Click: function (event) {
+    }
+    CreateButtonOK_Click(event) {
         "use strict";
         var valid, result, newLayer;
 
@@ -1054,7 +1093,7 @@ window.mapwork.editor.environment = {
 
 
         // tiles accross
-        result = mapwork.helper.validation.ValidateInput($('#inpCreateHorizontalTiles'),
+        result = ValidationHelper.validateInput($('#inpCreateHorizontalTiles'),
           [{ kind: 'required' },
           { kind: 'isnumeric' },
           { kind: 'min', value: 1 }]);
@@ -1065,7 +1104,7 @@ window.mapwork.editor.environment = {
         }
 
         // tiles down
-        result = mapwork.helper.validation.ValidateInput($('#inpCreateVerticalTiles'),
+        result = ValidationHelper.validateInput($('#inpCreateVerticalTiles'),
           [{ kind: 'required' },
           { kind: 'isnumeric' },
           { kind: 'min', value: 1 }]);
@@ -1076,12 +1115,12 @@ window.mapwork.editor.environment = {
         }
 
         if ((parseInt($('#inpCreateHorizontalTiles').val(), 10) * parseInt($('#inpCreateVerticalTiles').val(), 10)) > 16384) {
-            mapwork.editor.environment.DisplayNotification('Tiles per layer must not exceed 16384 (e.g 128x128 or 512x32 etc)', 'red');
+            scope.DisplayNotification('Tiles per layer must not exceed 16384 (e.g 128x128 or 512x32 etc)', 'red');
             valid = false;
         }
 
         // tile width
-        //result = mapwork.helper.validation.ValidateInput($('#inpCreateTileWidth'),
+        //result = ValidationHelper.validateInput($('#inpCreateTileWidth'),
         //  [{ kind: 'required' },
         //  { kind: 'isnumeric' },
         //  { kind: 'min', value: 1 }]);
@@ -1091,7 +1130,7 @@ window.mapwork.editor.environment = {
         //    valid = false;
         //}
         // tile height
-        //result = mapwork.helper.validation.ValidateInput($('#inpCreateTileHeight'),
+        //result = ValidationHelper.validateInput($('#inpCreateTileHeight'),
         // [{ kind: 'required' },
         // { kind: 'isnumeric' },
         // { kind: 'min', value: 1 }]);
@@ -1108,57 +1147,57 @@ window.mapwork.editor.environment = {
             $('.modalBlocker').hide();
 
 
-            mapwork.viewcontroller.mapModel = new Map(mapwork.editor.environment);
+            scope.renderManager.mapModel = new Map(scope);
 
-            //mapwork.viewcontroller.mapModel.createBlankModel($('#createNewMapName').val(),
+            //scope.renderManager.mapModel.createBlankModel($('#createNewMapName').val(),
             //    parseInt($('#inpCreateTileWidth').val(), 10),
             //    parseInt($('#inpCreateTileHeight').val(), 10),
             //    parseInt($('#inpCreateHorizontalTiles').val(), 10),
             //    parseInt($('#inpCreateVerticalTiles').val(), 10));
 
-            mapwork.viewcontroller.mapModel.createBlankModel($('#createNewMapName').val(),
+            scope.renderManager.mapModel.createBlankModel($('#createNewMapName').val(),
                 parseInt(32, 10),
                 parseInt(32, 10),
                 parseInt($('#inpCreateHorizontalTiles').val(), 10),
                 parseInt($('#inpCreateVerticalTiles').val(), 10));
 
 
-            mapwork.editor.environment.selectedLayer = 0;
+            scope.selectedLayer = 0;
 
 
             //build the camera and pass in the world and view coordinates
-            mapwork.viewcontroller.camera = new Camera(mapwork.viewcontroller.mapModel);
-            mapwork.viewcontroller.camera.setPosition(0, 0);
-            mapwork.viewcontroller.camera.setBounds(mapwork.viewcontroller.mapModel.getWorldWidth(), mapwork.viewcontroller.mapModel.getWorldHeight());
-            mapwork.viewcontroller.camera.setSize($('#editorCanvas').width(), $('#editorCanvas').height());
+            scope.renderManager.camera = new Camera(scope.renderManager.mapModel);
+            scope.renderManager.camera.setPosition(0, 0);
+            scope.renderManager.camera.setBounds(scope.renderManager.mapModel.getWorldWidth(), scope.renderManager.mapModel.getWorldHeight());
+            scope.renderManager.camera.setSize($('#editorCanvas').width(), $('#editorCanvas').height());
 
 
             // rebuild UI from model
-            mapwork.editor.environment.BuildUIFromModel();
+            scope.BuildUIFromModel();
         }
-    },
-    PublishButtonOK_Click: function (event) {
+    }
+    PublishButtonOK_Click(event) {
         "use strict";
         /*$('#publishDialogStepOne').hide();
         $('#publishDialogPending').show();
         // begin serializing and sending map to server and retreiving bundle
-        //mapwork.viewcontroller.mapModel.serializeCompact();
-        mapwork.viewcontroller.mapModel.serialize();*/
+        //scope.renderManager.mapModel.serializeCompact();
+        scope.renderManager.mapModel.serialize();*/
 
-        mapwork.editor.environment.DisplayNotification('Feature not implemented in this edition of MapWork', 'red');
-    },
-    CompressMapData_Success: function (data) {
+        scope.DisplayNotification('Feature not implemented in scope edition of MapWork', 'red');
+    }
+    CompressMapData_Success(data) {
         "use strict";
         var encodedData;
-        //begin sending this to the server
+        //begin sending scope to the server
         encodedData = encodeURIComponent(data);
-        mapwork.editor.environment.PostMapForDownload(encodedData);
-    },
-    PostMapForDownload: function (mapData) {
+        scope.PostMapForDownload(encodedData);
+    }
+    PostMapForDownload(mapData) {
         "use strict";
       /*  var fileDownloadCheckTimer, token, assetsIncluded;
 
-        mapwork.editor.environment.downloadToken = new Date().getTime().toString();
+        scope.downloadToken = new Date().getTime().toString();
 
         if ($('#publishIncludeAssets:checked').length > 0) {
             assetsIncluded = 'true';
@@ -1183,7 +1222,7 @@ window.mapwork.editor.environment = {
         $('#postDownloadMap').append($('<input/>', {
             type: 'hidden',
             name: 'mapName',
-            value: mapwork.viewcontroller.mapModel.getName()
+            value: scope.renderManager.mapModel.getName()
         }));
 
         $('#postDownloadMap').append($('<input/>', {
@@ -1202,11 +1241,11 @@ window.mapwork.editor.environment = {
         $('#postDownloadMap').append($('<input/>', {
             type: 'hidden',
             name: 'downloadToken',
-            value: mapwork.editor.environment.downloadToken
+            value: scope.downloadToken
         }));
 
 
-        mapwork.editor.environment.downloadInterval = window.setInterval(mapwork.editor.environment.CheckDownloadTimer, 1000);
+        scope.downloadInterval = window.setInterval(scope.CheckDownloadTimer, 1000);
 
         $('#postDownloadMap').submit();
         $('#postDownloadMap').empty();
@@ -1214,13 +1253,13 @@ window.mapwork.editor.environment = {
 
         */
 
-    },
-    PostMapForDownload_Success: function () {
+    }
+    PostMapForDownload_Success() {
         "use strict";
         $('#publishDialogPending').hide();
         $('#publishDialogSuccess').show();
-    },
-    CheckDownloadTimer: function () {
+    }
+    CheckDownloadTimer() {
         "use strict";
         var cookieValue;
         // if the token previously specified has become a cookie, stop polling for it and let user know that download is complete
@@ -1229,39 +1268,39 @@ window.mapwork.editor.environment = {
             cookieValue = $.cookie('bundleDownloadToken').toString();
         }
 
-        if (cookieValue === mapwork.editor.environment.downloadToken) {
+        if (cookieValue === scope.downloadToken) {
             $.cookie('bundleDownloadToken', null);
-            mapwork.editor.environment.downloadToken = null;
-            clearInterval(mapwork.editor.environment.downloadInterval);
-            mapwork.editor.environment.downloadInterval = null;
-            mapwork.editor.environment.PostMapForDownload_Success();
+            scope.downloadToken = null;
+            clearInterval(scope.downloadInterval);
+            scope.downloadInterval = null;
+            scope.PostMapForDownload_Success();
         }
 
-    },
-    PublishButtonCancel_Click: function (event) {
+    }
+    PublishButtonCancel_Click(event) {
         "use strict";
         $('#publishDialog').hide();
         $('#publishDialogStepOne').hide();
         $('.modalBlocker').hide();
-    },
-    PublishButtonCancelPublish_Click: function (event) {
+    }
+    PublishButtonCancelPublish_Click(event) {
         "use strict";
         $('#publishDialog').hide();
         $('#publishDialogStepOne').hide();
         $('.modalBlocker').hide();
-    },
-    PublishButtonSuccessOK_Click: function (event) {
+    }
+    PublishButtonSuccessOK_Click(event) {
         "use strict";
         $('#publishDialog').hide();
         $('#publishDialogSuccess').show();
         $('.modalBlocker').hide();
-    },
-    BuildUIFromModel: function () {
+    }
+    BuildUIFromModel() {
         "use strict";
-        mapwork.editor.environment.LoadLayersFromModel();
-        mapwork.editor.environment.LoadSettingsFromModel();
-    },
-    CreateButtonNext_Click: function (event) {
+        scope.LoadLayersFromModel();
+        scope.LoadSettingsFromModel();
+    }
+    CreateButtonNext_Click(event) {
         "use strict";
         var valid, result;
 
@@ -1275,7 +1314,7 @@ window.mapwork.editor.environment = {
 
 
         // new map name
-        result = mapwork.helper.validation.ValidateInput($('#createNewMapName'),
+        result = ValidationHelper.validateInput($('#createNewMapName'),
           [{ kind: 'required' },
           { kind: 'istext' }]);
 
@@ -1293,7 +1332,7 @@ window.mapwork.editor.environment = {
         else if ($('#createExistingProjectName').val() === '0') {
 
             // new project name
-            result = mapwork.helper.validation.ValidateInput($('#createNewProjectName'),
+            result = ValidationHelper.validateInput($('#createNewProjectName'),
               [{ kind: 'required' },
               { kind: 'istext' }]);
 
@@ -1303,7 +1342,7 @@ window.mapwork.editor.environment = {
             }
 
             // new project description
-            result = mapwork.helper.validation.ValidateInput($('#createNewProjectDescription'),
+            result = ValidationHelper.validateInput($('#createNewProjectDescription'),
               [{ kind: 'required' },
               { kind: 'istext' }]);
 
@@ -1319,8 +1358,8 @@ window.mapwork.editor.environment = {
             $('#createDialogStepTwo').show();
         }
 
-    },
-    CreateButtonCancel_Click: function (event) {
+    }
+    CreateButtonCancel_Click(event) {
         "use strict";
         // clear form
         $('#createNewMapName').val('');
@@ -1336,23 +1375,23 @@ window.mapwork.editor.environment = {
         $('.modalBlocker').hide();
 
 
-    },
-    BuildItem_Click: function (event) {
+    }
+    BuildItem_Click(event) {
         "use strict";
-        if (mapwork.viewcontroller.mapModel !== null && mapwork.viewcontroller.mapModel !== undefined) {
-            mapwork.editor.environment.PresentRibbonContextMenu('build');
+        if (scope.renderManager.mapModel !== null && scope.renderManager.mapModel !== undefined) {
+            scope.PresentRibbonContextMenu('build');
         }
-    },
-    SaveItem_Click: function (event) {
+    }
+    SaveItem_Click(event) {
         "use strict";
-        if (mapwork.viewcontroller.mapModel !== null && mapwork.viewcontroller.mapModel !== undefined) {
-            mapwork.editor.environment.PresentRibbonContextMenu('save');
+        if (scope.renderManager.mapModel !== null && scope.renderManager.mapModel !== undefined) {
+            scope.PresentRibbonContextMenu('save');
         }
-    },
-    PublishItem_Click: function (event) {
+    }
+    PublishItem_Click(event) {
         "use strict";
-        if (mapwork.viewcontroller.mapModel !== null && mapwork.viewcontroller.mapModel !== undefined) {
-            mapwork.editor.environment.PresentRibbonContextMenu('publish');
+        if (scope.renderManager.mapModel !== null && scope.renderManager.mapModel !== undefined) {
+            scope.PresentRibbonContextMenu('publish');
             // centre the create dialog
             $('#publishDialog').css('top', ((($('#leftBar').height() / 2) - $('#publishDialog').height() / 2) + "px"));
             $('#publishDialog').show();
@@ -1364,26 +1403,26 @@ window.mapwork.editor.environment = {
             $('.modalBlocker').show();
         }
 
-    },
-    PaletteItem_Click: function (event) {
+    }
+    PaletteItem_Click(event) {
         "use strict";
-        mapwork.editor.environment.PresentRibbonDialog('palette');
-    },
-    LayersItem_Click: function (event) {
+        scope.PresentRibbonDialog('palette');
+    }
+    LayersItem_Click(event) {
         "use strict";
-        mapwork.editor.environment.LoadLayersFromModel();
-        mapwork.editor.environment.PresentRibbonDialog('layers');
-    },
-    PropertiesItem_Click: function (event) {
+        scope.LoadLayersFromModel();
+        scope.PresentRibbonDialog('layers');
+    }
+    PropertiesItem_Click(event) {
         "use strict";
-        mapwork.editor.environment.PresentRibbonDialog('properties');
-    },
-    SettingsItem_Click: function (event) {
+        scope.PresentRibbonDialog('properties');
+    }
+    SettingsItem_Click(event) {
         "use strict";
-        mapwork.editor.environment.LoadSettingsFromModel();
-        mapwork.editor.environment.PresentRibbonDialog('settings');
-    },
-    PresentRibbonDialog: function (kind) {
+        scope.LoadSettingsFromModel();
+        scope.PresentRibbonDialog('settings');
+    }
+    PresentRibbonDialog(kind) {
         "use strict";
         $('#' + kind + 'Dialog').toggle();
 
@@ -1393,14 +1432,14 @@ window.mapwork.editor.environment = {
         }
         else {
             //// assign a tilesheet to the palette for selected layer
-            mapwork.editor.environment.PalletCanvasResize();
+            scope.PalletCanvasResize();
         }
 
         if (kind !== 'layers') {
             $('#layersDialog').hide();
         }
         else {
-            this.LoadLayersFromModel();
+            scope.LoadLayersFromModel();
         }
 
         if (kind !== 'properties') {
@@ -1424,7 +1463,7 @@ window.mapwork.editor.environment = {
             $('#settingsTileHeight').removeClass('errorBorder');
             $('#settingsTileWidth').removeClass('errorBorder');
 
-            this.LoadSettingsFromModel();
+            scope.LoadSettingsFromModel();
         }
 
 
@@ -1437,26 +1476,27 @@ window.mapwork.editor.environment = {
         }
 
         // do a canvas resize based on new dimensions of screen after toggle
-        mapwork.editor.environment.Window_Resize();
-    },
-    PresentRibbonContextMenu: function (kind) {
+        scope.Window_Resize();
+    }
+    PresentRibbonContextMenu(kind) {
         "use strict";
-        mapwork.editor.environment.PresentRibbonDialog('none');
+        scope.PresentRibbonDialog('none');
         if (kind === 'build') {
             $('#buildContextRibbon').show();
         }
         else {
             $('#buildContextRibbon').hide();
         }
-    },
-    PalletCanvasResize: function () {
+    }
+    PalletCanvasResize() {
+
         "use strict";
         var tilesheetWidth, tilesheetHeight, tileWidth, tileHeight, totalTiles, tilesPerRow, rowCount, pickerWidth, pickerHeight;
-        if (this.selectedLayer !== null) {
-            tilesheetWidth = mapwork.viewcontroller.mapModel.getLayerByZPosition(mapwork.editor.environment.selectedLayer).getTilesetWidth();
-            tilesheetHeight = mapwork.viewcontroller.mapModel.getLayerByZPosition(mapwork.editor.environment.selectedLayer).getTilesetHeight();
-            tileWidth = mapwork.viewcontroller.mapModel.getTileWidth();
-            tileHeight = mapwork.viewcontroller.mapModel.getTileHeight();
+        if (scope.selectedLayer !== null) {
+            tilesheetWidth = scope.renderManager.mapModel.getLayerByZPosition(scope.selectedLayer).getTilesetWidth();
+            tilesheetHeight = scope.renderManager.mapModel.getLayerByZPosition(scope.selectedLayer).getTilesetHeight();
+            tileWidth = scope.renderManager.mapModel.getTileWidth();
+            tileHeight = scope.renderManager.mapModel.getTileHeight();
             tilesPerRow = (256 / tileWidth);
             totalTiles = (tilesheetWidth / tileWidth) * (tilesheetHeight / tileHeight);
             rowCount = Math.ceil(totalTiles / tilesPerRow);
@@ -1465,45 +1505,46 @@ window.mapwork.editor.environment = {
 
 
             document.getElementById('paletteCanvas').height = pickerHeight;
-            mapwork.viewcontroller.tilesetTilesAccross = (tilesheetWidth / tileWidth);
-            mapwork.viewcontroller.tilesetTilesDown = (tilesheetHeight / tileHeight);
-            mapwork.viewcontroller.pickerRowCount = rowCount;
-            mapwork.viewcontroller.pickerTilesPerRow = tilesPerRow;
-            mapwork.viewcontroller.totalPickerTiles = totalTiles;
+            scope.renderManager.tilesetTilesAccross = (tilesheetWidth / tileWidth);
+            scope.renderManager.tilesetTilesDown = (tilesheetHeight / tileHeight);
+            scope.renderManager.pickerRowCount = rowCount;
+            scope.renderManager.pickerTilesPerRow = tilesPerRow;
+            scope.renderManager.totalPickerTiles = totalTiles;
         }
+    }
 
-    },
-    LoadTilesetList: function () {
+
+    LoadTilesetList() {
         "use strict";
       /*  $.ajax({
             url: 'Editor/GetTilesetFilenames',
             type: 'GET',
             contentType: 'application/json',
             dataType: 'json',
-            success: mapwork.editor.environment.LoadTilesetList_Success,
-            error: mapwork.editor.environment.LoadTilesetList_Error
+            success: scope.LoadTilesetList_Success,
+            error: scope.LoadTilesetList_Error
         });
         */
 
         var result = ["brick_tiles_64.png","default_tileset.png","dirt_tiles.png","environment_tiles_64.png","furniture_tiles.png","grass_tiles.png","inside_tiles_64.png","lightgrass_tiles.png","platform_tiles.png","terrain_tiles.png","village_tiles.png","water_tiles.png"];
 
-        mapwork.editor.environment.LoadTilesetList_Success(result);
-    },
-    LoadTilesetList_Success: function (data) {
+        scope.LoadTilesetList_Success(result);
+    }
+    LoadTilesetList_Success(data) {
         "use strict";
-        mapwork.editor.environment.tilesets = data;
-    },
-    LoadTilesetList_Error: function (data) {
+        scope.tilesets = data;
+    }
+    LoadTilesetList_Error(data) {
         "use strict";
-        mapwork.editor.environment.DisplayNotification('Failed to retrieve tilesets from server', 'red');
-    },
-    LayerSelectTileset_Change: function (event) {
+        scope.DisplayNotification('Failed to retrieve tilesets from server', 'red');
+    }
+    LayerSelectTileset_Change(event) {
         "use strict";
-        $(this).parent().parent().data('zPosition');
-        mapwork.viewcontroller.mapModel.getLayerByZPosition(parseInt($(this).parent().parent().data('zPosition'), 10)).setTilesetPath($(this).val());
-        mapwork.editor.environment.PalletCanvasResize();
-    },
-    DisplayNotification: function (message, colour) {
+        $(event.target).parent().parent().data('zPosition');
+        scope.renderManager.mapModel.getLayerByZPosition(parseInt($(event.target).parent().parent().data('zPosition'), 10)).setTilesetPath($(event.target).val());
+        () => {scope.PalletCanvasResize()}
+    }
+    DisplayNotification(message, colour) {
         "use strict";
         if (colour === 'red') {
             $('#notificationBanner').addClass('redNotification');
@@ -1515,33 +1556,14 @@ window.mapwork.editor.environment = {
             $('#notificationBanner').removeClass('redNotification');
         }
 
-        clearTimeout(mapwork.editor.environment.notificationTimeout);
+        clearTimeout(scope.notificationTimeout);
         $('#notificationBanner').hide();
         $('#notificationBanner span').text(message);
         $('#notificationBanner').slideDown(200, function () {
-            mapwork.editor.environment.notificationTimeout = setTimeout(function () {
+            scope.notificationTimeout = setTimeout(function () {
                 $('#notificationBanner').slideUp(200);
             }, 5000);
         });
-    },
-    editorMoveInterval: null,
-    editorClickInterval: null,
-    selectedLayer: null,
-    selectedTool: null,
-    selectedPalleteTile: 0,
-    selectedTile: null,
-    leftMouseButtonDown: false,
-    arrowKeyDown: false,
-    mouseX: null,
-    mouseY: null,
-    areaSelectEnabled: false,
-    areaSelectX: null,
-    areaSelectY: null,
-    selectedAreaTiles: null,
-    gridEnabled: true,
-    downloadToken: null,
-    downloadInterval: null,
-    tilesets: null,
-    notificationTimeout: null
+    }
 
-};
+}
