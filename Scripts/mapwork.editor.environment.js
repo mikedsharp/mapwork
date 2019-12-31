@@ -2,6 +2,7 @@
 import {Layer} from './mapwork.model.layer';
 import {Camera} from './mapwork.view.camera';
 import {ChangeRecorder} from './mapwork.editor.changes';
+import {ValidationHelper} from './mapwork.helper.validation';
 
 const changeRecorder = new ChangeRecorder();
 
@@ -159,7 +160,7 @@ window.mapwork.editor.environment = {
 
         // validate each field an add error borders where appropriate
 
-        result = mapwork.helper.validation.ValidateInput($('#settingsMapName'),
+        result = ValidationHelper.validateInput($('#settingsMapName'),
                  [{ kind: 'required' },
                 { kind: 'istext' }]);
 
@@ -168,7 +169,7 @@ window.mapwork.editor.environment = {
             valid = false;
         }
 
-        result = mapwork.helper.validation.ValidateInput($('#settingsTilesAccross'),
+        result = ValidationHelper.validateInput($('#settingsTilesAccross'),
             [{ kind: 'required' },
                 { kind: 'isnumeric' },
                 { kind: 'min', value: 1 }]);
@@ -178,7 +179,7 @@ window.mapwork.editor.environment = {
             valid = false;
 
         }
-        result = mapwork.helper.validation.ValidateInput($('#settingsTilesDown'),
+        result = ValidationHelper.validateInput($('#settingsTilesDown'),
            [{ kind: 'required' },
                { kind: 'isnumeric' },
                { kind: 'min', value: 1 }]);
@@ -187,7 +188,7 @@ window.mapwork.editor.environment = {
             $('#settingsTilesDown').addClass('errorBorder');
             valid = false;
         }
-        //result = mapwork.helper.validation.ValidateInput($('#settingsTileWidth'),
+        //result = ValidationHelper.validateInput($('#settingsTileWidth'),
         //    [{ kind: 'required' },
         //        { kind: 'isnumeric' },
         //        { kind: 'min', value: 1 }]);
@@ -196,7 +197,7 @@ window.mapwork.editor.environment = {
         //    $('#settingsTileWidth').addClass('errorBorder');
         //    valid = false;
         //}
-        //result = mapwork.helper.validation.ValidateInput($('#settingsTileHeight'),
+        //result = ValidationHelper.validateInput($('#settingsTileHeight'),
         //    [{ kind: 'required' },
         //        { kind: 'isnumeric' },
         //        { kind: 'min', value: 1 }]);
@@ -504,7 +505,7 @@ window.mapwork.editor.environment = {
 
         if ($(this).parent().parent().find('.layerNameInput').is(':visible')) {
             // validate selection
-            result = mapwork.helper.validation.ValidateInput($(this).parent().parent().find('.layerNameInput'),
+            result = ValidationHelper.validateInput($(this).parent().parent().find('.layerNameInput'),
              [{ kind: 'required' },
              { kind: 'istext' }]);
 
@@ -1058,7 +1059,7 @@ window.mapwork.editor.environment = {
 
 
         // tiles accross
-        result = mapwork.helper.validation.ValidateInput($('#inpCreateHorizontalTiles'),
+        result = ValidationHelper.validateInput($('#inpCreateHorizontalTiles'),
           [{ kind: 'required' },
           { kind: 'isnumeric' },
           { kind: 'min', value: 1 }]);
@@ -1069,7 +1070,7 @@ window.mapwork.editor.environment = {
         }
 
         // tiles down
-        result = mapwork.helper.validation.ValidateInput($('#inpCreateVerticalTiles'),
+        result = ValidationHelper.validateInput($('#inpCreateVerticalTiles'),
           [{ kind: 'required' },
           { kind: 'isnumeric' },
           { kind: 'min', value: 1 }]);
@@ -1085,7 +1086,7 @@ window.mapwork.editor.environment = {
         }
 
         // tile width
-        //result = mapwork.helper.validation.ValidateInput($('#inpCreateTileWidth'),
+        //result = ValidationHelper.validateInput($('#inpCreateTileWidth'),
         //  [{ kind: 'required' },
         //  { kind: 'isnumeric' },
         //  { kind: 'min', value: 1 }]);
@@ -1095,7 +1096,7 @@ window.mapwork.editor.environment = {
         //    valid = false;
         //}
         // tile height
-        //result = mapwork.helper.validation.ValidateInput($('#inpCreateTileHeight'),
+        //result = ValidationHelper.validateInput($('#inpCreateTileHeight'),
         // [{ kind: 'required' },
         // { kind: 'isnumeric' },
         // { kind: 'min', value: 1 }]);
@@ -1279,7 +1280,7 @@ window.mapwork.editor.environment = {
 
 
         // new map name
-        result = mapwork.helper.validation.ValidateInput($('#createNewMapName'),
+        result = ValidationHelper.validateInput($('#createNewMapName'),
           [{ kind: 'required' },
           { kind: 'istext' }]);
 
@@ -1297,7 +1298,7 @@ window.mapwork.editor.environment = {
         else if ($('#createExistingProjectName').val() === '0') {
 
             // new project name
-            result = mapwork.helper.validation.ValidateInput($('#createNewProjectName'),
+            result = ValidationHelper.validateInput($('#createNewProjectName'),
               [{ kind: 'required' },
               { kind: 'istext' }]);
 
@@ -1307,7 +1308,7 @@ window.mapwork.editor.environment = {
             }
 
             // new project description
-            result = mapwork.helper.validation.ValidateInput($('#createNewProjectDescription'),
+            result = ValidationHelper.validateInput($('#createNewProjectDescription'),
               [{ kind: 'required' },
               { kind: 'istext' }]);
 
