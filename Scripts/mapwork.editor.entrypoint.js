@@ -4,6 +4,4 @@ $(document).ready(function() {
   'use strict';
   //Init Environment
   mapwork.editor.environment.Init();
-  mapwork.rendermanager.Init();
-  //   mapwork.worker.Init();
 });
