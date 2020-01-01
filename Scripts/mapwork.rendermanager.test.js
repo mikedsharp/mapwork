@@ -30,8 +30,14 @@ describe('mapwork.rendermanager.js', () => {
       expect(renderManagerSpy).toHaveBeenCalledTimes(1);
     });
   });
-  describe('BindEvent()', () => {});
-  describe('InitiateRenderLoop()', () => {});
+  describe('InitiateRenderLoop()', () => {
+    it(`should create a timeout that calls the DrawMap function`, () => {
+      jest.useFakeTimers();
+      testRenderManager.InitiateRenderLoop();
+      expect(setTimeout).toHaveBeenCalledTimes(1);
+      expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 50);
+    });
+  });
   describe('DrawMap()', () => {});
   describe('clearCanvas(context, width, height)', () => {});
   describe('drawStencilBrush(context)', () => {});

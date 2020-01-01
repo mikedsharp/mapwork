@@ -17,9 +17,6 @@
     'use strict';
     this.InitiateRenderLoop();
   }
-  BindEvent() {
-    'use strict';
-  }
   InitiateRenderLoop() {
     'use strict';
     setTimeout(() => {
