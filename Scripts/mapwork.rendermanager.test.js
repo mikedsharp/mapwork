@@ -21,7 +21,7 @@ describe('mapwork.rendermanager.js', () => {
     });
   });
   describe('Init()', () => {
-    it(`should call InitiateRenderLoop()`, () => {
+    it(`should call InitiateRenderLoop() webhook test`, () => {
       const renderManagerSpy = jest.spyOn(
         testRenderManager,
         'InitiateRenderLoop'
