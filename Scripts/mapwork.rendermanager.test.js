@@ -1,20 +1,49 @@
 // for when we have real modules
-//import './mapwork.rendermanager.js';
-
+import { RenderManager } from './mapwork.rendermanager';
+import { isIterable } from 'core-js';
+let testRenderManager;
+let MockEditorEnvironment = {};
 describe('mapwork.rendermanager.js', () => {
-  describe('Init', () => {
-    // this structure will work when I turn the project into proper modules
-    // it('Should call InitateRenderLoop function once', () => {
-    //   const spy = jest.fn();
-    //   jest
-    //     .spyOn(window.mapwork.rendermanager, 'InitiateRenderLoop')
-    //     .mockImplementation(() => {});
-    //   expect(spy).toHaveBeenCalledTimes(1);
-    // });
-    // for now we just do a basic check on an object to prove the test framework is
-    // functioning correctly
-    it('true should be true', () => {
-      expect(true).toBe(true);
+  beforeEach(() => {
+    testRenderManager = new RenderManager(MockEditorEnvironment);
+  });
+  describe('constructor', () => {
+    it(`should instantiate RenderManager with some sensible defaults`, () => {
+      expect(testRenderManager.mapModel).toEqual(null);
+      expect(testRenderManager.camera).toEqual(null);
+      expect(testRenderManager.renderFlag).toBe(true);
+      expect(testRenderManager.viewFPS).toEqual(20);
+      expect(testRenderManager.tilesetTilesAccross).toEqual(null);
+      expect(testRenderManager.tilesetTilesDown).toEqual(null);
+      expect(testRenderManager.pickerRowCount).toEqual(null);
+      expect(testRenderManager.pickerTilesPerRow).toEqual(null);
+      expect(testRenderManager.totalPickerTiles).toEqual(null);
     });
   });
+  describe('Init()', () => {
+    it(`should call InitiateRenderLoop()`, () => {
+      const renderManagerSpy = jest.spyOn(
+        testRenderManager,
+        'InitiateRenderLoop'
+      );
+      testRenderManager.Init();
+      expect(renderManagerSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+  describe('InitiateRenderLoop()', () => {
+    it(`should create a timeout that calls the DrawMap function`, () => {
+      jest.useFakeTimers();
+      testRenderManager.InitiateRenderLoop();
+      expect(setTimeout).toHaveBeenCalledTimes(1);
+      expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 50);
+    });
+  });
+  describe('DrawMap()', () => {});
+  describe('clearCanvas(context, width, height)', () => {});
+  describe('drawStencilBrush(context)', () => {});
+  describe('renderMapTiles(context)', () => {});
+  describe('renderAreaSelectTool(context)', () => {});
+  describe('renderGrid(context)', () => {});
+  describe('renderTilePicker()', () => {});
+  describe('getPickerTileCode(x, y)', () => {});
 });
