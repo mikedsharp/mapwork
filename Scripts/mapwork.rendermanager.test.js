@@ -102,7 +102,25 @@ describe('mapwork.rendermanager.js', () => {
       expect(renderTilePickerSpy).not.toHaveBeenCalled();
     });
   });
-  describe('clearCanvas(context, width, height)', () => {});
+  describe('clearCanvas(context, width, height)', () => {
+    let canvas, context, width, height;
+    beforeEach(() => {
+      canvas = document.getElementById('editorCanvas');
+      context = canvas.getContext('2d');
+      width = 640;
+      height = 480;
+    });
+    it(`should adjust canvas context to draw a white fill colour`, () => {
+      testRenderManager.clearCanvas(context, width, height);
+      expect(context.fillStyle).toEqual('#fff');
+    });
+    it(`should call fillRect to fill the canvas with fill colour to 'clear' it for next frame`, () => {
+      const canvasFillRectSpy = jest.spyOn(context, 'fillRect');
+      testRenderManager.clearCanvas(context, width, height);
+      expect(canvasFillRectSpy).toHaveBeenCalledTimes(1);
+      expect(canvasFillRectSpy).toHaveBeenLastCalledWith(0, 0, width, height);
+    });
+  });
   describe('drawStencilBrush(context)', () => {});
   describe('renderMapTiles(context)', () => {});
   describe('renderAreaSelectTool(context)', () => {});
