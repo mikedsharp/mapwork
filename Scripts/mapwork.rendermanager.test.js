@@ -5,6 +5,23 @@ import { Map } from './mapwork.model.map';
 import { isIterable } from 'core-js';
 let testRenderManager;
 let MockEditorEnvironment = {};
+
+describe('mapwork.rendermanager.js barebones', () => {
+  describe('constructor', () => {
+    it(`should instantiate RenderManager with some sensible defaults`, () => {
+      testRenderManager = new RenderManager(MockEditorEnvironment);
+      expect(testRenderManager.mapModel).toEqual(null);
+      expect(testRenderManager.camera).toEqual(null);
+      expect(testRenderManager.renderFlag).toBe(true);
+      expect(testRenderManager.viewFPS).toEqual(20);
+      expect(testRenderManager.tilesetTilesAccross).toEqual(null);
+      expect(testRenderManager.tilesetTilesDown).toEqual(null);
+      expect(testRenderManager.pickerRowCount).toEqual(null);
+      expect(testRenderManager.pickerTilesPerRow).toEqual(null);
+      expect(testRenderManager.totalPickerTiles).toEqual(null);
+    });
+  });
+});
 describe('mapwork.rendermanager.js', () => {
   beforeEach(() => {
     testRenderManager = new RenderManager(MockEditorEnvironment);
@@ -17,19 +34,6 @@ describe('mapwork.rendermanager.js', () => {
       <canvas id="editorCanvas"></canvas>
     </div>
     `;
-  });
-  describe('constructor', () => {
-    it(`should instantiate RenderManager with some sensible defaults`, () => {
-      // expect(testRenderManager.mapModel).toEqual(null);
-      // expect(testRenderManager.camera).toEqual(null);
-      expect(testRenderManager.renderFlag).toBe(true);
-      expect(testRenderManager.viewFPS).toEqual(20);
-      expect(testRenderManager.tilesetTilesAccross).toEqual(null);
-      expect(testRenderManager.tilesetTilesDown).toEqual(null);
-      expect(testRenderManager.pickerRowCount).toEqual(null);
-      expect(testRenderManager.pickerTilesPerRow).toEqual(null);
-      expect(testRenderManager.totalPickerTiles).toEqual(null);
-    });
   });
   describe('Init()', () => {
     it(`should call InitiateRenderLoop()`, () => {
