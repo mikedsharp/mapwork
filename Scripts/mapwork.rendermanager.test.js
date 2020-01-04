@@ -72,6 +72,8 @@ describe('mapwork.rendermanager.js', () => {
     it(`should run all rendering routines, as we have a map model and render flag is set to true`, () => {
       testRenderManager.renderFlag = true;
       testRenderManager.DrawMap();
+      const canvas = document.getElementById('editorCanvas');
+      const context = canvas.getContext('2d');
 
       expect(clearCanvasSpy).toHaveBeenCalledTimes(1);
       expect(renderMapTilesSpy).toHaveBeenCalledTimes(1);
@@ -79,6 +81,16 @@ describe('mapwork.rendermanager.js', () => {
       expect(drawStencilBrushSpy).toHaveBeenCalledTimes(1);
       expect(renderTilePickerSpy).toHaveBeenCalledTimes(1);
       expect(renderGridSpy).toHaveBeenCalledTimes(1);
+
+      expect(clearCanvasSpy).toHaveBeenCalledWith(
+        context,
+        canvas.width,
+        canvas.height
+      );
+      expect(renderMapTilesSpy).toHaveBeenCalledWith(context);
+      expect(renderAreaSelectToolSpy).toHaveBeenCalledWith(context);
+      expect(drawStencilBrushSpy).toHaveBeenCalledWith(context);
+      expect(renderGridSpy).toHaveBeenCalledWith(context);
     });
     it(`should not run any rendering routines, render flag is set to false`, () => {
       testRenderManager.renderFlag = false;
