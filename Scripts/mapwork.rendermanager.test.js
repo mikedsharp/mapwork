@@ -6,6 +6,7 @@ import { isIterable } from 'core-js';
 import { Layer } from './mapwork.model.layer';
 let testRenderManager;
 let MockEditorEnvironment = {};
+let mockLayer;
 
 describe('mapwork.rendermanager.js barebones', () => {
   describe('constructor', () => {
@@ -38,6 +39,16 @@ describe('mapwork.rendermanager.js', () => {
     MockEditorEnvironment.selectedAreaTiles = {
       rows: [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]
     };
+    MockEditorEnvironment.selectedLayer = 0;
+    mockLayer = new Layer(MockEditorEnvironment);
+    mockLayer.zPosition = 0;
+    testRenderManager.mapModel.layers = [];
+    testRenderManager.mapModel.addLayer(mockLayer);
+    mockLayer.createBlankModelLayer(
+      testRenderManager.mapModel,
+      'new-layer',
+      ''
+    );
 
     document.body.innerHTML = `<div>
       <canvas id="editorCanvas"></canvas>
@@ -81,6 +92,7 @@ describe('mapwork.rendermanager.js', () => {
       drawStencilBrushSpy = jest.spyOn(testRenderManager, 'drawStencilBrush');
       renderTilePickerSpy = jest.spyOn(testRenderManager, 'renderTilePicker');
       renderGridSpy = jest.spyOn(testRenderManager, 'renderGrid');
+      MockEditorEnvironment.selectedTool = 'pasteTiles';
     });
     it(`should run all rendering routines, as we have a map model and render flag is set to true`, () => {
       testRenderManager.renderFlag = true;
@@ -150,7 +162,6 @@ describe('mapwork.rendermanager.js', () => {
     let canvas, context, width, height;
     let contextStrokeRectSpy;
     let contextDrawImageSpy;
-    let mockLayer;
 
     beforeEach(() => {
       jest.clearAllMocks();
@@ -160,10 +171,6 @@ describe('mapwork.rendermanager.js', () => {
       height = 480;
       contextStrokeRectSpy = jest.spyOn(context, 'strokeRect');
       contextDrawImageSpy = jest.spyOn(context, 'drawImage');
-      MockEditorEnvironment.selectedLayer = 0;
-      mockLayer = new Layer(MockEditorEnvironment);
-      mockLayer.zPosition = 0;
-      testRenderManager.mapModel.addLayer(mockLayer);
     });
     it(`should proceed to drawing the stencilBrush on the canvas,
       because the selectedTool is 'pasteTiles' and an area is selected to paste`, () => {
