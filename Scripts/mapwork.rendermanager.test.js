@@ -3,6 +3,7 @@ import { RenderManager } from './mapwork.rendermanager';
 import { Camera } from './mapwork.view.camera';
 import { Map } from './mapwork.model.map';
 import { isIterable } from 'core-js';
+import { Layer } from './mapwork.model.layer';
 let testRenderManager;
 let MockEditorEnvironment = {};
 
@@ -25,10 +26,18 @@ describe('mapwork.rendermanager.js barebones', () => {
 describe('mapwork.rendermanager.js', () => {
   beforeEach(() => {
     testRenderManager = new RenderManager(MockEditorEnvironment);
+    testRenderManager.totalPickerTiles = 10;
     testRenderManager.mapModel = new Map({});
     testRenderManager.mapModel.createBlankModel('test', 32, 32, 8, 6);
     testRenderManager.camera = new Camera(testRenderManager.mapModel);
     testRenderManager.camera.setupCamera(0, 0, 128, 128, 1024, 768);
+    MockEditorEnvironment.tilesetTilesAccross = 10;
+    MockEditorEnvironment.tilesetTilesDown = 1;
+    MockEditorEnvironment.pickerRowCount = 1;
+    MockEditorEnvironment.pickerTilesPerRow = 10;
+    MockEditorEnvironment.selectedAreaTiles = {
+      rows: [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]
+    };
 
     document.body.innerHTML = `<div>
       <canvas id="editorCanvas"></canvas>
@@ -137,7 +146,47 @@ describe('mapwork.rendermanager.js', () => {
       expect(canvasFillRectSpy).toHaveBeenLastCalledWith(0, 0, width, height);
     });
   });
-  describe('drawStencilBrush(context)', () => {});
+  describe('drawStencilBrush(context)', () => {
+    let canvas, context, width, height;
+    let contextStrokeRectSpy;
+    let contextDrawImageSpy;
+    let mockLayer;
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      canvas = document.getElementById('editorCanvas');
+      context = canvas.getContext('2d');
+      width = 640;
+      height = 480;
+      contextStrokeRectSpy = jest.spyOn(context, 'strokeRect');
+      contextDrawImageSpy = jest.spyOn(context, 'drawImage');
+      MockEditorEnvironment.selectedLayer = 0;
+      mockLayer = new Layer(MockEditorEnvironment);
+      mockLayer.zPosition = 0;
+      testRenderManager.mapModel.addLayer(mockLayer);
+    });
+    it(`should proceed to drawing the stencilBrush on the canvas,
+      because the selectedTool is 'pasteTiles' and an area is selected to paste`, () => {
+      MockEditorEnvironment.selectedTool = 'pasteTiles';
+      testRenderManager.drawStencilBrush(context);
+      expect(contextDrawImageSpy).toHaveBeenCalledTimes(10);
+      expect(contextStrokeRectSpy).toHaveBeenCalledTimes(1);
+    });
+    it(`should not draw stencil brush, there are no tiles selected to paste`, () => {
+      // testRenderManager.drawStencilBrush(context);
+      MockEditorEnvironment.selectedAreaTiles = null;
+      MockEditorEnvironment.selectedTool = 'pasteTiles';
+      expect(contextDrawImageSpy).not.toHaveBeenCalled();
+      expect(contextStrokeRectSpy).not.toHaveBeenCalled();
+    });
+    it(`should not draw stencil brush, the selected tool is not the 'pasteTiles' tool`, () => {
+      MockEditorEnvironment.selectedAreaTiles = { rows: [{}, {}, {}] };
+      MockEditorEnvironment.selectedTool = null;
+      testRenderManager.drawStencilBrush(context);
+      expect(contextDrawImageSpy).not.toHaveBeenCalled();
+      expect(contextStrokeRectSpy).not.toHaveBeenCalled();
+    });
+  });
   describe('renderMapTiles(context)', () => {});
   describe('renderAreaSelectTool(context)', () => {});
   describe('renderGrid(context)', () => {});
