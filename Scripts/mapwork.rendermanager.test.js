@@ -180,9 +180,9 @@ describe('mapwork.rendermanager.js', () => {
       expect(contextStrokeRectSpy).toHaveBeenCalledTimes(1);
     });
     it(`should not draw stencil brush, there are no tiles selected to paste`, () => {
-      // testRenderManager.drawStencilBrush(context);
       MockEditorEnvironment.selectedAreaTiles = null;
       MockEditorEnvironment.selectedTool = 'pasteTiles';
+      testRenderManager.drawStencilBrush(context);
       expect(contextDrawImageSpy).not.toHaveBeenCalled();
       expect(contextStrokeRectSpy).not.toHaveBeenCalled();
     });
