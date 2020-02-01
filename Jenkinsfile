@@ -19,8 +19,12 @@ pipeline {
                 withEnv(["JEST_JUNIT_OUTPUT=./junit.xml"]) {
                     sh 'npm run test-ci'
                 }
-                junit: 'junit.xml'
-                [$class: 'CoberturaPublisher', coberturaReportFile: 'coverage/cobertura-coverage.xml']
+                junit 'junit.xml'
+                try {
+                    [$class: 'CoberturaPublisher', coberturaReportFile: 'coverage/cobertura-coverage.xml']
+                } catch(ex) {
+
+                } 
 
             }
         }
