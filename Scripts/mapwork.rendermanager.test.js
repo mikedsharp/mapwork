@@ -230,6 +230,17 @@ describe('mapwork.rendermanager.js', () => {
       testRenderManager.renderMapTiles(context);
       expect(drawImageSpy).toHaveBeenCalledTimes(16);
     });
+    it(`should render 0 tiles on map, the layers are set to be invisible`, () => {
+      for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 6; j++) {
+          testRenderManager.mapModel.layers[0].getTile(i, j).setTileCode(1);
+        }
+      }
+      testRenderManager.mapModel.layers[0].setVisibility(false);
+      testRenderManager.camera.setupCamera(0, 0, 256, 192, 256, 192);
+      testRenderManager.renderMapTiles(context);
+      expect(drawImageSpy).toHaveBeenCalledTimes(0);
+    });
 
     it(`should render all 48 tiles on map, as all are defined with a tilecode that isn't -1, and the camera is
         clipped to the whole span of the map`, () => {
@@ -243,7 +254,102 @@ describe('mapwork.rendermanager.js', () => {
       expect(drawImageSpy).toHaveBeenCalledTimes(48);
     });
   });
-  describe('renderAreaSelectTool(context)', () => {});
+  describe('renderAreaSelectTool(context)', () => {
+    let canvas, context, width, height;
+    let strokeRectSpy;
+    beforeEach(() => {
+      jest.clearAllMocks();
+      canvas = document.getElementById('editorCanvas');
+      context = canvas.getContext('2d');
+      width = 640;
+      height = 480;
+      strokeRectSpy = jest.spyOn(context, 'strokeRect');
+    });
+    it(`should not make any calls to strokeRect,
+          because EditorEnvironment.areaSelectEnabled is 'false'`, () => {
+      MockEditorEnvironment.areaSelectX = 0;
+      MockEditorEnvironment.mouseX = 128;
+      MockEditorEnvironment.areaSelectY = 0;
+      MockEditorEnvironment.mouseY = 128;
+
+      MockEditorEnvironment.areaSelectEnabled = false;
+      testRenderManager.renderAreaSelectTool(context);
+      expect(strokeRectSpy).not.toHaveBeenCalled();
+    });
+
+    it(`should call strokeRect, because areaSelectEnabled is 'true'`, () => {
+      MockEditorEnvironment.areaSelectX = 0;
+      MockEditorEnvironment.mouseX = 128;
+      MockEditorEnvironment.areaSelectY = 0;
+      MockEditorEnvironment.mouseY = 128;
+
+      MockEditorEnvironment.areaSelectEnabled = true;
+      testRenderManager.renderAreaSelectTool(context);
+      expect(strokeRectSpy).toHaveBeenCalledTimes(1);
+    });
+    it(`should call strokeRect, areaSelectX < mouseX`, () => {
+      MockEditorEnvironment.areaSelectX = 0;
+      MockEditorEnvironment.mouseX = 128;
+      MockEditorEnvironment.areaSelectY = 0;
+      MockEditorEnvironment.mouseY = 128;
+
+      MockEditorEnvironment.areaSelectEnabled = true;
+      testRenderManager.renderAreaSelectTool(context);
+      expect(strokeRectSpy).toHaveBeenCalledWith(
+        MockEditorEnvironment.areaSelectX,
+        MockEditorEnvironment.areaSelectY,
+        128,
+        128
+      );
+    });
+
+    it(`should call strokeRect, areaSelectX > mouseX`, () => {
+      MockEditorEnvironment.areaSelectX = 128;
+      MockEditorEnvironment.mouseX = 0;
+      MockEditorEnvironment.areaSelectY = 0;
+      MockEditorEnvironment.mouseY = 128;
+
+      MockEditorEnvironment.areaSelectEnabled = true;
+      testRenderManager.renderAreaSelectTool(context);
+      expect(strokeRectSpy).toHaveBeenCalledWith(
+        MockEditorEnvironment.mouseX,
+        MockEditorEnvironment.areaSelectY,
+        128,
+        128
+      );
+    });
+
+    it(`should call strokeRect, areaSelectY > mouseY`, () => {
+      MockEditorEnvironment.areaSelectX = 128;
+      MockEditorEnvironment.mouseX = 0;
+      MockEditorEnvironment.areaSelectY = 128;
+      MockEditorEnvironment.mouseY = 0;
+
+      MockEditorEnvironment.areaSelectEnabled = true;
+      testRenderManager.renderAreaSelectTool(context);
+      expect(strokeRectSpy).toHaveBeenCalledWith(
+        MockEditorEnvironment.mouseX,
+        MockEditorEnvironment.mouseY,
+        128,
+        128
+      );
+    });
+    it(`should call strokeRect, areaSelectY < mouseY`, () => {
+      MockEditorEnvironment.areaSelectX = 128;
+      MockEditorEnvironment.mouseX = 0;
+      MockEditorEnvironment.areaSelectY = 0;
+      MockEditorEnvironment.mouseY = 128;
+
+      MockEditorEnvironment.areaSelectEnabled = true;
+      testRenderManager.renderAreaSelectTool(context);
+      expect(strokeRectSpy).toHaveBeenCalledWith(
+        MockEditorEnvironment.mouseX,
+        MockEditorEnvironment.areaSelectY,
+        128,
+        128
+      );
+    });
+  });
   describe('renderGrid(context)', () => {});
   describe('renderTilePicker()', () => {});
   describe('getPickerTileCode(x, y)', () => {});
