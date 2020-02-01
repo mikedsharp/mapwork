@@ -41,6 +41,8 @@ describe('mapwork.rendermanager.js', () => {
     };
     MockEditorEnvironment.selectedLayer = 0;
     mockLayer = new Layer(MockEditorEnvironment);
+    mockLayer.tilesetWidth = 128;
+    mockLayer.tilesetHeight = 64;
     mockLayer.zPosition = 0;
     testRenderManager.mapModel.layers = [];
     testRenderManager.mapModel.addLayer(mockLayer);
@@ -194,7 +196,53 @@ describe('mapwork.rendermanager.js', () => {
       expect(contextStrokeRectSpy).not.toHaveBeenCalled();
     });
   });
-  describe('renderMapTiles(context)', () => {});
+  describe('renderMapTiles(context)', () => {
+    let canvas, context, width, height;
+    let drawImageSpy;
+    beforeEach(() => {
+      jest.clearAllMocks();
+      canvas = document.getElementById('editorCanvas');
+      context = canvas.getContext('2d');
+      width = 640;
+      height = 480;
+      drawImageSpy = jest.spyOn(context, 'drawImage');
+    });
+    it(`should render 0 tiles, as the map only contains 'empty' -1 tiles`, () => {
+      testRenderManager.renderMapTiles(context);
+      expect(drawImageSpy).not.toHaveBeenCalled();
+    });
+    it(`should render 5 tiles, as 5 tiles on the map have been defined (i.e. are not -1)`, () => {
+      testRenderManager.mapModel.layers[0].getTile(1, 1).setTileCode(1);
+      testRenderManager.mapModel.layers[0].getTile(1, 2).setTileCode(1);
+      testRenderManager.mapModel.layers[0].getTile(2, 1).setTileCode(1);
+      testRenderManager.mapModel.layers[0].getTile(3, 3).setTileCode(1);
+      testRenderManager.mapModel.layers[0].getTile(2, 2).setTileCode(1);
+      testRenderManager.renderMapTiles(context);
+      expect(drawImageSpy).toHaveBeenCalledTimes(5);
+    });
+    it(`should render 16 of the 48 tiles on map, as all are defined with a tilecode that isn't -1, but the camera crops the canvas 
+          to an area of 4 x 4 tiles`, () => {
+      for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 6; j++) {
+          testRenderManager.mapModel.layers[0].getTile(i, j).setTileCode(1);
+        }
+      }
+      testRenderManager.renderMapTiles(context);
+      expect(drawImageSpy).toHaveBeenCalledTimes(16);
+    });
+
+    it(`should render all 48 tiles on map, as all are defined with a tilecode that isn't -1, and the camera is
+        clipped to the whole span of the map`, () => {
+      for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 6; j++) {
+          testRenderManager.mapModel.layers[0].getTile(i, j).setTileCode(1);
+        }
+      }
+      testRenderManager.camera.setupCamera(0, 0, 256, 192, 256, 192);
+      testRenderManager.renderMapTiles(context);
+      expect(drawImageSpy).toHaveBeenCalledTimes(48);
+    });
+  });
   describe('renderAreaSelectTool(context)', () => {});
   describe('renderGrid(context)', () => {});
   describe('renderTilePicker()', () => {});
