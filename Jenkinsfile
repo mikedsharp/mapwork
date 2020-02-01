@@ -16,6 +16,12 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'npm run test'
+                withEnv(["JEST_JUNIT_OUTPUT=./junit.xml"]) {
+                    sh 'npm run test-ci'
+                }
+                junit: 'junit.xml'
+                [$class: 'CoberturaPublisher', coberturaReportFile: 'coverage/cobertura-coverage.xml']
+
             }
         }
         stage('Deliver') {
