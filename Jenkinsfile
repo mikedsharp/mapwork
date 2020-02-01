@@ -20,6 +20,9 @@ pipeline {
                     sh 'npm run test-ci'
                 }
                 junit 'junit.xml'
+                script {
+                    [$class: 'CoberturaPublisher', coberturaReportFile: 'coverage/cobertura-coverage.xml']
+                }
             }
         }
         stage('Deliver') {
