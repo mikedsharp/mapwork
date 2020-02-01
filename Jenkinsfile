@@ -20,12 +20,6 @@ pipeline {
                     sh 'npm run test-ci'
                 }
                 junit 'junit.xml'
-                try {
-                    [$class: 'CoberturaPublisher', coberturaReportFile: 'coverage/cobertura-coverage.xml']
-                } catch(ex) {
-
-                } 
-
             }
         }
         stage('Deliver') {
