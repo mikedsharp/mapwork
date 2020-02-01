@@ -2,7 +2,6 @@
 import { RenderManager } from './mapwork.rendermanager';
 import { Camera } from './mapwork.view.camera';
 import { Map } from './mapwork.model.map';
-import { isIterable } from 'core-js';
 import { Layer } from './mapwork.model.layer';
 let testRenderManager;
 let MockEditorEnvironment = {};
@@ -54,6 +53,11 @@ describe('mapwork.rendermanager.js', () => {
 
     document.body.innerHTML = `<div>
       <canvas id="editorCanvas"></canvas>
+    </div>
+    <div>
+      <div id="paletteDialog" style="visibility:visible;display:block;">
+      </div>
+      <canvas id="paletteCanvas"></canvas>
     </div>
     `;
   });
@@ -350,7 +354,84 @@ describe('mapwork.rendermanager.js', () => {
       );
     });
   });
-  describe('renderGrid(context)', () => {});
-  describe('renderTilePicker()', () => {});
-  describe('getPickerTileCode(x, y)', () => {});
+  describe('renderGrid(context)', () => {
+    let canvas, context, width, height;
+    let contextStrokeSpy,
+      contextLineToSpy,
+      contextMoveToSpy,
+      contextBeginPathSpy;
+    beforeEach(() => {
+      jest.clearAllMocks();
+      canvas = document.getElementById('editorCanvas');
+      context = canvas.getContext('2d');
+      width = 640;
+      height = 480;
+      contextStrokeSpy = jest.spyOn(context, 'stroke');
+      contextLineToSpy = jest.spyOn(context, 'lineTo');
+      contextMoveToSpy = jest.spyOn(context, 'moveTo');
+      contextBeginPathSpy = jest.spyOn(context, 'beginPath');
+    });
+    it(`should call context.stroke 14 times to draw grid lines at each row and
+        column of the map within the camera`, () => {
+      testRenderManager.camera.setupCamera(0, 0, 256, 192, 256, 192);
+      MockEditorEnvironment.gridEnabled = true;
+      testRenderManager.renderGrid(context);
+      expect(contextStrokeSpy).toHaveBeenCalledTimes(14);
+      expect(contextBeginPathSpy).toHaveBeenCalledTimes(14);
+      expect(contextMoveToSpy).toHaveBeenCalledTimes(14);
+      expect(contextLineToSpy).toHaveBeenCalledTimes(14);
+    });
+
+    it(`should call context.stroke 8 times to draw grid lines at each row and
+    column of the map within the camera, the camera is restricted to 128x128 of the map`, () => {
+      testRenderManager.camera.setupCamera(0, 0, 128, 128, 128, 128);
+      MockEditorEnvironment.gridEnabled = true;
+      testRenderManager.renderGrid(context);
+      expect(contextStrokeSpy).toHaveBeenCalledTimes(8);
+      expect(contextBeginPathSpy).toHaveBeenCalledTimes(8);
+      expect(contextMoveToSpy).toHaveBeenCalledTimes(8);
+      expect(contextLineToSpy).toHaveBeenCalledTimes(8);
+    });
+
+    it(`should not call any rendering functions, because EditorEnvironment.gridEnabled is 'false'`, () => {
+      testRenderManager.camera.setupCamera(0, 0, 256, 192, 256, 192);
+      MockEditorEnvironment.gridEnabled = false;
+      testRenderManager.renderGrid(context);
+      expect(contextStrokeSpy).not.toHaveBeenCalled();
+      expect(contextBeginPathSpy).not.toHaveBeenCalled();
+      expect(contextMoveToSpy).not.toHaveBeenCalled();
+      expect(contextLineToSpy).not.toHaveBeenCalled();
+    });
+  });
+  describe('renderTilePicker()', () => {
+    let canvas, context, width, height;
+    let jQuerySpy;
+    let contextFillSpy, contextDrawImage;
+    beforeEach(() => {
+      jest.clearAllMocks();
+      canvas = document.getElementById('paletteCanvas');
+      context = canvas.getContext('2d');
+      width = 640;
+      height = 480;
+      testRenderManager.pickerRowCount = 2;
+      testRenderManager.pickerTilesPerRow = 5;
+      contextFillSpy = jest.spyOn(context, 'fill');
+      contextDrawImage = jest.spyOn(context, 'drawImage');
+    });
+    it(`should refresh picker canvas with a fill colour and then render each tile in the tileset`, () => {
+      testRenderManager.renderTilePicker(true);
+      expect(contextFillSpy).toHaveBeenCalledTimes(1);
+      expect(contextDrawImage).toHaveBeenCalledTimes(10);
+    });
+  });
+  describe('getPickerTileCode(x, y)', () => {
+    beforeEach(() => {
+      testRenderManager.pickerRowCount = 2;
+      testRenderManager.pickerTilesPerRow = 5;
+    });
+    it(`should return the tilecode of 2 for a given set of mouse X,Y co-ordinates on the canvas`, () => {
+      testRenderManager.getPickerTileCode(64, 8);
+      expect(MockEditorEnvironment.selectedPalleteTile).toEqual(2);
+    });
+  });
 });

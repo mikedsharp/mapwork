@@ -297,13 +297,13 @@
     }
   }
 
-  renderTilePicker() {
+  renderTilePicker(palletteDialogVisible = false) {
     let pickerRowCount;
     let pickerCellCount;
     let tileCode;
 
     if (
-      $('#paletteDialog').is(':visible') &&
+      ($('#paletteDialog').is(':visible') || palletteDialogVisible) &&
       this.mapModel.getLayers().length > 0 &&
       this.EditorEnvironment.selectedLayer !== null
     ) {
