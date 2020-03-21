@@ -209,7 +209,7 @@ export class EditorEnvironment {
       }
     }
   }
-  Editor_KeyUp(event) {
+  Editor_KeyUp() {
     'use strict'
     // resolve repeating keys issue in opera
     if (window.opera) {
@@ -218,7 +218,7 @@ export class EditorEnvironment {
       scope.editorMoveInterval = null
     }
   }
-  SettingsToggleGrid_Change(event) {
+  SettingsToggleGrid_Change() {
     'use strict'
     if ($('#settingsToggleGrid:checked').length > 0) {
       scope.gridEnabled = true
@@ -227,7 +227,7 @@ export class EditorEnvironment {
     }
     //user toggles on-screen grid
   }
-  SettingsSaveChanges_Click(event) {
+  SettingsSaveChanges_Click() {
     'use strict'
     var result, valid
     valid = true
@@ -393,7 +393,7 @@ export class EditorEnvironment {
   }
   PropertiesInput_Blur(event) {
     'use strict'
-    var scopeValue, layerValue, tileValue, html, properties, x, y
+    var scopeValue, layerValue, html, properties
 
     scopeValue = parseInt($('#selectPropertyScope').val(), 10)
     layerValue = parseInt($('#selectLayerScope').val(), 10)
@@ -508,7 +508,7 @@ export class EditorEnvironment {
   SelectLayerScope_Change(event) {
     'use strict'
 
-    var inputValue, scopeValue, propertyCount, layerProperties, html
+    var inputValue, scopeValue
 
     scopeValue = parseInt($('#selectPropertyScope').val(), 10)
     inputValue = parseInt($(event.target).val(), 10)
@@ -604,7 +604,7 @@ export class EditorEnvironment {
     $('#propertyTable').append(html)
   }
 
-  SelectPropertyScope_Change(event) {
+  SelectPropertyScope_Change() {
     'use strict'
 
     var inputValue, html, layerCount
@@ -676,7 +676,7 @@ export class EditorEnvironment {
     }
   }
 
-  PropertiesInspectTile_Click(event) {
+  PropertiesInspectTile_Click() {
     'use strict'
     scope.selectedTool = 'inspectTile'
   }
@@ -786,10 +786,10 @@ export class EditorEnvironment {
     api = pane.data('jsp')
     api.reinitialise()
   }
-  LayerCreateNewLayer_Click(event) {
+  LayerCreateNewLayer_Click() {
     'use strict'
 
-    var html, layerName, newLayer
+    var layerName, newLayer
 
     if (scope.renderManager.mapModel.getLayers().length < 5) {
       //create new layer
@@ -914,7 +914,7 @@ export class EditorEnvironment {
     }
   }
 
-  LayerMoveUp_Click(event) {
+  LayerMoveUp_Click() {
     'use strict'
 
     var target
@@ -931,7 +931,7 @@ export class EditorEnvironment {
     }
   }
 
-  LayerMoveDown_Click(event) {
+  LayerMoveDown_Click() {
     'use strict'
 
     var target
@@ -948,7 +948,7 @@ export class EditorEnvironment {
     }
   }
 
-  LayerListItemDescription_Click(event) {
+  LayerListItemDescription_Click() {
     'use strict'
 
     // remove the highlighter for all unselected layers
@@ -974,27 +974,27 @@ export class EditorEnvironment {
     }
   }
 
-  ToolboxItemAreaselect_Click(event) {
+  ToolboxItemAreaselect_Click() {
     'use strict'
     scope.selectedTool = 'areaSelect'
   }
 
-  ToolboxItemInspect_Click(event) {
+  ToolboxItemInspect_Click() {
     'use strict'
     scope.selectedTool = 'inspectTile'
   }
 
-  ToolboxItemBrush_Click(event) {
+  ToolboxItemBrush_Click() {
     'use strict'
     scope.selectedTool = 'singleTileBrush'
   }
 
-  ToolboxItemBucket_Click(event) {
+  ToolboxItemBucket_Click() {
     'use strict'
     scope.selectedTool = 'bucketFill'
   }
 
-  ToolboxItemEraser_Click(event) {
+  ToolboxItemEraser_Click() {
     'use strict'
     scope.selectedTool = 'eraser'
   }
@@ -1365,16 +1365,12 @@ export class EditorEnvironment {
       scope.selectedTool = 'areaSelect'
     }
   }
-  EditorCanvas_MouseUp(event) {
+  EditorCanvas_MouseUp() {
     'use strict'
-    var eventCount,
-      startX,
+    var startX,
       startY,
       endX,
       endY,
-      selectedTiles,
-      firstTile,
-      lastTile,
       firstCodeX,
       firstCodeY,
       lastCodeX,
@@ -1461,9 +1457,8 @@ export class EditorEnvironment {
 
     scope.leftMouseButtonDown = false
   }
-  EditorCanvas_MouseOut(event) {
+  EditorCanvas_MouseOut() {
     'use strict'
-    var eventCount
     if (scope.leftMouseButtonDown) {
       clearInterval(scope.editorClickInterval)
       scope.editorClickInterval = null
@@ -1481,7 +1476,7 @@ export class EditorEnvironment {
       parseInt(event.pageY - $('#paletteCanvas').offset().top, 10)
     )
   }
-  CreateItem_Click(event) {
+  CreateItem_Click() {
     'use strict'
     scope.PresentRibbonContextMenu('create')
     // centre the create dialog
@@ -1504,9 +1499,9 @@ export class EditorEnvironment {
     $('#createNewProjectDescription').removeClass('errorBorder')
     $('#createExistingProjectName').removeClass('errorBorder')
   }
-  CreateButtonOK_Click(event) {
+  CreateButtonOK_Click() {
     'use strict'
-    var valid, result, newLayer
+    var valid, result
 
     valid = true
 
@@ -1612,7 +1607,7 @@ export class EditorEnvironment {
       scope.BuildUIFromModel()
     }
   }
-  PublishButtonOK_Click(event) {
+  PublishButtonOK_Click() {
     'use strict'
     /*$('#publishDialogStepOne').hide();
         $('#publishDialogPending').show();
@@ -1632,7 +1627,7 @@ export class EditorEnvironment {
     encodedData = encodeURIComponent(data)
     scope.PostMapForDownload(encodedData)
   }
-  PostMapForDownload(mapData) {
+  PostMapForDownload() {
     'use strict'
     /*  var fileDownloadCheckTimer, token, assetsIncluded;
 
@@ -1714,19 +1709,19 @@ export class EditorEnvironment {
       scope.PostMapForDownload_Success()
     }
   }
-  PublishButtonCancel_Click(event) {
+  PublishButtonCancel_Click() {
     'use strict'
     $('#publishDialog').hide()
     $('#publishDialogStepOne').hide()
     $('.modalBlocker').hide()
   }
-  PublishButtonCancelPublish_Click(event) {
+  PublishButtonCancelPublish_Click() {
     'use strict'
     $('#publishDialog').hide()
     $('#publishDialogStepOne').hide()
     $('.modalBlocker').hide()
   }
-  PublishButtonSuccessOK_Click(event) {
+  PublishButtonSuccessOK_Click() {
     'use strict'
     $('#publishDialog').hide()
     $('#publishDialogSuccess').show()
@@ -1737,7 +1732,7 @@ export class EditorEnvironment {
     scope.LoadLayersFromModel()
     scope.LoadSettingsFromModel()
   }
-  CreateButtonNext_Click(event) {
+  CreateButtonNext_Click() {
     'use strict'
     var valid, result
 
@@ -1795,7 +1790,7 @@ export class EditorEnvironment {
       $('#createDialogStepTwo').show()
     }
   }
-  CreateButtonCancel_Click(event) {
+  CreateButtonCancel_Click() {
     'use strict'
     // clear form
     $('#createNewMapName').val('')
@@ -1810,7 +1805,7 @@ export class EditorEnvironment {
     $('#createDialogStepOne').hide()
     $('.modalBlocker').hide()
   }
-  BuildItem_Click(event) {
+  BuildItem_Click() {
     'use strict'
     if (
       scope.renderManager.mapModel !== null &&
@@ -1819,7 +1814,7 @@ export class EditorEnvironment {
       scope.PresentRibbonContextMenu('build')
     }
   }
-  SaveItem_Click(event) {
+  SaveItem_Click() {
     'use strict'
     if (
       scope.renderManager.mapModel !== null &&
@@ -1828,7 +1823,7 @@ export class EditorEnvironment {
       scope.PresentRibbonContextMenu('save')
     }
   }
-  PublishItem_Click(event) {
+  PublishItem_Click() {
     'use strict'
     if (
       scope.renderManager.mapModel !== null &&
@@ -1849,20 +1844,20 @@ export class EditorEnvironment {
       $('.modalBlocker').show()
     }
   }
-  PaletteItem_Click(event) {
+  PaletteItem_Click() {
     'use strict'
     scope.PresentRibbonDialog('palette')
   }
-  LayersItem_Click(event) {
+  LayersItem_Click() {
     'use strict'
     scope.LoadLayersFromModel()
     scope.PresentRibbonDialog('layers')
   }
-  PropertiesItem_Click(event) {
+  PropertiesItem_Click() {
     'use strict'
     scope.PresentRibbonDialog('properties')
   }
-  SettingsItem_Click(event) {
+  SettingsItem_Click() {
     'use strict'
     scope.LoadSettingsFromModel()
     scope.PresentRibbonDialog('settings')
@@ -1934,7 +1929,6 @@ export class EditorEnvironment {
       totalTiles,
       tilesPerRow,
       rowCount,
-      pickerWidth,
       pickerHeight
     if (scope.selectedLayer !== null) {
       tilesheetWidth = scope.renderManager.mapModel
@@ -1949,7 +1943,6 @@ export class EditorEnvironment {
       totalTiles = (tilesheetWidth / tileWidth) * (tilesheetHeight / tileHeight)
       rowCount = Math.ceil(totalTiles / tilesPerRow)
       pickerHeight = rowCount * tileHeight
-      pickerWidth = rowCount * tileWidth
 
       document.getElementById('paletteCanvas').height = pickerHeight
       scope.renderManager.tilesetTilesAccross = tilesheetWidth / tileWidth
@@ -1993,7 +1986,7 @@ export class EditorEnvironment {
     'use strict'
     scope.tilesets = data
   }
-  LoadTilesetList_Error(data) {
+  LoadTilesetList_Error() {
     'use strict'
     scope.DisplayNotification('Failed to retrieve tilesets from server', 'red')
   }

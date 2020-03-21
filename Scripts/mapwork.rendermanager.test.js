@@ -161,7 +161,7 @@ describe('mapwork.rendermanager.js', () => {
     })
   })
   describe('drawStencilBrush(context)', () => {
-    let canvas, context, width, height
+    let canvas, context
     let contextStrokeRectSpy
     let contextDrawImageSpy
 
@@ -169,8 +169,6 @@ describe('mapwork.rendermanager.js', () => {
       jest.clearAllMocks()
       canvas = document.getElementById('editorCanvas')
       context = canvas.getContext('2d')
-      width = 640
-      height = 480
       contextStrokeRectSpy = jest.spyOn(context, 'strokeRect')
       contextDrawImageSpy = jest.spyOn(context, 'drawImage')
     })
@@ -197,14 +195,12 @@ describe('mapwork.rendermanager.js', () => {
     })
   })
   describe('renderMapTiles(context)', () => {
-    let canvas, context, width, height
+    let canvas, context
     let drawImageSpy
     beforeEach(() => {
       jest.clearAllMocks()
       canvas = document.getElementById('editorCanvas')
       context = canvas.getContext('2d')
-      width = 640
-      height = 480
       drawImageSpy = jest.spyOn(context, 'drawImage')
     })
     it(`should render 0 tiles, as the map only contains 'empty' -1 tiles`, () => {
@@ -255,14 +251,12 @@ describe('mapwork.rendermanager.js', () => {
     })
   })
   describe('renderAreaSelectTool(context)', () => {
-    let canvas, context, width, height
+    let canvas, context
     let strokeRectSpy
     beforeEach(() => {
       jest.clearAllMocks()
       canvas = document.getElementById('editorCanvas')
       context = canvas.getContext('2d')
-      width = 640
-      height = 480
       strokeRectSpy = jest.spyOn(context, 'strokeRect')
     })
     it(`should not make any calls to strokeRect,
@@ -351,7 +345,7 @@ describe('mapwork.rendermanager.js', () => {
     })
   })
   describe('renderGrid(context)', () => {
-    let canvas, context, width, height
+    let canvas, context
     let contextStrokeSpy,
       contextLineToSpy,
       contextMoveToSpy,
@@ -360,8 +354,6 @@ describe('mapwork.rendermanager.js', () => {
       jest.clearAllMocks()
       canvas = document.getElementById('editorCanvas')
       context = canvas.getContext('2d')
-      width = 640
-      height = 480
       contextStrokeSpy = jest.spyOn(context, 'stroke')
       contextLineToSpy = jest.spyOn(context, 'lineTo')
       contextMoveToSpy = jest.spyOn(context, 'moveTo')
@@ -400,15 +392,12 @@ describe('mapwork.rendermanager.js', () => {
     })
   })
   describe('renderTilePicker()', () => {
-    let canvas, context, width, height
-    let jQuerySpy
+    let canvas, context
     let contextFillSpy, contextDrawImage
     beforeEach(() => {
       jest.clearAllMocks()
       canvas = document.getElementById('paletteCanvas')
       context = canvas.getContext('2d')
-      width = 640
-      height = 480
       testRenderManager.pickerRowCount = 2
       testRenderManager.pickerTilesPerRow = 5
       contextFillSpy = jest.spyOn(context, 'fill')

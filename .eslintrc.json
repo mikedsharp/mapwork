@@ -16,8 +16,7 @@
       "processor": "svelte3/svelte3"
     }
   ],
+  "globals": {"beforeEach":true, "jest": true, "$": true,"describe": true, "expect": true, "it": true},
   "rules": {
-    "prettier/prettier": "error",
-    "svelte3/lint-template": 2
   }
 }
