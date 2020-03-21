@@ -1,71 +1,71 @@
 ﻿export class Tile {
   constructor() {
-    this.tileCode = -1;
-    this.tilesheetX = null;
-    this.tilesheetY = null;
-    this.properties = [];
+    this.tileCode = -1
+    this.tilesheetX = null
+    this.tilesheetY = null
+    this.properties = []
   }
   setTileCode(code) {
     if (isNaN(code)) {
-      throw new Error('TileCode must be a number');
+      throw new Error('TileCode must be a number')
     }
-    this.tileCode = code;
+    this.tileCode = code
   }
   getTileCode() {
-    return this.tileCode;
+    return this.tileCode
   }
   setTilesheetX(value) {
-    this.tilesheetX = value;
+    this.tilesheetX = value
   }
   getTilesheetX() {
-    return this.tilesheetX;
+    return this.tilesheetX
   }
   setTilesheetY(value) {
-    this.tilesheetY = value;
+    this.tilesheetY = value
   }
   getTilesheetY() {
-    return this.tilesheetY;
+    return this.tilesheetY
   }
   addProperty(prop) {
-    this.properties.push(prop);
+    this.properties.push(prop)
   }
 
   removeProperty(key) {
-    var propCount;
+    var propCount
 
     for (propCount = 0; propCount < this.properties.length; propCount++) {
       if (this.properties[propCount].key === key) {
-        this.getAllProperties().splice(propCount, 1);
+        this.getAllProperties().splice(propCount, 1)
       }
     }
   }
 
   setProperty(property) {
-    var propCount;
+    var propCount
 
     for (propCount = 0; propCount < this.properties.length; propCount++) {
       if (this.properties[propCount].key === property.oldKey) {
-        this.properties[propCount].key = property.newKey;
-        this.properties[propCount].value = property.newValue;
-        return;
+        this.properties[propCount].key = property.newKey
+        this.properties[propCount].value = property.newValue
+        return
       }
     }
   }
   getProperty(key) {
-    var propCount;
+    var propCount
 
     for (propCount = 0; propCount < this.properties.length; propCount++) {
       if (this.properties[propCount].key === key) {
-        return this.properties[propCount].value;
+        return this.properties[propCount].value
       }
     }
   }
   getAllProperties() {
-    return this.properties;
+    return this.properties
   }
 
   // other methods
   createBlankModelTile() {
-    this.setTileCode(-1);
+    this.setTileCode(-1)
   }
 }

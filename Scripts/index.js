@@ -1,31 +1,31 @@
-import '../Content/reset.scss';
-import '../Content/mapwork.editor.structure.scss';
-import '../Content/mapwork.editor.colourscheme.scss';
-import '../Content/mapwork.editor.formatting.scss';
-import '../Content/jquery.jscrollpane.scss';
+import '../Content/reset.scss'
+import '../Content/mapwork.editor.structure.scss'
+import '../Content/mapwork.editor.colourscheme.scss'
+import '../Content/mapwork.editor.formatting.scss'
+import '../Content/jquery.jscrollpane.scss'
 
-import App from './App.svelte';
+import App from './App.svelte'
 
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
 
-import { EditorEnvironment } from './mapwork.editor.environment';
-import { ChangeRecorder } from './mapwork.editor.changes';
+import { EditorEnvironment } from './mapwork.editor.environment'
+import { ChangeRecorder } from './mapwork.editor.changes'
 
-const changeRecorder = new ChangeRecorder();
-const editor = new EditorEnvironment(changeRecorder);
+const changeRecorder = new ChangeRecorder()
+const editor = new EditorEnvironment(changeRecorder)
 
-window.$ = window.jQuery = require('jquery');
-require('./jquery.jscrollpane.min.js');
-require('./jquery.mousewheel.js');
-require('./jquery.cookie.js');
+window.$ = window.jQuery = require('jquery')
+require('./jquery.jscrollpane.min.js')
+require('./jquery.mousewheel.js')
+require('./jquery.cookie.js')
 
 const app = new App({
-  target: document.getElementById('app')
-});
+  target: document.getElementById('app'),
+})
 
-$(document).ready(function() {
-  'use strict';
+$(document).ready(function () {
+  'use strict'
   //Init Environment
-  editor.Init();
-});
+  editor.Init()
+})

@@ -1,180 +1,180 @@
-﻿import { Tile } from './mapwork.model.tile';
+﻿import { Tile } from './mapwork.model.tile'
 // i will get rid of the jquery soon, this is legacy and I hate it
-window.$ = require('jquery');
+window.$ = require('jquery')
 const tilesetsEndpoint =
-  'https://mds-mapwork-tilesets.s3-eu-west-1.amazonaws.com';
+  'https://mds-mapwork-tilesets.s3-eu-west-1.amazonaws.com'
 
 export class Layer {
   constructor(EditorEnvironment) {
     // injected dependencies
-    this.EditorEnvironment = EditorEnvironment;
+    this.EditorEnvironment = EditorEnvironment
 
-    this.name = null;
-    this.tilesetPath = null;
-    this.tilesetImage = null;
-    this.rows = [];
-    this.zPosition = null;
-    this.properties = [];
-    this.tilesetHeight = null;
-    this.tilesetWidth = null;
-    this.visible = true;
+    this.name = null
+    this.tilesetPath = null
+    this.tilesetImage = null
+    this.rows = []
+    this.zPosition = null
+    this.properties = []
+    this.tilesetHeight = null
+    this.tilesetWidth = null
+    this.visible = true
   }
   setName(layerName) {
-    this.name = layerName;
+    this.name = layerName
   }
   getName() {
-    return this.name;
+    return this.name
   }
   setTilesetPath(path) {
     // set the new path in the model  to the given directory
-    this.tilesetPath = path;
-    this.setTilesetImage(this.tilesetPath);
+    this.tilesetPath = path
+    this.setTilesetImage(this.tilesetPath)
   }
   getVisibility() {
-    return this.visible;
+    return this.visible
   }
   setVisibility(visible) {
-    this.visible = visible;
+    this.visible = visible
   }
   getTilesetWidth() {
-    return this.tilesetWidth;
+    return this.tilesetWidth
   }
   getTilesetHeight() {
-    return this.tilesetHeight;
+    return this.tilesetHeight
   }
 
   loadImage(path) {
     return new Promise((resolve, reject) => {
-      this.tilesetImage = new Image();
-      this.tilesetImage.onload = resolve;
-      this.tilesetImage.onerror = reject;
-      this.tilesetImage.src = path;
-    });
+      this.tilesetImage = new Image()
+      this.tilesetImage.onload = resolve
+      this.tilesetImage.onerror = reject
+      this.tilesetImage.src = path
+    })
   }
 
   async setTilesetImage(path) {
     // load file into an img object for rendering
-    await this.loadImage(tilesetsEndpoint + '/' + path);
-    this.tilesetWidth = this.getTilesetImage().width;
-    this.tilesetHeight = this.getTilesetImage().height;
-    this.EditorEnvironment.PalletCanvasResize();
+    await this.loadImage(tilesetsEndpoint + '/' + path)
+    this.tilesetWidth = this.getTilesetImage().width
+    this.tilesetHeight = this.getTilesetImage().height
+    this.EditorEnvironment.PalletCanvasResize()
   }
 
   getTilesetPath() {
-    return this.tilesetPath;
+    return this.tilesetPath
   }
   getTilesetImage() {
-    return this.tilesetImage;
+    return this.tilesetImage
   }
   setZPosition(value) {
-    this.zPosition = value;
+    this.zPosition = value
   }
   getZPosition() {
-    return this.zPosition;
+    return this.zPosition
   }
   addRow(row) {
-    this.rows.push(row);
+    this.rows.push(row)
   }
   getRows() {
-    return this.rows;
+    return this.rows
   }
   getTile(x, y) {
     try {
-      return this.getRow(y)[x];
+      return this.getRow(y)[x]
     } catch (ex) {
-      return null;
+      return null
     }
   }
   getRow(index) {
     try {
-      const returnedRow = this.rows[index];
-      return returnedRow ? returnedRow : null;
+      const returnedRow = this.rows[index]
+      return returnedRow ? returnedRow : null
     } catch (ex) {
-      return null;
+      return null
     }
   }
   removeProperty(key) {
-    var propCount;
+    var propCount
 
     for (propCount = 0; propCount < this.properties.length; propCount++) {
       if (this.properties[propCount].key === key) {
-        this.getAllProperties().splice(propCount, 1);
+        this.getAllProperties().splice(propCount, 1)
       }
     }
   }
 
   setProperty(property) {
-    var propCount;
+    var propCount
 
     for (propCount = 0; propCount < this.properties.length; propCount++) {
       if (this.properties[propCount].key === property.oldKey) {
-        this.properties[propCount].key = property.newKey;
-        this.properties[propCount].value = property.newValue;
-        return;
+        this.properties[propCount].key = property.newKey
+        this.properties[propCount].value = property.newValue
+        return
       }
     }
   }
   getProperty(key) {
-    var propCount;
+    var propCount
 
     for (propCount = 0; propCount < this.properties.length; propCount++) {
       if (this.properties[propCount].key === key) {
-        return this.properties[propCount].value;
+        return this.properties[propCount].value
       }
     }
   }
   addProperty(prop) {
-    this.properties.push(prop);
+    this.properties.push(prop)
   }
   getAllProperties() {
-    return this.properties;
+    return this.properties
   }
   createBlankModelLayer(map, layerName, tilesetPath) {
-    var rows, row, cell, cols;
+    var rows, row, cell, cols
 
-    this.setName(layerName);
-    this.setTilesetPath(tilesetPath);
-    this.setZPosition(0);
+    this.setName(layerName)
+    this.setTilesetPath(tilesetPath)
+    this.setZPosition(0)
 
     // create tiles to the specification of the map model
     for (rows = 0; rows < map.getTilesDown(); rows++) {
-      row = [];
+      row = []
       for (cols = 0; cols < map.getTilesAccross(); cols++) {
-        cell = new Tile();
-        cell.createBlankModelTile();
-        cell.setTileCode(-1);
+        cell = new Tile()
+        cell.createBlankModelTile()
+        cell.setTileCode(-1)
         // append cell to row
-        row.push(cell);
+        row.push(cell)
       }
       // apppend row to layer
-      this.addRow(row);
+      this.addRow(row)
     }
   }
   createModelLayerFromJSONObject(map, json) {
-    var layerPropertyCount, rowCount, cell, cellCount, propertyCount, row;
+    var layerPropertyCount, rowCount, cell, cellCount, propertyCount, row
 
     // this is where the layer parsing code will go
-    this.setTilesetPath(json.tilesetPath);
-    this.setName(json.name);
-    this.setZPosition(json.zPosition);
+    this.setTilesetPath(json.tilesetPath)
+    this.setName(json.name)
+    this.setZPosition(json.zPosition)
 
     for (
       layerPropertyCount = 0;
       layerPropertyCount < json.properties.length;
       layerPropertyCount++
     ) {
-      this.addProperty(json.properties[layerPropertyCount]);
+      this.addProperty(json.properties[layerPropertyCount])
     }
 
     for (rowCount = 0; rowCount < json.rows.length; rowCount++) {
-      row = [];
+      row = []
       for (
         cellCount = 0;
         cellCount < json.rows[rowCount].cells.length;
         cellCount++
       ) {
-        cell = new Tile();
-        cell.setTileCode(json.rows[rowCount].cells[cellCount].tileCode);
+        cell = new Tile()
+        cell.setTileCode(json.rows[rowCount].cells[cellCount].tileCode)
 
         for (
           propertyCount = 0;
@@ -184,12 +184,12 @@ export class Layer {
         ) {
           cell.addProperty(
             json.rows[rowCount].cells[cellCount].properties[propertyCount]
-          );
+          )
         }
 
-        row.push(cell);
+        row.push(cell)
       }
-      this.addRow(row);
+      this.addRow(row)
     }
   }
 }
