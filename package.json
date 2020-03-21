@@ -19,14 +19,22 @@
   "homepage": "https://bitbucket.org/programmerinprogress/mapwork-legacy#readme",
   "devDependencies": {
     "@babel/core": "^7.7.7",
+    "@babel/polyfill": "^7.8.7",
     "@babel/preset-env": "^7.7.7",
     "jest": "^24.9.0",
     "jest-canvas-mock": "^2.2.0",
     "jest-junit": "^10.0.0",
     "jquery": "^3.4.1",
     "parcel": "^1.12.4",
-    "sass": "^1.23.7"
+    "parcel-bundler": "^1.12.4",
+    "parcel-plugin-svelte": "^4.0.6",
+    "sass": "^1.23.7",
+    "svelte": "^3.20.1",
+    "svelte-preprocess": "^3.5.0"
   },
+  "browserslist": [
+    "last 1 chrome versions"
+  ],
   "jest": {
     "collectCoverage": true,
     "coveragePathIgnorePatterns": [
