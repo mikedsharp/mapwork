@@ -9,7 +9,7 @@
     "test": "jest --coverage",
     "test-ci": "jest --ci --coverage --reporters=default --reporters=jest-junit",
     "test:once": "jest",
-        "format": "npx prettier --write \"{,!(node_modules)/**/}*.{js,jsx}\""
+    "format": "npx prettier --write \"{,!(node_modules)/**/}*.{js,jsx}\""
   },
   "repository": {
     "type": "git",
