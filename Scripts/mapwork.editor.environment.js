@@ -5,9 +5,6 @@ import { ChangeRecorder } from './mapwork.editor.changes'
 import { ValidationHelper } from './mapwork.helper.validation'
 import { RenderManager } from './mapwork.rendermanager'
 
-// svelte stuff
-import { mapModel } from './Stores/MapModel'
-
 const changeRecorder = new ChangeRecorder()
 let scope
 export class EditorEnvironment {
@@ -48,9 +45,6 @@ export class EditorEnvironment {
     scope.Window_Resize()
     scope.LoadTilesetList()
     scope.renderManager.Init()
-    mapModel.subscribe((value) => {
-      scope.renderManager.mapModel = value
-    })
   }
   BindEvent() {
     'use strict'
@@ -1579,7 +1573,7 @@ export class EditorEnvironment {
       $('#createDialog').hide()
       $('.modalBlocker').hide()
 
-      mapModel.set(new Map(scope))
+      scope.renderManager.mapModel = new Map(scope)
       //scope.renderManager.mapModel.createBlankModel($('#createNewMapName').val(),
       //    parseInt($('#inpCreateTileWidth').val(), 10),
       //    parseInt($('#inpCreateTileHeight').val(), 10),
