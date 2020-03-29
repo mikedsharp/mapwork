@@ -4,11 +4,9 @@
 
   function onCancelCreateProject() {
     setupStage.set('')
-    alert('project create cancelled!')
   }
   function onConfirmCreateProject() {
     setupStage.set('set-map-dimensions')
-    alert('project create confirmed, moving to next step!')
   }
 </script>
 

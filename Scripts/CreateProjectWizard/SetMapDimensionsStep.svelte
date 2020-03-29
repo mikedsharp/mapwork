@@ -4,11 +4,9 @@
 
   function onCancelCreateProject() {
     setupStage.set('')
-    alert('project create cancelled!')
   }
   function onConfirmCreateProject() {
     setupStage.set('')
-    alert('project create confirmed, creating project...')
   }
 </script>
 

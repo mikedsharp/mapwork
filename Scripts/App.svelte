@@ -10,14 +10,6 @@
   }
 </script>
 
-<style type="scss">
-  [slot='dialog-actions'] {
-    button {
-      background-color: red;
-    }
-  }
-</style>
-
 <div id="appContainer">
   {#if $setupStage !== ''}
     <CreateProjectWizard />

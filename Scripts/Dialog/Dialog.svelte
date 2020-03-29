@@ -44,11 +44,6 @@
     min-height: 40px;
     max-height: 40px;
   }
-  [slot='dialog-actions'] {
-    button {
-      background-color: red;
-    }
-  }
 </style>
 
 <div class="dialog-overlay" />
