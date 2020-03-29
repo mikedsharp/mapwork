@@ -16,9 +16,16 @@
   $: valid = tilesAccross > 0 && tilesDown > 0
 </script>
 
+<style lang="scss">
+  .set-map-dimensions-content {
+    display: flex;
+    flex-direction: column;
+  }
+</style>
+
 <Dialog {$setupStage} dialogWidth="500px" dialogHeight="500px">
   <h1 slot="dialog-title">New Map</h1>
-  <div slot="dialog-content">
+  <div class="set-map-dimensions-content" slot="dialog-content">
     <span>Number of horizontal tiles</span>
     <input type="number" bind:value={tilesAccross} />
     <span>Number of vertical tiles</span>
