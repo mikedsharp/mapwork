@@ -2,17 +2,29 @@
   import MenuItem from './Menu/MenuItem.svelte'
   import CreateProjectWizard from './CreateProjectWizard/CreateProjectWizard.svelte'
   import { setupStage } from './Stores/CreateProjectWizard'
+  export let editorInstance
   function handlePrimaryUIAction(event) {
     console.log(event)
   }
   function handleCreateProject() {
     setupStage.set('create-project')
   }
+  function handleWizardCompletion(event) {
+    console.log('wizard complete')
+    console.log(event)
+    window.editorInstance.createNewMap(
+      event.detail.mapName,
+      event.detail.tileWidth,
+      event.detail.tileHeight,
+      event.detail.tilesAccross,
+      event.detail.tilesDown
+    )
+  }
 </script>
 
 <div id="appContainer">
   {#if $setupStage !== ''}
-    <CreateProjectWizard />
+    <CreateProjectWizard on:wizardCompleted={handleWizardCompletion} />
   {/if}
   <!--@*Notification Banner *@-->
   <div id="notificationBanner">

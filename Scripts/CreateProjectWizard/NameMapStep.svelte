@@ -1,12 +1,15 @@
 <script>
   import Dialog from '../Dialog/Dialog'
   import { setupStage } from '../Stores/CreateProjectWizard'
+  import { createEventDispatcher } from 'svelte'
+  const dispatch = createEventDispatcher()
   let mapName = 'untitled map 1'
   function onCancelCreateProject() {
     setupStage.set('')
   }
   function onConfirmCreateProject() {
     setupStage.set('set-map-dimensions')
+    dispatch('stepCompleted', { mapName })
   }
   $: valid = mapName && mapName.length > 0
 </script>

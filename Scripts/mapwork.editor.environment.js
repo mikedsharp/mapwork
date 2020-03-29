@@ -31,6 +31,7 @@ export class EditorEnvironment {
     scope.notificationTimeout = null
     scope.changeRecorder = ChangeRecorder
     scope.renderManager = new RenderManager(scope)
+    this.rootScope = scope
   }
   Init() {
     'use strict'
@@ -57,7 +58,6 @@ export class EditorEnvironment {
 
     $('#paletteCanvas').click(scope.PaletteCanvas_Click.bind(scope))
     // left ribbon events
-    $('#createItem').click(scope.CreateItem_Click.bind(scope))
     $('#buildItem').click(scope.BuildItem_Click.bind(scope))
     $('#saveItem').click(scope.SaveItem_Click.bind(scope))
     $('#publishItem').click(scope.PublishItem_Click.bind(scope))
@@ -66,14 +66,6 @@ export class EditorEnvironment {
     $('#layersItem').click(scope.LayersItem_Click.bind(scope))
     $('#propertiesItem').click(scope.PropertiesItem_Click.bind(scope))
     $('#settingsItem').click(scope.SettingsItem_Click.bind(scope))
-
-    $('#createButtonNext').click(scope.CreateButtonNext_Click.bind(scope))
-    $('#createButtonOK').click(scope.CreateButtonOK_Click.bind(scope))
-    $('#createButtonCancel').click(scope.CreateButtonCancel_Click.bind(scope))
-    $('#createButtonCancelTwo').click(
-      scope.CreateButtonCancel_Click.bind(scope)
-    )
-
     $('#publishButtonOK').click(scope.PublishButtonOK_Click.bind(scope))
     $('#publishButtonCancel').click(scope.PublishButtonCancel_Click.bind(scope))
     $('#publishButtonCancelPublish').click(
@@ -1499,112 +1491,33 @@ export class EditorEnvironment {
     $('#createNewProjectDescription').removeClass('errorBorder')
     $('#createExistingProjectName').removeClass('errorBorder')
   }
-  CreateButtonOK_Click() {
-    'use strict'
-    var valid, result
 
-    valid = true
+  createNewMap(mapName, tileWidth, tileHeight, tilesAccross, tilesDown) {
+    scope.renderManager.mapModel = new Map(scope)
 
-    $('#inpCreateHorizontalTiles').removeClass('errorBorder')
-    $('#inpCreateVerticalTiles').removeClass('errorBorder')
-    $('#inpCreateTileWidth').removeClass('errorBorder')
-    $('#inpCreateTileHeight').removeClass('errorBorder')
+    scope.renderManager.mapModel.createBlankModel(
+      mapName,
+      tileWidth,
+      tileHeight,
+      tilesAccross,
+      tilesDown
+    )
+    scope.selectedLayer = 0
 
-    // tiles accross
-    result = ValidationHelper.validateInput($('#inpCreateHorizontalTiles'), [
-      { kind: 'required' },
-      { kind: 'isnumeric' },
-      { kind: 'min', value: 1 },
-    ])
+    //build the camera and pass in the world and view coordinates
+    scope.renderManager.camera = new Camera(scope.renderManager.mapModel)
+    scope.renderManager.camera.setPosition(0, 0)
+    scope.renderManager.camera.setBounds(
+      scope.renderManager.mapModel.getWorldWidth(),
+      scope.renderManager.mapModel.getWorldHeight()
+    )
+    scope.renderManager.camera.setSize(
+      $('#editorCanvas').width(),
+      $('#editorCanvas').height()
+    )
 
-    if (result.length > 0) {
-      $('#inpCreateHorizontalTiles').addClass('errorBorder')
-      valid = false
-    }
-
-    // tiles down
-    result = ValidationHelper.validateInput($('#inpCreateVerticalTiles'), [
-      { kind: 'required' },
-      { kind: 'isnumeric' },
-      { kind: 'min', value: 1 },
-    ])
-
-    if (result.length > 0) {
-      $('#inpCreateVerticalTiles').addClass('errorBorder')
-      valid = false
-    }
-
-    if (
-      parseInt($('#inpCreateHorizontalTiles').val(), 10) *
-        parseInt($('#inpCreateVerticalTiles').val(), 10) >
-      16384
-    ) {
-      scope.DisplayNotification(
-        'Tiles per layer must not exceed 16384 (e.g 128x128 or 512x32 etc)',
-        'red'
-      )
-      valid = false
-    }
-
-    // tile width
-    //result = ValidationHelper.validateInput($('#inpCreateTileWidth'),
-    //  [{ kind: 'required' },
-    //  { kind: 'isnumeric' },
-    //  { kind: 'min', value: 1 }]);
-
-    //if (result.length > 0) {
-    //    $('#inpCreateTileWidth').addClass('errorBorder');
-    //    valid = false;
-    //}
-    // tile height
-    //result = ValidationHelper.validateInput($('#inpCreateTileHeight'),
-    // [{ kind: 'required' },
-    // { kind: 'isnumeric' },
-    // { kind: 'min', value: 1 }]);
-
-    //if (result.length > 0) {
-    //    $('#inpCreateTileHeight').addClass('errorBorder');
-    //    valid = false;
-    //}
-
-    // if after all of that, the user entered the correct data
-    if (valid) {
-      // proceed to creating their new map object
-      $('#createDialog').hide()
-      $('.modalBlocker').hide()
-
-      scope.renderManager.mapModel = new Map(scope)
-      //scope.renderManager.mapModel.createBlankModel($('#createNewMapName').val(),
-      //    parseInt($('#inpCreateTileWidth').val(), 10),
-      //    parseInt($('#inpCreateTileHeight').val(), 10),
-      //    parseInt($('#inpCreateHorizontalTiles').val(), 10),
-      //    parseInt($('#inpCreateVerticalTiles').val(), 10));
-
-      scope.renderManager.mapModel.createBlankModel(
-        $('#createNewMapName').val(),
-        parseInt(32, 10),
-        parseInt(32, 10),
-        parseInt($('#inpCreateHorizontalTiles').val(), 10),
-        parseInt($('#inpCreateVerticalTiles').val(), 10)
-      )
-
-      scope.selectedLayer = 0
-
-      //build the camera and pass in the world and view coordinates
-      scope.renderManager.camera = new Camera(scope.renderManager.mapModel)
-      scope.renderManager.camera.setPosition(0, 0)
-      scope.renderManager.camera.setBounds(
-        scope.renderManager.mapModel.getWorldWidth(),
-        scope.renderManager.mapModel.getWorldHeight()
-      )
-      scope.renderManager.camera.setSize(
-        $('#editorCanvas').width(),
-        $('#editorCanvas').height()
-      )
-
-      // rebuild UI from model
-      scope.BuildUIFromModel()
-    }
+    // rebuild UI from model
+    scope.BuildUIFromModel()
   }
   PublishButtonOK_Click() {
     'use strict'
@@ -1728,81 +1641,9 @@ export class EditorEnvironment {
   }
   BuildUIFromModel() {
     'use strict'
+    debugger
     scope.LoadLayersFromModel()
     scope.LoadSettingsFromModel()
-  }
-  CreateButtonNext_Click() {
-    'use strict'
-    var valid, result
-
-    valid = true
-
-    //refresh validation
-    $('#createNewMapName').removeClass('errorBorder')
-    $('#createNewProjectName').removeClass('errorBorder')
-    $('#createNewProjectDescription').removeClass('errorBorder')
-    $('#createExistingProjectName').removeClass('errorBorder')
-
-    // new map name
-    result = ValidationHelper.validateInput($('#createNewMapName'), [
-      { kind: 'required' },
-      { kind: 'istext' },
-    ])
-
-    if (result.length > 0) {
-      $('#createNewMapName').addClass('errorBorder')
-      $('#createNewMapName').next().addClass('errorText')
-      valid = false
-    }
-
-    if ($('#createExistingProjectName').val() === '-1') {
-      // user hasnt selected a project, get them to
-      $('#createExistingProjectName').addClass('errorBorder')
-      valid = false
-    } else if ($('#createExistingProjectName').val() === '0') {
-      // new project name
-      result = ValidationHelper.validateInput($('#createNewProjectName'), [
-        { kind: 'required' },
-        { kind: 'istext' },
-      ])
-
-      if (result.length > 0) {
-        $('#createNewProjectName').addClass('errorBorder')
-        valid = false
-      }
-
-      // new project description
-      result = ValidationHelper.validateInput(
-        $('#createNewProjectDescription'),
-        [{ kind: 'required' }, { kind: 'istext' }]
-      )
-
-      if (result.length > 0) {
-        $('#createNewProjectDescription').addClass('errorBorder')
-        valid = false
-      }
-    }
-
-    if (valid) {
-      // go to next step, hide content of previous step
-      $('#createDialogStepOne').hide()
-      $('#createDialogStepTwo').show()
-    }
-  }
-  CreateButtonCancel_Click() {
-    'use strict'
-    // clear form
-    $('#createNewMapName').val('')
-    $('#createExistingProjectName').val(-1)
-    $('#createNewProjectName').val('')
-    $('#createNewProjectDescription').val('')
-    // hide dialog
-    $('#createDialog').hide()
-
-    // hide all stages of create dialog
-    $('#createDialogStepTwo').hide()
-    $('#createDialogStepOne').hide()
-    $('.modalBlocker').hide()
   }
   BuildItem_Click() {
     'use strict'

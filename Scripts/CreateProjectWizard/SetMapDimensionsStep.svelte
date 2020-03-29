@@ -1,6 +1,9 @@
 <script>
   import Dialog from '../Dialog/Dialog'
   import { setupStage } from '../Stores/CreateProjectWizard'
+  import { createEventDispatcher } from 'svelte'
+  const dispatch = createEventDispatcher()
+  export let mapName
   let tilesAccross = 32
   let tilesDown = 32
 
@@ -9,6 +12,13 @@
   }
   function onConfirmCreateProject() {
     setupStage.set('')
+    dispatch('wizardCompleted', {
+      mapName,
+      tileWidth: 32,
+      tileHeight: 32,
+      tilesAccross,
+      tilesDown,
+    })
   }
   function isInvalid() {
     return true
