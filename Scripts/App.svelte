@@ -1,8 +1,28 @@
 <script>
-  import MenuItem from "./Menu/MenuItem.svelte";
+  import MenuItem from './Menu/MenuItem.svelte'
+  import Dialog from './Dialog/Dialog'
 </script>
 
+<style type="scss">
+  [slot='dialog-actions'] {
+    button {
+      background-color: red;
+    }
+  }
+</style>
+
 <div id="appContainer">
+  <Dialog dialogWidth="500px" dialogHeight="500px">
+    <h1 slot="dialog-title">Create new project</h1>
+    <div slot="dialog-content">
+      <span>Enter a name for your new map</span>
+      <input type="text" />
+    </div>
+    <div slot="dialog-actions">
+      <button type="button">Next</button>
+      <button type="button">Cancel</button>
+    </div>
+  </Dialog>
   <!--@*Notification Banner *@-->
   <div id="notificationBanner">
     <span class="textCentre" />
