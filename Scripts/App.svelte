@@ -1,6 +1,13 @@
 <script>
   import MenuItem from './Menu/MenuItem.svelte'
-  import Dialog from './Dialog/Dialog'
+  import CreateProjectWizard from './CreateProjectWizard/CreateProjectWizard.svelte'
+  import { setupStage } from './Stores/CreateProjectWizard'
+  function handlePrimaryUIAction(event) {
+    console.log(event)
+  }
+  function handleCreateProject() {
+    setupStage.set('create-project')
+  }
 </script>
 
 <style type="scss">
@@ -12,17 +19,9 @@
 </style>
 
 <div id="appContainer">
-  <Dialog dialogWidth="500px" dialogHeight="500px">
-    <h1 slot="dialog-title">Create new project</h1>
-    <div slot="dialog-content">
-      <span>Enter a name for your new map</span>
-      <input type="text" />
-    </div>
-    <div slot="dialog-actions">
-      <button type="button">Next</button>
-      <button type="button">Cancel</button>
-    </div>
-  </Dialog>
+  {#if $setupStage !== ''}
+    <CreateProjectWizard />
+  {/if}
   <!--@*Notification Banner *@-->
   <div id="notificationBanner">
     <span class="textCentre" />
@@ -31,10 +30,12 @@
   <div id="leftBar" class="leftBar">
     <div class="verticalCentered">
       <div class="itemContainer">
-        <MenuItem action={'createItem'} />
-        <MenuItem action={'buildItem'} />
-        <MenuItem action={'saveItem'} />
-        <MenuItem action={'publishItem'} />
+        <MenuItem action={'createItem'} on:createItem={handleCreateProject} />
+        <MenuItem action={'buildItem'} on:buildItem={handlePrimaryUIAction} />
+        <MenuItem action={'saveItem'} on:saveItem={handlePrimaryUIAction} />
+        <MenuItem
+          action={'publishItem'}
+          on:publishItem={handlePrimaryUIAction} />
       </div>
     </div>
   </div>

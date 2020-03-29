@@ -20,6 +20,7 @@
     z-index: 10;
   }
   .dialog {
+    font-family: Verdana;
     background-color: $dialog-background-color;
     position: absolute;
     top: calc(50% - var(--dialogHeight) / 2);

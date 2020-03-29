@@ -57,8 +57,10 @@
   outline: none;
 }
 
-
-a, p, div, img {
+a,
+p,
+div,
+img {
   /* Vendor Prefixes for preventing the user from selecting certain HTML elements with cursor*/
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -166,7 +168,6 @@ a, p, div, img {
   background-position: 0px -96px;
 }
 
-
 #paletteItem {
   border-width: 0px;
   background-image: url('../Images/ribbon_sprites.png');
@@ -214,7 +215,6 @@ a, p, div, img {
 textarea {
   resize: none;
 }
-
 
 .leftDialog {
   position: relative;
@@ -269,7 +269,6 @@ button::-moz-focus-inner {
   cursor: pointer;
 }
 
-
 .fullWidth {
   width: 100% !important;
 }
@@ -296,17 +295,14 @@ button::-moz-focus-inner {
   display: inline-block;
 }
 
-  .horizontalList li {
-    display: inline;
-    margin-right: 5px;
-  }
-
+.horizontalList li {
+  display: inline;
+  margin-right: 5px;
+}
 
 .dialogContainer {
   margin: 10px;
 }
-
-
 
 #buildContextRibbon {
   display: none;
@@ -325,7 +321,6 @@ button::-moz-focus-inner {
 #paletteCanvas {
   cursor: pointer;
 }
-
 
 #appContainer {
   position: fixed;
@@ -361,7 +356,6 @@ button::-moz-focus-inner {
   margin-top: 30px;
 }
 
-
 .marTB-10 {
   margin-top: 10px;
   margin-bottom: 10px;
@@ -384,7 +378,6 @@ button::-moz-focus-inner {
 .marR-10 {
   margin-right: 10px;
 }
-
 
 .propertiesInput {
   width: 112px;
@@ -432,9 +425,6 @@ button::-moz-focus-inner {
   border: 1px solid #000 !important;
 }
 
-
-
-
 /*Table CSS*/
 .table {
   display: table;
@@ -479,7 +469,10 @@ button::-moz-focus-inner {
   margin: 0 auto;
 }
 
-#inpCreateTileWidth, #inpCreateTileHeight, #settingsTileHeight, #settingsTileWidth {
+#inpCreateTileWidth,
+#inpCreateTileHeight,
+#settingsTileHeight,
+#settingsTileWidth {
   display: none;
 }
 
@@ -517,10 +510,9 @@ button::-moz-focus-inner {
   cursor: pointer;
 }
 
-  #propertiesInspectTile:hover {
-    background: url('../Images/toolbox_items.png') -64px -64px;
-  }
-
+#propertiesInspectTile:hover {
+  background: url('../Images/toolbox_items.png') -64px -64px;
+}
 
 #toolboxItemEraser:hover {
   background: url('../Images/toolbox_items.png') -64px -256px;
@@ -630,7 +622,6 @@ button::-moz-focus-inner {
 #layerCreateNewLayer:hover {
   background-color: #1b78b5;
 }
-
 
 #layerMoveUp img {
   margin: 0 auto;
