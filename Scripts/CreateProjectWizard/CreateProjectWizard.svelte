@@ -1,19 +1,22 @@
 <script>
   import NameMapStep from './NameMapStep'
   import SetMapDimensionsStep from './SetMapDimensionsStep'
-  import { setupStage } from '../Stores/CreateProjectWizard'
+  import { createEventDispatcher } from 'svelte'
+  const dispatch = createEventDispatcher()
   let mapName
+  export let setupStage;
   function handleStepCompletion(event) {
     mapName = event.detail.mapName
-      setupStage.set('set-map-dimensions');
-  }
-  function handleWizardCancelled() {
-    setupStage.set('');
+    dispatch('wizardStepChange', 'set-map-dimensions')
   }
 </script>
 
-{#if $setupStage === 'create-project'}
-  <NameMapStep on:wizardCancelled={handleWizardCancelled} on:stepCompleted={handleStepCompletion} />
-{:else if $setupStage === 'set-map-dimensions'}
-  <SetMapDimensionsStep {mapName} on:wizardCancelled={handleWizardCancelled} on:wizardCompleted />
+{#if setupStage === 'create-project'}
+  <NameMapStep   
+    on:wizardCancelled 
+    on:stepCompleted={handleStepCompletion} />
+{:else if setupStage === 'set-map-dimensions'}
+  <SetMapDimensionsStep {mapName}  
+    on:wizardCancelled 
+    on:wizardCompleted />
 {/if}

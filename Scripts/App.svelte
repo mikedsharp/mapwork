@@ -1,16 +1,22 @@
 <script>
   import MenuItem from './Menu/MenuItem.svelte'
   import CreateProjectWizard from './CreateProjectWizard/CreateProjectWizard.svelte'
-  import { setupStage } from './Stores/CreateProjectWizard'
   export let editorInstance
+  let setupStage = '';
   function handlePrimaryUIAction(event) {
     console.log(event)
   }
   function handleCreateProject() {
-    setupStage.set('create-project')
+    setupStage = 'create-project';
+  }
+  function handleWizardStepChange(event) {
+    setupStage = event.detail;
+  } 
+  function handleWizardCancelled() {
+    setupStage = '';
   }
   function handleWizardCompletion(event) {
-    setupStage.set('');
+    setupStage = '';
 
     editorInstance.createNewMap(
       event.detail.mapName,
@@ -23,8 +29,12 @@
 </script>
 
 <div id="appContainer">
-  {#if $setupStage !== ''}
-    <CreateProjectWizard on:wizardCompleted={handleWizardCompletion} />
+  {#if setupStage !== ''}
+    <CreateProjectWizard 
+    {setupStage} 
+    on:wizardCancelled={handleWizardCancelled} 
+    on:wizardStepChange={handleWizardStepChange} 
+    on:wizardCompleted={handleWizardCompletion} />
   {/if}
   <!--@*Notification Banner *@-->
   <div id="notificationBanner">
