@@ -13,7 +13,7 @@ import { EditorEnvironment } from './mapwork.editor.environment'
 import { ChangeRecorder } from './mapwork.editor.changes'
 
 const changeRecorder = new ChangeRecorder()
-window.editorInstance = new EditorEnvironment(changeRecorder)
+const editorInstance = new EditorEnvironment(changeRecorder)
 
 window.$ = window.jQuery = require('jquery')
 require('./jquery.jscrollpane.min.js')
@@ -23,12 +23,12 @@ require('./jquery.cookie.js')
 const app = new App({
   target: document.getElementById('app'),
   props: {
-    editorInstance: window.editorInstance,
+    editorInstance
   },
 })
 
 $(document).ready(function () {
   'use strict'
   //Init Environment
-  window.editorInstance.Init()
+  editorInstance.Init()
 })

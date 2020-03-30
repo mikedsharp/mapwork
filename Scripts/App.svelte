@@ -10,9 +10,9 @@
     setupStage.set('create-project')
   }
   function handleWizardCompletion(event) {
-    console.log('wizard complete')
-    console.log(event)
-    window.editorInstance.createNewMap(
+    setupStage.set('');
+
+    editorInstance.createNewMap(
       event.detail.mapName,
       event.detail.tileWidth,
       event.detail.tileHeight,

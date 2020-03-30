@@ -5,11 +5,15 @@
   let mapName
   function handleStepCompletion(event) {
     mapName = event.detail.mapName
+      setupStage.set('set-map-dimensions');
+  }
+  function handleWizardCancelled() {
+    setupStage.set('');
   }
 </script>
 
 {#if $setupStage === 'create-project'}
-  <NameMapStep on:stepCompleted={handleStepCompletion} />
+  <NameMapStep on:wizardCancelled={handleWizardCancelled} on:stepCompleted={handleStepCompletion} />
 {:else if $setupStage === 'set-map-dimensions'}
-  <SetMapDimensionsStep {mapName} on:wizardCompleted />
+  <SetMapDimensionsStep {mapName} on:wizardCancelled={handleWizardCancelled} on:wizardCompleted />
 {/if}

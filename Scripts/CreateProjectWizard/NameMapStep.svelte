@@ -1,20 +1,18 @@
 <script>
   import Dialog from '../Dialog/Dialog'
-  import { setupStage } from '../Stores/CreateProjectWizard'
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
   let mapName = 'untitled map 1'
   function onCancelCreateProject() {
-    setupStage.set('')
+    dispatch('wizardCancelled')
   }
   function onConfirmCreateProject() {
-    setupStage.set('set-map-dimensions')
     dispatch('stepCompleted', { mapName })
   }
   $: valid = mapName && mapName.length > 0
 </script>
 
-<Dialog {$setupStage} dialogWidth="500px" dialogHeight="500px">
+<Dialog dialogWidth="500px" dialogHeight="500px">
   <h1 slot="dialog-title">New Map</h1>
   <div slot="dialog-content">
     <span>Enter a name for your new map</span>

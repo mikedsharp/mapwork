@@ -1,6 +1,5 @@
 <script>
   import Dialog from '../Dialog/Dialog'
-  import { setupStage } from '../Stores/CreateProjectWizard'
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
   export let mapName
@@ -8,10 +7,9 @@
   let tilesDown = 32
 
   function onCancelCreateProject() {
-    setupStage.set('')
+      dispatch('wizardCancelled')
   }
   function onConfirmCreateProject() {
-    setupStage.set('')
     dispatch('wizardCompleted', {
       mapName,
       tileWidth: 32,
@@ -33,7 +31,7 @@
   }
 </style>
 
-<Dialog {$setupStage} dialogWidth="500px" dialogHeight="500px">
+<Dialog dialogWidth="500px" dialogHeight="500px">
   <h1 slot="dialog-title">New Map</h1>
   <div class="set-map-dimensions-content" slot="dialog-content">
     <span>Number of horizontal tiles</span>
