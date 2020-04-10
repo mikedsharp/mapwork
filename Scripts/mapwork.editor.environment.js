@@ -1640,7 +1640,6 @@ export class EditorEnvironment {
   }
   BuildUIFromModel() {
     'use strict'
-    debugger
     scope.LoadLayersFromModel()
     scope.LoadSettingsFromModel()
   }

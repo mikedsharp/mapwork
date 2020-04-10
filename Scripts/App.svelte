@@ -3,45 +3,45 @@
   import ActionMenu from './Menu/ActionMenu.svelte'
   import CreateProjectWizard from './CreateProjectWizard/CreateProjectWizard.svelte'
   export let editorInstance
-  let setupStage = '';
+  let setupStage = ''
   const primaryActions = [
     {
       label: 'New Map',
       id: 'createItem',
       actionHandler: () => {
-        setupStage = 'create-project';
-      }
+        setupStage = 'create-project'
+      },
     },
     {
       label: 'Map Tools',
       id: 'buildItem',
       actionHandler: () => {
-        editorInstance.showBuildMenu();
-      }
+        editorInstance.showBuildMenu()
+      },
     },
     {
       label: 'Save Map',
       id: 'saveItem',
       actionHandler: () => {
-        setupStage = '';
-      }
+        setupStage = ''
+      },
     },
-     {
+    {
       label: 'Download Map',
       id: 'publishItem',
       actionHandler: () => {
-        setupStage = '';
-      }
-    }
-  ];
+        setupStage = ''
+      },
+    },
+  ]
   function handleWizardStepChange(event) {
-    setupStage = event.detail;
-  } 
+    setupStage = event.detail
+  }
   function handleWizardCancelled() {
-    setupStage = '';
+    setupStage = ''
   }
   function handleWizardCompletion(event) {
-    setupStage = '';
+    setupStage = ''
 
     editorInstance.createNewMap(
       event.detail.mapName,
@@ -55,11 +55,11 @@
 
 <div id="appContainer">
   {#if setupStage !== ''}
-    <CreateProjectWizard 
-    {setupStage} 
-    on:wizardCancelled={handleWizardCancelled} 
-    on:wizardStepChange={handleWizardStepChange} 
-    on:wizardCompleted={handleWizardCompletion} />
+    <CreateProjectWizard
+      {setupStage}
+      on:wizardCancelled={handleWizardCancelled}
+      on:wizardStepChange={handleWizardStepChange}
+      on:wizardCompleted={handleWizardCompletion} />
   {/if}
   <!--@*Notification Banner *@-->
   <div id="notificationBanner">
@@ -67,10 +67,7 @@
   </div>
   <!-- left region -->
   <div id="leftBar" class="leftBar">
-    <ActionMenu
-      actions={primaryActions}
-    >
-    </ActionMenu>
+    <ActionMenu actions={primaryActions} />
   </div>
   <div class="modalBlocker" />
   <div id="createDialog" class="leftDialog">

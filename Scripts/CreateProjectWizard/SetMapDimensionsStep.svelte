@@ -7,7 +7,7 @@
   let tilesDown = 32
 
   function onCancelCreateProject() {
-      dispatch('wizardCancelled')
+    dispatch('wizardCancelled')
   }
   function onConfirmCreateProject() {
     dispatch('wizardCompleted', {
