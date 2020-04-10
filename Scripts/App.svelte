@@ -1,14 +1,39 @@
 <script>
   import MenuItem from './Menu/MenuItem.svelte'
+  import ActionMenu from './Menu/ActionMenu.svelte'
   import CreateProjectWizard from './CreateProjectWizard/CreateProjectWizard.svelte'
   export let editorInstance
   let setupStage = '';
-  function handlePrimaryUIAction(event) {
-    console.log(event)
-  }
-  function handleCreateProject() {
-    setupStage = 'create-project';
-  }
+  const primaryActions = [
+    {
+      label: 'New Map',
+      id: 'createItem',
+      actionHandler: () => {
+        setupStage = 'create-project';
+      }
+    },
+    {
+      label: 'Map Tools',
+      id: 'buildItem',
+      actionHandler: () => {
+        editorInstance.showBuildMenu();
+      }
+    },
+    {
+      label: 'Save Map',
+      id: 'saveItem',
+      actionHandler: () => {
+        setupStage = '';
+      }
+    },
+     {
+      label: 'Download Map',
+      id: 'publishItem',
+      actionHandler: () => {
+        setupStage = '';
+      }
+    }
+  ];
   function handleWizardStepChange(event) {
     setupStage = event.detail;
   } 
@@ -42,16 +67,10 @@
   </div>
   <!-- left region -->
   <div id="leftBar" class="leftBar">
-    <div class="verticalCentered">
-      <div class="itemContainer">
-        <MenuItem action={'createItem'} on:createItem={handleCreateProject} />
-        <MenuItem action={'buildItem'} on:buildItem={handlePrimaryUIAction} />
-        <MenuItem action={'saveItem'} on:saveItem={handlePrimaryUIAction} />
-        <MenuItem
-          action={'publishItem'}
-          on:publishItem={handlePrimaryUIAction} />
-      </div>
-    </div>
+    <ActionMenu
+      actions={primaryActions}
+    >
+    </ActionMenu>
   </div>
   <div class="modalBlocker" />
   <div id="createDialog" class="leftDialog">

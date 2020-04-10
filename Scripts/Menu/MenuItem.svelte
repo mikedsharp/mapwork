@@ -1,14 +1,10 @@
 <script>
-  import { createEventDispatcher } from 'svelte'
   export let action
-  const dispatch = createEventDispatcher()
-  function handleClick() {
-    dispatch(action)
-  }
+  export let label;
 </script>
 
 <style lang="scss">
 
 </style>
 
-<div class="ribbonItem" id={action} title={action} on:click={handleClick} />
+<div class="ribbonItem" id={action.id} title={label} on:click={() => {action.actionHandler()}} />

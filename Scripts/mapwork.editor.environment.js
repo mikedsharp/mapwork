@@ -58,7 +58,6 @@ export class EditorEnvironment {
 
     $('#paletteCanvas').click(scope.PaletteCanvas_Click.bind(scope))
     // left ribbon events
-    $('#buildItem').click(scope.BuildItem_Click.bind(scope))
     $('#saveItem').click(scope.SaveItem_Click.bind(scope))
     $('#publishItem').click(scope.PublishItem_Click.bind(scope))
     // right ribbon events (toolbox context)
@@ -1645,15 +1644,6 @@ export class EditorEnvironment {
     scope.LoadLayersFromModel()
     scope.LoadSettingsFromModel()
   }
-  BuildItem_Click() {
-    'use strict'
-    if (
-      scope.renderManager.mapModel !== null &&
-      scope.renderManager.mapModel !== undefined
-    ) {
-      scope.PresentRibbonContextMenu('build')
-    }
-  }
   SaveItem_Click() {
     'use strict'
     if (
@@ -1860,5 +1850,10 @@ export class EditorEnvironment {
         $('#notificationBanner').slideUp(200)
       }, 5000)
     })
+  }
+  showBuildMenu() {
+    if(scope.renderManager.mapModel) {
+      scope.PresentRibbonContextMenu('build');
+    }
   }
 }
