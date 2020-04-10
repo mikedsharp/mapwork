@@ -585,6 +585,9 @@ button::-moz-focus-inner {
   float: left;
   clear: none;
   cursor: pointer;
+  background: url('../Images/layer_movedown.png') no-repeat;
+  background-position-x: center;
+  background-position-y: center;
 }
 
 #layerMoveUp {
@@ -597,6 +600,9 @@ button::-moz-focus-inner {
   margin: 0;
   border-width: 0px;
   cursor: pointer;
+  background: url('../Images/layer_moveup.png') no-repeat;
+  background-position-x: center;
+  background-position-y: center;
 }
 
 #layerCreateNewLayer {
@@ -609,6 +615,9 @@ button::-moz-focus-inner {
   margin: 0;
   border-width: 0px;
   cursor: pointer;
+  background: url('../Images/layer_new.png') no-repeat;
+  background-position-x: center;
+  background-position-y: center;
 }
 
 #layerMoveDown:hover {
@@ -623,32 +632,32 @@ button::-moz-focus-inner {
   background-color: #1b78b5;
 }
 
-#layerMoveUp img {
-  margin: 0 auto;
-  width: 32px;
-  height: 16px;
-  position: relative;
-  left: 32px;
-  top: 8px;
-}
+// #layerMoveUp img {
+//   margin: 0 auto;
+//   width: 32px;
+//   height: 16px;
+//   position: relative;
+//   left: 32px;
+//   top: 8px;
+// }
 
-#layerMoveDown img {
-  margin: 0 auto;
-  width: 31px;
-  height: 16px;
-  position: relative;
-  left: 32px;
-  top: 8px;
-}
+// #layerMoveDown img {
+//   margin: 0 auto;
+//   width: 31px;
+//   height: 16px;
+//   position: relative;
+//   left: 32px;
+//   top: 8px;
+// }
 
-#layerCreateNewLayer img {
-  margin: 0 auto;
-  width: 24px;
-  height: 24px;
-  position: relative;
-  left: 19px;
-  top: 4px;
-}
+// #layerCreateNewLayer img {
+//   margin: 0 auto;
+//   width: 24px;
+//   height: 24px;
+//   position: relative;
+//   left: 19px;
+//   top: 4px;
+// }
 
 .renameLayer {
   width: 16px;

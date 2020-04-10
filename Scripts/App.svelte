@@ -349,15 +349,9 @@
       <ul id="layerList" class="clearfix" />
     </div>
     <div id="layerControls" class="clearfix">
-      <div id="layerCreateNewLayer">
-        <img src="/Images/layer_new.png" />
-      </div>
-      <div id="layerMoveUp">
-        <img src="/Images/layer_moveup.png" />
-      </div>
-      <div id="layerMoveDown">
-        <img src="/Images/layer_movedown.png" />
-      </div>
+      <div id="layerCreateNewLayer" />
+      <div id="layerMoveUp" />
+      <div id="layerMoveDown" />
     </div>
   </div>
   <div id="propertiesDialog" class="dialogDummy">
