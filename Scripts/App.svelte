@@ -1,15 +1,26 @@
 <script>
-  import MenuItem from './Menu/MenuItem.svelte'
-  import ActionMenu from './Menu/ActionMenu.svelte'
-  import CreateProjectWizard from './CreateProjectWizard/CreateProjectWizard.svelte'
+  import ActionMenu from './Menu/ActionMenu'
+  import CreateProjectWizard from './CreateProjectWizard/CreateProjectWizard'
+  // tool menus
+  import PaletteMenu from './PaletteMenu/PaletteMenu'
+  import LayersMenu from './LayersMenu/LayersMenu'
+  import PropertiesMenu from './PropetiesMenu/PropertiesMenu'
+  import SettingsMenu from './SettingsMenu/SettingsMenu'
+  // props
   export let editorInstance
-  let setupStage = ''
+  const wizardTypes = {
+    WIZARD_NONE: -1,
+    WIZARD_CREATE_MAP: 0,
+    WIZARD_SAVE_MAP: 1,
+    WIZARD_DOWNLOAD_MAP: 2,
+  }
+  let activeWizard = wizardTypes.WIZARD_NONE
   const primaryActions = [
     {
       label: 'New Map',
       id: 'createItem',
       actionHandler: () => {
-        setupStage = 'create-project'
+        activeWizard = wizardTypes.WIZARD_CREATE_MAP
       },
     },
     {
@@ -23,14 +34,14 @@
       label: 'Save Map',
       id: 'saveItem',
       actionHandler: () => {
-        setupStage = ''
+        activeWizard = wizardTypes.WIZARD_SAVE_MAP
       },
     },
     {
       label: 'Download Map',
       id: 'publishItem',
       actionHandler: () => {
-        setupStage = ''
+        activeWizard = wizardTypes.WIZARD_DOWNLOAD_MAP
       },
     },
   ]
@@ -64,15 +75,10 @@
       },
     },
   ]
-  function handleWizardStepChange(event) {
-    setupStage = event.detail
-  }
   function handleWizardCancelled() {
-    setupStage = ''
+    activeWizard = wizardTypes.WIZARD_NONE
   }
   function handleWizardCompletion(event) {
-    setupStage = ''
-
     editorInstance.createNewMap(
       event.detail.mapName,
       event.detail.tileWidth,
@@ -80,15 +86,14 @@
       event.detail.tilesAccross,
       event.detail.tilesDown
     )
+    activeWizard = wizardTypes.WIZARD_NONE
   }
 </script>
 
 <div id="appContainer">
-  {#if setupStage !== ''}
+  {#if activeWizard === wizardTypes.WIZARD_CREATE_MAP}
     <CreateProjectWizard
-      {setupStage}
       on:wizardCancelled={handleWizardCancelled}
-      on:wizardStepChange={handleWizardStepChange}
       on:wizardCompleted={handleWizardCompletion} />
   {/if}
   <!--@*Notification Banner *@-->
@@ -212,181 +217,8 @@
       <ActionMenu actions={secondaryActions} />
     {/if}
   </div>
-  <div id="paletteDialog" class="dialogDummy">
-    <div id="paletteInfo" class="clearfix">
-      <h3>Palette</h3>
-      <p>
-        Select a tile from the palette below, if required, upload a new tileset.
-      </p>
-      <div id="paletteToolbox">
-        <div class="table">
-          <div class="tableRow">
-            <div class="tableCell toolboxItem" id="toolboxItemAreaselect" />
-            <div class="tableCell toolboxItem" id="toolboxItemInspect" />
-            <div class="tableCell toolboxItem" id="toolboxItemBrush" />
-            <div class="tableCell toolboxItem" id="toolboxItemBucket" />
-            <div class="tableCell toolboxItem" id="toolboxItemEraser" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="paletteCanvasContainer">
-      <canvas id="paletteCanvas" />
-    </div>
-  </div>
-  <div id="layersDialog" class="dialogDummy">
-    <h3>Layers</h3>
-    <div id="layersMenuContainer">
-      <p>Manage the order and visibiltiy of map layers here.</p>
-    </div>
-    <div id="layerInformationContainer" class="layerScroll">
-      <ul id="layerList" class="clearfix" />
-    </div>
-    <div id="layerControls" class="clearfix">
-      <div id="layerCreateNewLayer" />
-      <div id="layerMoveUp" />
-      <div id="layerMoveDown" />
-    </div>
-  </div>
-  <div id="propertiesDialog" class="dialogDummy">
-    <h3>Map Properties</h3>
-    <div id="mapPropertiesContainer">
-      <p>
-        Add, remove and edit properties about the maps, layers and specific tile
-        types.
-      </p>
-    </div>
-
-    <div id="propertyFilterContainer" class="marL-10 marR-10">
-      <ul class="marTB-10">
-        <li class="marTB-10">
-          <span>Property Scope:</span>
-        </li>
-        <li>
-          <select
-            name="propertyScope"
-            class="noPadding w150"
-            id="selectPropertyScope">
-            <option value="-1">--Select Scope--</option>
-            <option value="0">Map</option>
-            <option value="1">Layer</option>
-            <option value="2">Tile</option>
-          </select>
-        </li>
-      </ul>
-      <ul class="marTB-10" id="layerScopeContainer">
-        <li class="marTB-10">
-          <span>Select a Layer:</span>
-        </li>
-        <li>
-          <select
-            name="propertyScope"
-            class="noPadding w150"
-            id="selectLayerScope"
-            disabled="disabled">
-            <option value="-1">--Select Layer--</option>
-            <option value="0">Layer 1</option>
-            <option value="1">Collision Layer</option>
-            <option value="2">Random Layer</option>
-          </select>
-        </li>
-      </ul>
-      <ul class="marTB-10" id="layerTileSelectContainer">
-        <li>
-          <span>Select a Tile:</span>
-        </li>
-        <li>
-          <a id="propertiesInspectTile" />
-        </li>
-      </ul>
-    </div>
-    <div id="mapPropertiesListContainer" class="propertiesScroll">
-      <div class="table" id="propertyTable">
-        <div class="tableRow border">
-          <div class="tableCell border">
-            <span class="textCentered">Property</span>
-          </div>
-          <div class="tableCell border">
-            <span class="textCentered">Value</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div id="settingsDialog" class="dialogDummy ">
-    <h3>Settings</h3>
-    <div id="mapSettingsContainer">
-      <p>Change export and editor settings here.</p>
-      <div>
-        <ul class="marL-10 marR-10 marTB-10">
-          <li class="marT-5">
-            <h4>Map</h4>
-          </li>
-          <li class="marT-5">
-            <span class="noPadding">Map Name:</span>
-          </li>
-          <li class="marT-5">
-            <input type="text" class="noPadding w150" id="settingsMapName" />
-          </li>
-          <!--  @* <li class="marT-5">
-              <span class="noPadding">Project Name:</span>
-            </li>
-            <li class="marT-5">
-              <select class="noPadding w150" id="settingsSelectProject">
-                <option value="-1">-- Select A Project --</option>
-                <option value="0">Project A</option>
-                <option value="1">Project B</option>
-              </select>
-            </li>*@ -->
-          <li class="marT-5">
-            <span class="noPadding">Tiles Accross:</span>
-          </li>
-          <li class="marT-5">
-            <input
-              type="text"
-              class="noPadding w150"
-              id="settingsTilesAccross" />
-          </li>
-          <li class="marT-5">
-            <span class="noPadding">Tiles Down:</span>
-          </li>
-          <li class="marT-5">
-            <input type="text" class="noPadding w150" id="settingsTilesDown" />
-          </li>
-          <!-- @* <li class="marT-5">
-              <span class="noPadding">Tile Width: </span>
-            </li>*@ -->
-          <li class="marT-5">
-            <input type="text" class="noPadding w150" id="settingsTileWidth" />
-          </li>
-          <!--@* <li class="marT-5">
-              <span class="noPadding">Tile Height: </span>
-            </li>*@ -->
-          <li class="marT-5">
-            <input type="text" class="noPadding w150" id="settingsTileHeight" />
-          </li>
-          <li class="marTB-10">
-            <a class="button" id="settingsSaveChanges">Save Changes</a>
-          </li>
-        </ul>
-
-        <ul class="marL-10 marR-10 marTB-10">
-          <li class="marT-5">
-            <h4>Editor</h4>
-          </li>
-          <li class="marT-5">
-            <span>Show Grid:</span>
-          </li>
-          <li class="marT-5">
-            <input
-              type="checkbox"
-              checked="checked"
-              class="noPadding"
-              id="settingsToggleGrid" />
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
+  <PaletteMenu />
+  <LayersMenu />
+  <PropertiesMenu />
+  <SettingsMenu />
 </div>
