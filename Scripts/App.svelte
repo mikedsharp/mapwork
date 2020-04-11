@@ -11,21 +11,18 @@
   import EditorCanvas from './EditorCanvas/EditorCanvas'
   // notifications
   import NotificationBanner from './NotificationBanner/NotificationBanner'
+  // enums
+  import { WizardTypes } from './Wizard/WizardTypes'
   // props
   export let editorInstance
-  const wizardTypes = {
-    WIZARD_NONE: -1,
-    WIZARD_CREATE_MAP: 0,
-    WIZARD_SAVE_MAP: 1,
-    WIZARD_DOWNLOAD_MAP: 2,
-  }
-  let activeWizard = wizardTypes.WIZARD_NONE
+
+  let activeWizard = WizardTypes.WIZARD_NONE
   const primaryActions = [
     {
       label: 'New Map',
       id: 'createItem',
       actionHandler: () => {
-        activeWizard = wizardTypes.WIZARD_CREATE_MAP
+        activeWizard = WizardTypes.WIZARD_CREATE_MAP
       },
     },
     {
@@ -39,7 +36,7 @@
       label: 'Save Map',
       id: 'saveItem',
       actionHandler: () => {
-        activeWizard = wizardTypes.WIZARD_SAVE_MAP
+        activeWizard = WizardTypes.WIZARD_SAVE_MAP
       },
     },
     {
@@ -47,7 +44,7 @@
       id: 'publishItem',
       actionHandler: () => {
         if (editorInstance.renderManager.mapModel) {
-          activeWizard = wizardTypes.WIZARD_DOWNLOAD_MAP
+          activeWizard = WizardTypes.WIZARD_DOWNLOAD_MAP
         } else {
           editorInstance.DisplayNotification(
             'Please create a map before attempting to download the project.',
@@ -88,10 +85,10 @@
     },
   ]
   function handleWizardCancelled() {
-    activeWizard = wizardTypes.WIZARD_NONE
+    activeWizard = WizardTypes.WIZARD_NONE
   }
   function handleDownloadMapWizardCompletion() {
-    activeWizard = wizardTypes.WIZARD_NONE
+    activeWizard = WizardTypes.WIZARD_NONE
   }
   function handleCreateMapWizardCompletion(event) {
     editorInstance.createNewMap(
@@ -101,16 +98,16 @@
       event.detail.tilesAccross,
       event.detail.tilesDown
     )
-    activeWizard = wizardTypes.WIZARD_NONE
+    activeWizard = WizardTypes.WIZARD_NONE
   }
 </script>
 
 <div id="appContainer">
-  {#if activeWizard === wizardTypes.WIZARD_CREATE_MAP}
+  {#if activeWizard === WizardTypes.WIZARD_CREATE_MAP}
     <CreateProjectWizard
       on:wizardCancelled={handleWizardCancelled}
       on:wizardCompleted={handleCreateMapWizardCompletion} />
-  {:else if activeWizard === wizardTypes.WIZARD_DOWNLOAD_MAP}
+  {:else if activeWizard === WizardTypes.WIZARD_DOWNLOAD_MAP}
     <DownloadMapWizard
       on:wizardCancelled={handleWizardCancelled}
       on:wizardCompleted={handleDownloadMapWizardCompletion} />
