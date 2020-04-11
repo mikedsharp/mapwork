@@ -31,7 +31,10 @@
   }
 </style>
 
-<Dialog dialogWidth="500px" dialogHeight="500px">
+<Dialog
+  dialogWidth="500px"
+  dialogHeight="500px"
+  clickOutsideToCancelAction={onCancelCreateProject}>
   <h1 slot="dialog-title">New Map</h1>
   <div class="set-map-dimensions-content" slot="dialog-content">
     <span>Number of horizontal tiles</span>

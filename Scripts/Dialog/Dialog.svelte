@@ -1,6 +1,7 @@
 <script>
   export let dialogWidth
   export let dialogHeight
+  export let clickOutsideToCancelAction = function() {}
 </script>
 
 <style lang="scss">
@@ -46,7 +47,7 @@
   }
 </style>
 
-<div class="dialog-overlay" />
+<div class="dialog-overlay" on:click={clickOutsideToCancelAction} />
 <div
   class="dialog"
   style="--dialogHeight:{dialogHeight};--dialogWidth:{dialogWidth}">

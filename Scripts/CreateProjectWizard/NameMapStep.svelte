@@ -12,7 +12,10 @@
   $: valid = mapName && mapName.length > 0
 </script>
 
-<Dialog dialogWidth="500px" dialogHeight="500px">
+<Dialog
+  dialogWidth="500px"
+  dialogHeight="500px"
+  clickOutsideToCancelAction={onCancelCreateProject}>
   <h1 slot="dialog-title">New Map</h1>
   <div slot="dialog-content">
     <span>Enter a name for your new map</span>
