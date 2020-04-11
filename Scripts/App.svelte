@@ -34,6 +34,36 @@
       },
     },
   ]
+  const secondaryActions = [
+    {
+      label: 'palette',
+      id: 'paletteItem',
+      actionHandler: () => {
+        editorInstance.openPaletteDrawer()
+      },
+    },
+    {
+      label: 'layers',
+      id: 'layersItem',
+      actionHandler: () => {
+        editorInstance.openLayersDrawer()
+      },
+    },
+    {
+      label: 'properties',
+      id: 'propertiesItem',
+      actionHandler: () => {
+        editorInstance.openPropertiesDrawer()
+      },
+    },
+    {
+      label: 'settings',
+      id: 'settingsItem',
+      actionHandler: () => {
+        editorInstance.openSettingsDrawer()
+      },
+    },
+  ]
   function handleWizardStepChange(event) {
     setupStage = event.detail
   }
@@ -308,14 +338,9 @@
   </div>
   <!-- right region -->
   <div id="rightBar" class="rightBar">
-    <div class="verticalCentered">
-      <div class="itemContainer" id="buildContextRibbon">
-        <div class="ribbonItem" id="paletteItem" title="palette" />
-        <div class="ribbonItem" id="layersItem" title="layers" />
-        <div class="ribbonItem" id="propertiesItem" title="properties" />
-        <div class="ribbonItem" id="settingsItem" title="settings" />
-      </div>
-    </div>
+    {#if editorInstance.renderManager.mapModel}
+      <ActionMenu actions={secondaryActions} />
+    {/if}
   </div>
   <div id="paletteDialog" class="dialogDummy">
     <div id="paletteInfo" class="clearfix">

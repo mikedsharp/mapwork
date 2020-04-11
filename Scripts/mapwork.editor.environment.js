@@ -60,11 +60,6 @@ export class EditorEnvironment {
     // left ribbon events
     $('#saveItem').click(scope.SaveItem_Click.bind(scope))
     $('#publishItem').click(scope.PublishItem_Click.bind(scope))
-    // right ribbon events (toolbox context)
-    $('#paletteItem').click(scope.PaletteItem_Click.bind(scope))
-    $('#layersItem').click(scope.LayersItem_Click.bind(scope))
-    $('#propertiesItem').click(scope.PropertiesItem_Click.bind(scope))
-    $('#settingsItem').click(scope.SettingsItem_Click.bind(scope))
     $('#publishButtonOK').click(scope.PublishButtonOK_Click.bind(scope))
     $('#publishButtonCancel').click(scope.PublishButtonCancel_Click.bind(scope))
     $('#publishButtonCancelPublish').click(
@@ -1673,20 +1668,20 @@ export class EditorEnvironment {
       $('.modalBlocker').show()
     }
   }
-  PaletteItem_Click() {
+  openPaletteDrawer() {
     'use strict'
     scope.PresentRibbonDialog('palette')
   }
-  LayersItem_Click() {
+  openLayersDrawer() {
     'use strict'
     scope.LoadLayersFromModel()
     scope.PresentRibbonDialog('layers')
   }
-  PropertiesItem_Click() {
+  openPropertiesDrawer() {
     'use strict'
     scope.PresentRibbonDialog('properties')
   }
-  SettingsItem_Click() {
+  openSettingsDrawer() {
     'use strict'
     scope.LoadSettingsFromModel()
     scope.PresentRibbonDialog('settings')
@@ -1851,8 +1846,8 @@ export class EditorEnvironment {
     })
   }
   showBuildMenu() {
-    if(scope.renderManager.mapModel) {
-      scope.PresentRibbonContextMenu('build');
+    if (scope.renderManager.mapModel) {
+      scope.PresentRibbonContextMenu('build')
     }
   }
 }
