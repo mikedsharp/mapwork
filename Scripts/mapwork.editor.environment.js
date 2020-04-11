@@ -1004,12 +1004,6 @@ export class EditorEnvironment {
       '#paletteCanvasContainer'
     ).width()
     //document.getElementById('paletteCanvas').height = $('#paletteCanvasContainer').height();
-
-    // reposition dialogs
-    $('#createDialog').css(
-      'top',
-      $('#leftBar').height() / 2 - $('#createDialog').height() / 2 + 'px'
-    )
     $('#publishDialog').css(
       'top',
       $('#leftBar').height() / 2 - $('#publishDialog').height() / 2 + 'px'
@@ -1462,30 +1456,6 @@ export class EditorEnvironment {
       parseInt(event.pageY - $('#paletteCanvas').offset().top, 10)
     )
   }
-  CreateItem_Click() {
-    'use strict'
-    scope.PresentRibbonContextMenu('create')
-    // centre the create dialog
-    $('#createDialog').css(
-      'top',
-      $('#leftBar').height() / 2 - $('#createDialog').height() / 2 + 'px'
-    )
-    $('#createDialog').show()
-    $('.modalBlocker').show()
-    $('#createProjectOptions').hide()
-    $('#createExistingProjectName').val(-1)
-
-    // show/hide each step, default to showing step one
-    $('#createDialogStepOne').show()
-    $('#createDialogStepTwo').hide()
-
-    //refresh validation
-    $('#createNewMapName').removeClass('errorBorder')
-    $('#createNewProjectName').removeClass('errorBorder')
-    $('#createNewProjectDescription').removeClass('errorBorder')
-    $('#createExistingProjectName').removeClass('errorBorder')
-  }
-
   createNewMap(mapName, tileWidth, tileHeight, tilesAccross, tilesDown) {
     scope.renderManager.mapModel = new Map(scope)
 
