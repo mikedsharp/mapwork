@@ -50,7 +50,7 @@
           activeWizard = wizardTypes.WIZARD_DOWNLOAD_MAP
         } else {
           editorInstance.DisplayNotification(
-            'Please create a map before trying to save',
+            'Please create a map before attempting to download the project.',
             'red'
           )
         }
