@@ -9,6 +9,8 @@
   import SettingsMenu from './SettingsMenu/SettingsMenu'
   // canvas
   import EditorCanvas from './EditorCanvas/EditorCanvas'
+  // notifications
+  import NotificationBanner from './NotificationBanner/NotificationBanner'
   // props
   export let editorInstance
   const wizardTypes = {
@@ -44,7 +46,14 @@
       label: 'Download Map',
       id: 'publishItem',
       actionHandler: () => {
-        activeWizard = wizardTypes.WIZARD_DOWNLOAD_MAP
+        if (editorInstance.renderManager.mapModel) {
+          activeWizard = wizardTypes.WIZARD_DOWNLOAD_MAP
+        } else {
+          editorInstance.DisplayNotification(
+            'Please create a map before trying to save',
+            'red'
+          )
+        }
       },
     },
   ]
@@ -81,7 +90,10 @@
   function handleWizardCancelled() {
     activeWizard = wizardTypes.WIZARD_NONE
   }
-  function handleWizardCompletion(event) {
+  function handleDownloadMapWizardCompletion() {
+    activeWizard = wizardTypes.WIZARD_NONE
+  }
+  function handleCreateMapWizardCompletion(event) {
     editorInstance.createNewMap(
       event.detail.mapName,
       event.detail.tileWidth,
@@ -97,28 +109,24 @@
   {#if activeWizard === wizardTypes.WIZARD_CREATE_MAP}
     <CreateProjectWizard
       on:wizardCancelled={handleWizardCancelled}
-      on:wizardCompleted={handleWizardCompletion} />
+      on:wizardCompleted={handleCreateMapWizardCompletion} />
+  {:else if activeWizard === wizardTypes.WIZARD_DOWNLOAD_MAP}
+    <DownloadMapWizard
+      on:wizardCancelled={handleWizardCancelled}
+      on:wizardCompleted={handleDownloadMapWizardCompletion} />
   {/if}
-  <!--@*Notification Banner *@-->
-  <div id="notificationBanner">
-    <span class="textCentre" />
-  </div>
-  <!-- left region -->
+  <NotificationBanner />
   <div id="leftBar" class="leftBar">
     <ActionMenu actions={primaryActions} />
   </div>
-  <div class="modalBlocker" />
-  <DownloadMapWizard />
-  <!-- centre region -->
   <EditorCanvas />
-  <!-- right region -->
   <div id="rightBar" class="rightBar">
     {#if editorInstance.renderManager.mapModel}
       <ActionMenu actions={secondaryActions} />
     {/if}
+    <PaletteMenu />
+    <LayersMenu />
+    <PropertiesMenu />
+    <SettingsMenu />
   </div>
-  <PaletteMenu />
-  <LayersMenu />
-  <PropertiesMenu />
-  <SettingsMenu />
 </div>

@@ -59,15 +59,6 @@ export class EditorEnvironment {
     $('#paletteCanvas').click(scope.PaletteCanvas_Click.bind(scope))
     // left ribbon events
     $('#saveItem').click(scope.SaveItem_Click.bind(scope))
-    $('#publishItem').click(scope.PublishItem_Click.bind(scope))
-    $('#publishButtonOK').click(scope.PublishButtonOK_Click.bind(scope))
-    $('#publishButtonCancel').click(scope.PublishButtonCancel_Click.bind(scope))
-    $('#publishButtonCancelPublish').click(
-      scope.PublishButtonCancelPublish_Click.bind(scope)
-    )
-    $('#publishButtonSuccessOK').click(
-      scope.PublishButtonSuccessOK_Click.bind(scope)
-    )
 
     //toolbox items
     $('#toolboxItemAreaselect').click(
@@ -1004,10 +995,6 @@ export class EditorEnvironment {
       '#paletteCanvasContainer'
     ).width()
     //document.getElementById('paletteCanvas').height = $('#paletteCanvasContainer').height();
-    $('#publishDialog').css(
-      'top',
-      $('#leftBar').height() / 2 - $('#publishDialog').height() / 2 + 'px'
-    )
 
     //inform mapwork.rendermanager of update
     if (scope.renderManager.camera) {
@@ -1483,19 +1470,6 @@ export class EditorEnvironment {
     // rebuild UI from model
     scope.BuildUIFromModel()
   }
-  PublishButtonOK_Click() {
-    'use strict'
-    /*$('#publishDialogStepOne').hide();
-        $('#publishDialogPending').show();
-        // begin serializing and sending map to server and retreiving bundle
-        //scope.renderManager.mapModel.serializeCompact();
-        scope.renderManager.mapModel.serialize();*/
-
-    scope.DisplayNotification(
-      'Feature not implemented in scope edition of MapWork',
-      'red'
-    )
-  }
   CompressMapData_Success(data) {
     'use strict'
     var encodedData
@@ -1563,11 +1537,6 @@ export class EditorEnvironment {
 
         */
   }
-  PostMapForDownload_Success() {
-    'use strict'
-    $('#publishDialogPending').hide()
-    $('#publishDialogSuccess').show()
-  }
   CheckDownloadTimer() {
     'use strict'
     var cookieValue
@@ -1585,24 +1554,6 @@ export class EditorEnvironment {
       scope.PostMapForDownload_Success()
     }
   }
-  PublishButtonCancel_Click() {
-    'use strict'
-    $('#publishDialog').hide()
-    $('#publishDialogStepOne').hide()
-    $('.modalBlocker').hide()
-  }
-  PublishButtonCancelPublish_Click() {
-    'use strict'
-    $('#publishDialog').hide()
-    $('#publishDialogStepOne').hide()
-    $('.modalBlocker').hide()
-  }
-  PublishButtonSuccessOK_Click() {
-    'use strict'
-    $('#publishDialog').hide()
-    $('#publishDialogSuccess').show()
-    $('.modalBlocker').hide()
-  }
   BuildUIFromModel() {
     'use strict'
     scope.LoadLayersFromModel()
@@ -1615,27 +1566,6 @@ export class EditorEnvironment {
       scope.renderManager.mapModel !== undefined
     ) {
       scope.PresentRibbonContextMenu('save')
-    }
-  }
-  PublishItem_Click() {
-    'use strict'
-    if (
-      scope.renderManager.mapModel !== null &&
-      scope.renderManager.mapModel !== undefined
-    ) {
-      scope.PresentRibbonContextMenu('publish')
-      // centre the create dialog
-      $('#publishDialog').css(
-        'top',
-        $('#leftBar').height() / 2 - $('#publishDialog').height() / 2 + 'px'
-      )
-      $('#publishDialog').show()
-      $('#publishDialogStepOne').show()
-      $('#publishDialogSuccess').hide()
-      $('#publishDialogError').hide()
-      $('#publishDialogPending').hide()
-
-      $('.modalBlocker').show()
     }
   }
   openPaletteDrawer() {
