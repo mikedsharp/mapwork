@@ -11,18 +11,32 @@
   import EditorCanvas from './EditorCanvas/EditorCanvas'
   // notifications
   import NotificationBanner from './NotificationBanner/NotificationBanner'
+  import { DisplayNotification } from './NotificationBanner/NotificationService'
   // enums
   import { WizardTypes } from './Wizard/WizardTypes'
   // props
   export let editorInstance
 
-  let activeWizard = WizardTypes.WIZARD_NONE
+  let selectedWizard = null
+  const wizards = {
+    [WizardTypes.WIZARD_CREATE_MAP]: {
+      component: CreateProjectWizard,
+      onCompleted: handleCreateMapWizardCompletion,
+      onCancelled: handleWizardCancelled,
+    },
+    [WizardTypes.WIZARD_DOWNLOAD_MAP]: {
+      component: DownloadMapWizard,
+      onCompleted: handleDownloadMapWizardCompletion,
+      onCancelled: handleWizardCancelled,
+    },
+  }
+
   const primaryActions = [
     {
       label: 'New Map',
       id: 'createItem',
       actionHandler: () => {
-        activeWizard = WizardTypes.WIZARD_CREATE_MAP
+        selectedWizard = wizards[WizardTypes.WIZARD_CREATE_MAP]
       },
     },
     {
@@ -35,18 +49,16 @@
     {
       label: 'Save Map',
       id: 'saveItem',
-      actionHandler: () => {
-        activeWizard = WizardTypes.WIZARD_SAVE_MAP
-      },
+      actionHandler: () => {},
     },
     {
       label: 'Download Map',
       id: 'publishItem',
       actionHandler: () => {
         if (editorInstance.renderManager.mapModel) {
-          activeWizard = WizardTypes.WIZARD_DOWNLOAD_MAP
+          selectedWizard = wizards[WizardTypes.WIZARD_DOWNLOAD_MAP]
         } else {
-          editorInstance.DisplayNotification(
+          DisplayNotification(
             'Please create a map before attempting to download the project.',
             'red'
           )
@@ -84,11 +96,12 @@
       },
     },
   ]
+
   function handleWizardCancelled() {
-    activeWizard = WizardTypes.WIZARD_NONE
+    selectedWizard = null
   }
   function handleDownloadMapWizardCompletion() {
-    activeWizard = WizardTypes.WIZARD_NONE
+    selectedWizard = null
   }
   function handleCreateMapWizardCompletion(event) {
     editorInstance.createNewMap(
@@ -98,19 +111,16 @@
       event.detail.tilesAccross,
       event.detail.tilesDown
     )
-    activeWizard = WizardTypes.WIZARD_NONE
+    selectedWizard = null
   }
 </script>
 
 <div id="appContainer">
-  {#if activeWizard === WizardTypes.WIZARD_CREATE_MAP}
-    <CreateProjectWizard
-      on:wizardCancelled={handleWizardCancelled}
-      on:wizardCompleted={handleCreateMapWizardCompletion} />
-  {:else if activeWizard === WizardTypes.WIZARD_DOWNLOAD_MAP}
-    <DownloadMapWizard
-      on:wizardCancelled={handleWizardCancelled}
-      on:wizardCompleted={handleDownloadMapWizardCompletion} />
+  {#if selectedWizard !== null}
+    <svelte:component
+      this={selectedWizard.component}
+      on:wizardCancelled={selectedWizard.onCancelled}
+      on:wizardCompleted={selectedWizard.onCompleted} />
   {/if}
   <NotificationBanner />
   <div id="leftBar" class="leftBar">

@@ -462,32 +462,6 @@ button::-moz-focus-inner {
   display: none;
 }
 
-#notificationBanner {
-  position: absolute;
-  left: 72px;
-  right: 72px;
-  top: 0px;
-  z-index: 4;
-  display: none;
-  padding: 10px 0;
-}
-
-.redNotification {
-  background-color: #d84040;
-}
-
-.greenNotification {
-  background-color: #5ea84c;
-}
-
-#notificationBanner span {
-  display: block;
-  font-family: Verdana, Geneva, 'DejaVu Sans', sans-serif;
-  font-size: 12px;
-  font-weight: bold;
-  color: #eee;
-}
-
 #propertiesInspectTile {
   background: url('../assets/toolbox_items.png') -0px -64px;
   width: 64px;

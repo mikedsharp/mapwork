@@ -4,6 +4,7 @@ import { Camera } from './mapwork.view.camera'
 import { ChangeRecorder } from './mapwork.editor.changes'
 import { ValidationHelper } from './mapwork.helper.validation'
 import { RenderManager } from './mapwork.rendermanager'
+import { DisplayNotification } from './NotificationBanner/NotificationService'
 
 const changeRecorder = new ChangeRecorder()
 let scope
@@ -277,7 +278,7 @@ export class EditorEnvironment {
         parseInt($('#settingsTilesDown').val(), 10) >
       16384
     ) {
-      scope.DisplayNotification(
+      DisplayNotification(
         'Tiles per layer must not exceed 16384 (e.g 128x128 or 512x32 etc)',
         'red'
       )
@@ -365,7 +366,7 @@ export class EditorEnvironment {
       //    scope.renderManager.camera.setPosition(scope.renderManager.camera.getX(), scope.renderManager.camera.getY());
       //    scope.renderManager.renderFlag = true;
       //}
-      scope.DisplayNotification('Changes Saved', 'green')
+      DisplayNotification('Changes Saved', 'green')
     }
   }
   PropertiesInput_Blur(event) {
@@ -789,7 +790,7 @@ export class EditorEnvironment {
       //refresh the scrollpane
       scope.RefreshScrollpane('layerScroll')
     } else {
-      scope.DisplayNotification('A map may only have up to 5 layers', 'red')
+      DisplayNotification('A map may only have up to 5 layers', 'red')
     }
   }
 
@@ -1712,7 +1713,7 @@ export class EditorEnvironment {
   }
   LoadTilesetList_Error() {
     'use strict'
-    scope.DisplayNotification('Failed to retrieve tilesets from server', 'red')
+    DisplayNotification('Failed to retrieve tilesets from server', 'red')
   }
   LayerSelectTileset_Change(event) {
     'use strict'
@@ -1725,25 +1726,6 @@ export class EditorEnvironment {
     ;() => {
       scope.PalletCanvasResize()
     }
-  }
-  DisplayNotification(message, colour) {
-    'use strict'
-    if (colour === 'red') {
-      $('#notificationBanner').addClass('redNotification')
-      $('#notificationBanner').removeClass('greenNotification')
-    } else if (colour === 'green') {
-      $('#notificationBanner').addClass('greenNotification')
-      $('#notificationBanner').removeClass('redNotification')
-    }
-
-    clearTimeout(scope.notificationTimeout)
-    $('#notificationBanner').hide()
-    $('#notificationBanner span').text(message)
-    $('#notificationBanner').slideDown(200, function () {
-      scope.notificationTimeout = setTimeout(function () {
-        $('#notificationBanner').slideUp(200)
-      }, 5000)
-    })
   }
   showBuildMenu() {
     if (scope.renderManager.mapModel) {
