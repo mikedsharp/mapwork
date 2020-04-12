@@ -144,19 +144,19 @@ img {
 
 #createItem {
   border-width: 0px;
-  background-image: url('../Images/ribbon_sprites.png');
+  background-image: url('../assets/ribbon_sprites.png');
   background-position: 0px 0px;
 }
 
 #buildItem {
   border-width: 0px;
-  background-image: url('../Images/ribbon_sprites.png');
+  background-image: url('../assets/ribbon_sprites.png');
   background-position: 0px -32px;
 }
 
 #saveItem {
   border-width: 0px;
-  background-image: url('../Images/ribbon_sprites.png');
+  background-image: url('../assets/ribbon_sprites.png');
   background-position: 0px -64px;
   /*disk button Removed for iteration 1*/
   display: none;
@@ -164,31 +164,31 @@ img {
 
 #publishItem {
   border-width: 0px;
-  background-image: url('../Images/ribbon_sprites.png');
+  background-image: url('../assets/ribbon_sprites.png');
   background-position: 0px -96px;
 }
 
 #paletteItem {
   border-width: 0px;
-  background-image: url('../Images/ribbon_sprites.png');
+  background-image: url('../assets/ribbon_sprites.png');
   background-position: 0px -128px;
 }
 
 #layersItem {
   border-width: 0px;
-  background-image: url('../Images/ribbon_sprites.png');
+  background-image: url('../assets/ribbon_sprites.png');
   background-position: 0px -160px;
 }
 
 #propertiesItem {
   border-width: 0px;
-  background-image: url('../Images/ribbon_sprites.png');
+  background-image: url('../assets/ribbon_sprites.png');
   background-position: 0px -192px;
 }
 
 #settingsItem {
   border-width: 0px;
-  background-image: url('../Images/ribbon_sprites.png');
+  background-image: url('../assets/ribbon_sprites.png');
   background-position: 0px -224px;
 }
 
@@ -489,7 +489,7 @@ button::-moz-focus-inner {
 }
 
 #propertiesInspectTile {
-  background: url('../Images/toolbox_items.png') -0px -64px;
+  background: url('../assets/toolbox_items.png') -0px -64px;
   width: 64px;
   height: 64px;
   display: inline-block;
@@ -497,57 +497,57 @@ button::-moz-focus-inner {
 }
 
 #propertiesInspectTile:hover {
-  background: url('../Images/toolbox_items.png') -64px -64px;
+  background: url('../assets/toolbox_items.png') -64px -64px;
 }
 
 #toolboxItemEraser:hover {
-  background: url('../Images/toolbox_items.png') -64px -256px;
+  background: url('../assets/toolbox_items.png') -64px -256px;
 }
 
 #toolboxItemAreaselect:hover {
-  background: url('../Images/toolbox_items.png') -64px 0px;
+  background: url('../assets/toolbox_items.png') -64px 0px;
 }
 
 #toolboxItemInspect:hover {
-  background: url('../Images/toolbox_items.png') -64px -64px;
+  background: url('../assets/toolbox_items.png') -64px -64px;
 }
 
 #toolboxItemBrush:hover {
-  background: url('../Images/toolbox_items.png') -64px -128px;
+  background: url('../assets/toolbox_items.png') -64px -128px;
 }
 
 #toolboxItemBucket:hover {
-  background: url('../Images/toolbox_items.png') -64px -192px;
+  background: url('../assets/toolbox_items.png') -64px -192px;
 }
 
 #toolboxItemAreaselect {
   border-width: 0px;
-  background: url('../Images/toolbox_items.png') 0px 0px;
+  background: url('../assets/toolbox_items.png') 0px 0px;
 }
 
 #toolboxItemEraser {
   border-width: 0px;
-  background: url('../Images/toolbox_items.png') 0px -256px;
+  background: url('../assets/toolbox_items.png') 0px -256px;
 }
 
 #toolboxItemInspect {
   border-width: 0px;
-  background: url('../Images/toolbox_items.png') 0px -64px;
+  background: url('../assets/toolbox_items.png') 0px -64px;
   display: none;
 }
 
 #toolboxItemBrush {
   border-width: 0px;
-  background: url('../Images/toolbox_items.png') 0px -128px;
+  background: url('../assets/toolbox_items.png') 0px -128px;
 }
 
 #toolboxItemBucket {
   border-width: 0px;
-  background: url('../Images/toolbox_items.png') 0px -192px;
+  background: url('../assets/toolbox_items.png') 0px -192px;
 }
 
 .itemSelected {
-  background: url('../Images/toolbox_items.png') 128px -192px;
+  background: url('../assets/toolbox_items.png') 128px -192px;
 }
 
 #layerControls {
@@ -571,7 +571,7 @@ button::-moz-focus-inner {
   float: left;
   clear: none;
   cursor: pointer;
-  background: url('../Images/layer_movedown.png') no-repeat;
+  background: url('../assets/layer_movedown.png') no-repeat;
   background-position-x: center;
   background-position-y: center;
 }
@@ -586,7 +586,7 @@ button::-moz-focus-inner {
   margin: 0;
   border-width: 0px;
   cursor: pointer;
-  background: url('../Images/layer_moveup.png') no-repeat;
+  background: url('../assets/layer_moveup.png') no-repeat;
   background-position-x: center;
   background-position-y: center;
 }
@@ -601,7 +601,7 @@ button::-moz-focus-inner {
   margin: 0;
   border-width: 0px;
   cursor: pointer;
-  background: url('../Images/layer_new.png') no-repeat;
+  background: url('../assets/layer_new.png') no-repeat;
   background-position-x: center;
   background-position-y: center;
 }
@@ -648,7 +648,7 @@ button::-moz-focus-inner {
 .renameLayer {
   width: 16px;
   height: 16px;
-  background-image: url('../Images/layer_rename.png');
+  background-image: url('../assets/layer_rename.png');
   background-repeat: no-repeat;
   display: inline-block;
   clear: none;
@@ -671,17 +671,17 @@ button::-moz-focus-inner {
 }
 
 .layerVisibilityIconVisible {
-  background: url('../Images/layer_visibility.png') 0px 0px;
+  background: url('../assets/layer_visibility.png') 0px 0px;
 }
 
 .layerVisibilityIconHidden {
-  background: url('../Images/layer_visibility.png') -16px 0px;
+  background: url('../assets/layer_visibility.png') -16px 0px;
 }
 
 .deleteLayer {
   width: 16px;
   height: 16px;
-  background-image: url('../Images/layer_delete.png');
+  background-image: url('../assets/layer_delete.png');
   background-repeat: no-repeat;
   display: inline-block;
   clear: none;

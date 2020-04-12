@@ -1,8 +1,8 @@
-import '../Content/reset.scss'
-import '../Content/mapwork.editor.structure.scss'
-import '../Content/mapwork.editor.colourscheme.scss'
-import '../Content/mapwork.editor.formatting.scss'
-import '../Content/jquery.jscrollpane.scss'
+import '../styles/reset.scss'
+import '../styles/mapwork.editor.structure.scss'
+import '../styles/mapwork.editor.colourscheme.scss'
+import '../styles/mapwork.editor.formatting.scss'
+import '../styles/jquery.jscrollpane.scss'
 
 import App from './App.svelte'
 
@@ -23,7 +23,7 @@ require('./jquery.cookie.js')
 const app = new App({
   target: document.getElementById('app'),
   props: {
-    editorInstance
+    editorInstance,
   },
 })
 

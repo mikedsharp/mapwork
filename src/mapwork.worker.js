@@ -4,7 +4,7 @@
 //   Init: function() {
 //     'use strict';
 //     mapwork.worker.compressionWorker = new Worker(
-//       'Scripts/mapwork.worker.compression.js'
+//       'src/mapwork.worker.compression.js'
 //     );
 //     mapwork.worker.BindEvent();
 //   },

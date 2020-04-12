@@ -47,7 +47,7 @@
     ],
     "setupFiles": [
       "jest-canvas-mock",
-      "./Scripts/jest.setup.js"
+      "./src/jest.setup.js"
     ],
     "coverageReporters": [
       "text",
