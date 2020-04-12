@@ -2,6 +2,7 @@
   export let dialogWidth
   export let dialogHeight
   export let clickOutsideToCancelAction = function() {}
+  const KEY_ESCAPE = 27
 </script>
 
 <style lang="scss">
@@ -47,6 +48,12 @@
   }
 </style>
 
+<svelte:window
+  on:keydown={event => {
+    if (event.keyCode === KEY_ESCAPE) {
+      clickOutsideToCancelAction()
+    }
+  }} />
 <div class="dialog-overlay" on:click={clickOutsideToCancelAction} />
 <div
   class="dialog"
