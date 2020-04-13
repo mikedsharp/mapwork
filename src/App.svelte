@@ -18,6 +18,8 @@
   export let editorInstance
 
   let selectedWizard = null
+  let openDrawer = null
+
   const wizards = {
     [WizardTypes.WIZARD_CREATE_MAP]: {
       component: CreateProjectWizard,
@@ -31,6 +33,20 @@
     },
   }
 
+  const drawers = {
+    palette: {
+      component: PaletteMenu,
+    },
+    layers: {
+      component: LayersMenu,
+    },
+    properties: {
+      component: PropertiesMenu,
+    },
+    settings: {
+      component: SettingsMenu,
+    },
+  }
   const primaryActions = [
     {
       label: 'New Map',
@@ -71,28 +87,28 @@
       label: 'palette',
       id: 'paletteItem',
       actionHandler: () => {
-        editorInstance.openPaletteDrawer()
+        openDrawer = drawers['palette']
       },
     },
     {
       label: 'layers',
       id: 'layersItem',
       actionHandler: () => {
-        editorInstance.openLayersDrawer()
+        openDrawer = drawers['layers']
       },
     },
     {
       label: 'properties',
       id: 'propertiesItem',
       actionHandler: () => {
-        editorInstance.openPropertiesDrawer()
+        openDrawer = drawers['properties']
       },
     },
     {
       label: 'settings',
       id: 'settingsItem',
       actionHandler: () => {
-        editorInstance.openSettingsDrawer()
+        openDrawer = drawers['settings']
       },
     },
   ]
@@ -131,9 +147,8 @@
     {#if editorInstance.renderManager.mapModel}
       <ActionMenu actions={secondaryActions} />
     {/if}
-    <PaletteMenu />
-    <LayersMenu />
-    <PropertiesMenu />
-    <SettingsMenu />
+    {#if openDrawer !== null}
+      <svelte:component this={openDrawer.component} {editorInstance} />
+    {/if}
   </div>
 </div>

@@ -201,7 +201,6 @@ img {
   top: 0;
   right: 72px;
   bottom: 0;
-  display: none;
   overflow: hidden;
   overflow-x: hidden;
   width: 256px;
@@ -292,20 +291,6 @@ button::-moz-focus-inner {
 
 #buildContextRibbon {
   display: none;
-}
-
-#paletteCanvasContainer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: auto;
-  overflow-x: hidden;
-}
-
-#paletteCanvas {
-  cursor: pointer;
 }
 
 #appContainer {

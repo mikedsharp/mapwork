@@ -6,6 +6,9 @@ import { ValidationHelper } from './mapwork.helper.validation'
 import { RenderManager } from './mapwork.rendermanager'
 import { DisplayNotification } from './NotificationBanner/NotificationService'
 
+import { mapModel } from './MapModel/MapModel'
+let mapModelInstance
+
 const changeRecorder = new ChangeRecorder()
 let scope
 export class EditorEnvironment {
@@ -33,15 +36,15 @@ export class EditorEnvironment {
     scope.changeRecorder = ChangeRecorder
     scope.renderManager = new RenderManager(scope)
     this.rootScope = scope
+
+    this.mapSubscriber = mapModel.subscribe((value) => {
+      scope.renderManager.mapModel = value
+    })
   }
   Init() {
     'use strict'
     // bind all JQuery event handlers
     scope.BindEvent()
-
-    // add custom decoration to elements
-    $('.layerScroll').jScrollPane()
-    $('.propertiesScroll').jScrollPane()
 
     // Trigger a window resize to make canvas fit into page
     scope.Window_Resize()
@@ -57,18 +60,10 @@ export class EditorEnvironment {
     $('#editorCanvas').mouseout(scope.EditorCanvas_MouseOut.bind(scope))
     $('#editorCanvas').mousemove(scope.EditorCanvas_MouseMove.bind(scope))
 
-    $('#paletteCanvas').click(scope.PaletteCanvas_Click.bind(scope))
     // left ribbon events
     $('#saveItem').click(scope.SaveItem_Click.bind(scope))
 
-    //toolbox items
-    $('#toolboxItemAreaselect').click(
-      scope.ToolboxItemAreaselect_Click.bind(scope)
-    )
     $('#toolboxItemInspect').click(scope.ToolboxItemInspect_Click.bind(scope))
-    $('#toolboxItemBrush').click(scope.ToolboxItemBrush_Click.bind(scope))
-    $('#toolboxItemBucket').click(scope.ToolboxItemBucket_Click.bind(scope))
-    $('#toolboxItemEraser').click(scope.ToolboxItemEraser_Click.bind(scope))
 
     //change events for dialogs
     $('#createExistingProjectName').change(
@@ -103,9 +98,6 @@ export class EditorEnvironment {
       scope.LayerSelectTileset_Change.bind(scope)
     )
 
-    $('#layerCreateNewLayer').click(scope.LayerCreateNewLayer_Click.bind(scope))
-    $('#layerMoveUp').click(scope.LayerMoveUp_Click.bind(scope))
-    $('#layerMoveDown').click(scope.LayerMoveDown_Click.bind(scope))
     $('#propertyTable').on(
       'blur',
       '.propertiesInput',
@@ -448,7 +440,7 @@ export class EditorEnvironment {
           ' </div>'
 
         $(html).insertAfter($(event.target).parent().parent())
-        scope.RefreshScrollpane('propertiesScroll')
+        // scope.RefreshScrollpane('propertiesScroll')
       }
     } else {
       // scope isnt the bottom row, but does need to be removed from the DOM
@@ -462,7 +454,7 @@ export class EditorEnvironment {
       ) {
         properties.removeProperty($(event.target).parent().parent().data('key'))
         $(event.target).parent().parent().remove()
-        scope.RefreshScrollpane('propertiesScroll')
+        // scope.RefreshScrollpane('propertiesScroll')
       } else {
         // property exists, lets modify it
         properties.setProperty({
@@ -784,11 +776,12 @@ export class EditorEnvironment {
       newLayer.setZPosition(scope.renderManager.mapModel.getLayers().length)
       scope.selectedLayer = scope.renderManager.mapModel.getLayers().length
       scope.renderManager.mapModel.addLayer(newLayer)
+      mapModel.set(scope.renderManager.mapModel)
 
       // refresh layers view
-      scope.LoadLayersFromModel()
+      //scope.LoadLayersFromModel()
       //refresh the scrollpane
-      scope.RefreshScrollpane('layerScroll')
+      // scope.RefreshScrollpane('layerScroll')
     } else {
       DisplayNotification('A map may only have up to 5 layers', 'red')
     }
@@ -952,29 +945,9 @@ export class EditorEnvironment {
     }
   }
 
-  ToolboxItemAreaselect_Click() {
-    'use strict'
-    scope.selectedTool = 'areaSelect'
-  }
-
   ToolboxItemInspect_Click() {
     'use strict'
     scope.selectedTool = 'inspectTile'
-  }
-
-  ToolboxItemBrush_Click() {
-    'use strict'
-    scope.selectedTool = 'singleTileBrush'
-  }
-
-  ToolboxItemBucket_Click() {
-    'use strict'
-    scope.selectedTool = 'bucketFill'
-  }
-
-  ToolboxItemEraser_Click() {
-    'use strict'
-    scope.selectedTool = 'eraser'
   }
 
   Window_Resize() {
@@ -988,14 +961,22 @@ export class EditorEnvironment {
     ).height()
 
     //resize the tile palette based on the size of the screen
-    $('#paletteCanvasContainer').css(
-      'top',
-      $('#paletteInfo').height().toString() + 'px'
-    )
-    document.getElementById('paletteCanvas').width = $(
-      '#paletteCanvasContainer'
-    ).width()
-    //document.getElementById('paletteCanvas').height = $('#paletteCanvasContainer').height();
+    if (
+      document.getElementById('paletteCanvasContainer') &&
+      document.getElementById('paletteCanvas') &&
+      document.getElementById('paletteInfo')
+    ) {
+      $('#paletteCanvasContainer').css(
+        'top',
+        $('#paletteInfo').height().toString() + 'px'
+      )
+      document.getElementById('paletteCanvas').width = $(
+        '#paletteCanvasContainer'
+      ).width()
+      document.getElementById('paletteCanvas').height = $(
+        '#paletteCanvasContainer'
+      ).height()
+    }
 
     //inform mapwork.rendermanager of update
     if (scope.renderManager.camera) {
@@ -1010,8 +991,8 @@ export class EditorEnvironment {
     }
 
     // refresh all scrollbars
-    scope.RefreshScrollpane('layerScroll')
-    scope.RefreshScrollpane('propertiesScroll')
+    // scope.RefreshScrollpane('layerScroll')
+    // scope.RefreshScrollpane('propertiesScroll')
   }
   ModifyTile() {
     'use strict'
@@ -1436,16 +1417,8 @@ export class EditorEnvironment {
     }
     scope.leftMouseButtonDown = false
   }
-  PaletteCanvas_Click(event) {
-    'use strict'
-
-    scope.renderManager.getPickerTileCode(
-      parseInt(event.pageX - $('#paletteCanvas').offset().left, 10),
-      parseInt(event.pageY - $('#paletteCanvas').offset().top, 10)
-    )
-  }
   createNewMap(mapName, tileWidth, tileHeight, tilesAccross, tilesDown) {
-    scope.renderManager.mapModel = new Map(scope)
+    mapModel.set(new Map(scope))
 
     scope.renderManager.mapModel.createBlankModel(
       mapName,
@@ -1569,15 +1542,6 @@ export class EditorEnvironment {
       scope.PresentRibbonContextMenu('save')
     }
   }
-  openPaletteDrawer() {
-    'use strict'
-    scope.PresentRibbonDialog('palette')
-  }
-  openLayersDrawer() {
-    'use strict'
-    scope.LoadLayersFromModel()
-    scope.PresentRibbonDialog('layers')
-  }
   openPropertiesDrawer() {
     'use strict'
     scope.PresentRibbonDialog('properties')
@@ -1588,53 +1552,46 @@ export class EditorEnvironment {
     scope.PresentRibbonDialog('settings')
   }
   PresentRibbonDialog(kind) {
-    'use strict'
-    $('#' + kind + 'Dialog').toggle()
-
-    if (kind !== 'palette') {
-      $('#paletteDialog').hide()
-    } else {
-      //// assign a tilesheet to the palette for selected layer
-      scope.PalletCanvasResize()
-    }
-
-    if (kind !== 'layers') {
-      $('#layersDialog').hide()
-    } else {
-      scope.LoadLayersFromModel()
-    }
-
-    if (kind !== 'properties') {
-      $('#propertiesDialog').hide()
-    } else {
-      // reset property selection
-      $('#selectPropertyScope').val('-1')
-      $('#selectPropertyScope').trigger('change')
-    }
-
-    if (kind !== 'settings') {
-      $('#settingsDialog').hide()
-    } else {
-      //clear error validation warnings
-      $('#settingsSelectProject').removeClass('errorBorder')
-      $('#settingsMapName').removeClass('errorBorder')
-      $('#settingsTilesAccross').removeClass('errorBorder')
-      $('#settingsTilesDown').removeClass('errorBorder')
-      $('#settingsTileHeight').removeClass('errorBorder')
-      $('#settingsTileWidth').removeClass('errorBorder')
-
-      scope.LoadSettingsFromModel()
-    }
-
-    // alter size of the main canvas, based on dialog being visible or not
-    if ($('#' + kind + 'Dialog').is(':visible')) {
-      $('#canvasContainer').css('right', '328px')
-    } else {
-      $('#canvasContainer').css('right', '72px')
-    }
-
-    // do a canvas resize based on new dimensions of screen after toggle
-    scope.Window_Resize()
+    // 'use strict'
+    // $('#' + kind + 'Dialog').toggle()
+    // if (kind !== 'palette') {
+    //   $('#paletteDialog').hide()
+    // } else {
+    //   //// assign a tilesheet to the palette for selected layer
+    //   scope.PalletCanvasResize()
+    // }
+    // if (kind !== 'layers') {
+    //   $('#layersDialog').hide()
+    // } else {
+    //   scope.LoadLayersFromModel()
+    // }
+    // if (kind !== 'properties') {
+    //   $('#propertiesDialog').hide()
+    // } else {
+    //   // reset property selection
+    //   $('#selectPropertyScope').val('-1')
+    //   $('#selectPropertyScope').trigger('change')
+    // }
+    // if (kind !== 'settings') {
+    //   $('#settingsDialog').hide()
+    // } else {
+    //   //clear error validation warnings
+    //   $('#settingsSelectProject').removeClass('errorBorder')
+    //   $('#settingsMapName').removeClass('errorBorder')
+    //   $('#settingsTilesAccross').removeClass('errorBorder')
+    //   $('#settingsTilesDown').removeClass('errorBorder')
+    //   $('#settingsTileHeight').removeClass('errorBorder')
+    //   $('#settingsTileWidth').removeClass('errorBorder')
+    //   scope.LoadSettingsFromModel()
+    // }
+    // // alter size of the main canvas, based on dialog being visible or not
+    // if ($('#' + kind + 'Dialog').is(':visible')) {
+    //   $('#canvasContainer').css('right', '328px')
+    // } else {
+    //   $('#canvasContainer').css('right', '72px')
+    // }
+    // // do a canvas resize based on new dimensions of screen after toggle
+    // scope.Window_Resize()
   }
   PresentRibbonContextMenu(kind) {
     'use strict'
@@ -1647,6 +1604,9 @@ export class EditorEnvironment {
   }
   PalletCanvasResize() {
     'use strict'
+    if (!document.getElementById('paletteCanvas')) {
+      return
+    }
     var tilesheetWidth,
       tilesheetHeight,
       tileWidth,
@@ -1668,7 +1628,6 @@ export class EditorEnvironment {
       totalTiles = (tilesheetWidth / tileWidth) * (tilesheetHeight / tileHeight)
       rowCount = Math.ceil(totalTiles / tilesPerRow)
       pickerHeight = rowCount * tileHeight
-
       document.getElementById('paletteCanvas').height = pickerHeight
       scope.renderManager.tilesetTilesAccross = tilesheetWidth / tileWidth
       scope.renderManager.tilesetTilesDown = tilesheetHeight / tileHeight

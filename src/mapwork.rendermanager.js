@@ -1,4 +1,5 @@
-﻿export class RenderManager {
+﻿import { mapModel } from './MapModel/MapModel'
+export class RenderManager {
   constructor(EditorEnvironment) {
     // inject dependencies
     this.EditorEnvironment = EditorEnvironment
@@ -12,6 +13,10 @@
     this.pickerRowCount = null
     this.pickerTilesPerRow = null
     this.totalPickerTiles = null
+
+    this.mapSubscriber = mapModel.subscribe((value) => {
+      this.mapModel = value
+    })
   }
   Init() {
     'use strict'
