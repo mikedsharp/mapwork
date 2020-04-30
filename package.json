@@ -23,7 +23,7 @@
     "jest": "^24.9.0",
     "jest-canvas-mock": "^2.2.0",
     "jest-junit": "^10.0.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "parcel": "^1.12.4",
     "sass": "^1.23.7"
   },
