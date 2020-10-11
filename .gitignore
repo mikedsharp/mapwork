@@ -7,3 +7,4 @@ coverage
 coverage/
 coverage/*
 junit.xml
+.cache
