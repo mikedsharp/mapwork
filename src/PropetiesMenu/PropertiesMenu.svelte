@@ -33,7 +33,7 @@
           name="propertyScope"
           class="noPadding w150"
           id="selectLayerScope"
-          disabled="disabled">
+          disabled>
           <option value="-1">--Select Layer--</option>
           <option value="0">Layer 1</option>
           <option value="1">Collision Layer</option>

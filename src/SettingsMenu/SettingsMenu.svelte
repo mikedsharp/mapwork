@@ -62,7 +62,7 @@
         <li class="marT-5">
           <input
             type="checkbox"
-            checked="checked"
+            checked
             class="noPadding"
             id="settingsToggleGrid" />
         </li>

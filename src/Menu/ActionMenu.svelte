@@ -1,5 +1,5 @@
 <script>
-  import MenuItem from './MenuItem'
+  import MenuItem from './MenuItem.svelte'
   export let actions
 </script>
 

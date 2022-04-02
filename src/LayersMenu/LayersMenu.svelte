@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
   import { mapModel } from '../MapModel/MapModel'
   import { DisplayNotification } from '../NotificationBanner/NotificationService'
-  import { Layer } from '../mapwork.model.layer.js'
+  import { Layer } from '../mapwork.model.layer'
   export let editorInstance
   let mapModelInstance
   mapModel.subscribe(value => {

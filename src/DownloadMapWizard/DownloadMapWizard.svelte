@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
-  import Dialog from '../Dialog/Dialog'
+  import Dialog from '../Dialog/Dialog.svelte'
   function onConfirm() {
     dispatch('wizardCompleted')
   }

@@ -1,5 +1,5 @@
 <script>
-  import TilePicker from '../TilePicker/TilePicker'
+  import TilePicker from '../TilePicker/TilePicker.svelte'
   export let editorInstance
 
   function onBrushToolSelected() {

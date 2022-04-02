@@ -1,7 +1,9 @@
 ﻿export class ChangeRecorder {
+  reversions: any[]
+  changes: any[]
   constructor() {
-    this.reversions = []
-    this.changes = []
+    this.reversions = [];
+    this.changes = [];
   }
   pushChange(data) {
     this.changes.push(data)
@@ -104,7 +106,7 @@
     // commit changes to the server
   }
   popRevision() {
-    if (this.changes > 1) {
+    if (this.changes.length > 0) {
       this.changes.pop()
       return this.reversions.pop()
     }

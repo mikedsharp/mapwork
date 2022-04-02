@@ -1,11 +1,24 @@
 ﻿import { Tile } from './mapwork.model.tile'
 // i will get rid of the jquery soon, this is legacy and I hate it
-window.$ = require('jquery')
+
+import jquery from 'jquery';
+//@ts-ignore
+window.$ = jquery;
 const tilesetsEndpoint =
   'https://mds-mapwork-tilesets.s3-eu-west-1.amazonaws.com'
 
 export class Layer {
-  constructor(EditorEnvironment) {
+  EditorEnvironment: any;
+  name: any;
+  tilesetPath: any;
+  tilesetImage: any;
+  rows: any[];
+  zPosition: any;
+  properties: any[];
+  tilesetHeight: any;
+  tilesetWidth: any;
+  visible: boolean;
+  constructor(EditorEnvironment?) {
     // injected dependencies
     this.EditorEnvironment = EditorEnvironment
 

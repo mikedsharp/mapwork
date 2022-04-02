@@ -1,5 +1,5 @@
 <script>
-  import Dialog from '../Dialog/Dialog'
+  import Dialog from '../Dialog/Dialog.svelte'
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
   let mapName = 'untitled map 1'

@@ -1,40 +1,40 @@
 // for when we have real modules
-import { RenderManager } from './mapwork.rendermanager'
-import { Camera } from './mapwork.view.camera'
-import { Map } from './mapwork.model.map'
-import { Layer } from './mapwork.model.layer'
-let testRenderManager
-let MockEditorEnvironment = {}
-let mockLayer
+import { RenderManager } from './mapwork.rendermanager';
+import { Camera } from './mapwork.view.camera';
+import { Map } from './mapwork.model.map';
+import { Layer } from './mapwork.model.layer';
+let testRenderManager;
+let MockEditorEnvironment:any = {};
+let mockLayer;
 
 describe('mapwork.rendermanager.js barebones', () => {
   describe('constructor', () => {
     it(`should instantiate RenderManager with some sensible defaults`, () => {
-      testRenderManager = new RenderManager(MockEditorEnvironment)
-      expect(testRenderManager.mapModel).toEqual(null)
-      expect(testRenderManager.camera).toEqual(null)
-      expect(testRenderManager.renderFlag).toBe(true)
-      expect(testRenderManager.viewFPS).toEqual(20)
-      expect(testRenderManager.tilesetTilesAccross).toEqual(null)
-      expect(testRenderManager.tilesetTilesDown).toEqual(null)
-      expect(testRenderManager.pickerRowCount).toEqual(null)
-      expect(testRenderManager.pickerTilesPerRow).toEqual(null)
-      expect(testRenderManager.totalPickerTiles).toEqual(null)
+      testRenderManager = new RenderManager(MockEditorEnvironment);
+      expect(testRenderManager.mapModel).toEqual(null);
+      expect(testRenderManager.camera).toEqual(null);
+      expect(testRenderManager.renderFlag).toBe(true);
+      expect(testRenderManager.viewFPS).toEqual(20);
+      expect(testRenderManager.tilesetTilesAccross).toEqual(null);
+      expect(testRenderManager.tilesetTilesDown).toEqual(null);
+      expect(testRenderManager.pickerRowCount).toEqual(null);
+      expect(testRenderManager.pickerTilesPerRow).toEqual(null);
+      expect(testRenderManager.totalPickerTiles).toEqual(null);
     })
   })
 })
 describe('mapwork.rendermanager.js', () => {
   beforeEach(() => {
-    testRenderManager = new RenderManager(MockEditorEnvironment)
-    testRenderManager.totalPickerTiles = 10
-    testRenderManager.mapModel = new Map({})
-    testRenderManager.mapModel.createBlankModel('test', 32, 32, 8, 6)
-    testRenderManager.camera = new Camera(testRenderManager.mapModel)
-    testRenderManager.camera.setupCamera(0, 0, 128, 128, 1024, 768)
-    MockEditorEnvironment.tilesetTilesAccross = 10
-    MockEditorEnvironment.tilesetTilesDown = 1
-    MockEditorEnvironment.pickerRowCount = 1
-    MockEditorEnvironment.pickerTilesPerRow = 10
+    testRenderManager = new RenderManager(MockEditorEnvironment);
+    testRenderManager.totalPickerTiles = 10;
+    testRenderManager.mapModel = new Map({});
+    testRenderManager.mapModel.createBlankModel('test', 32, 32, 8, 6);
+    testRenderManager.camera = new Camera(testRenderManager.mapModel);
+    testRenderManager.camera.setupCamera(0, 0, 128, 128, 1024, 768);
+    MockEditorEnvironment.tilesetTilesAccross = 10;
+    MockEditorEnvironment.tilesetTilesDown = 1;
+    MockEditorEnvironment.pickerRowCount = 1;
+    MockEditorEnvironment.pickerTilesPerRow = 10;
     MockEditorEnvironment.selectedAreaTiles = {
       rows: [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]],
     }
@@ -70,9 +70,10 @@ describe('mapwork.rendermanager.js', () => {
   describe('InitiateRenderLoop()', () => {
     it(`should create a timeout that calls the DrawMap function`, () => {
       jest.useFakeTimers()
+      const windowSpy = jest.spyOn(window, 'setTimeout');
       testRenderManager.InitiateRenderLoop()
-      expect(setTimeout).toHaveBeenCalledTimes(1)
-      expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 50)
+      expect(windowSpy).toHaveBeenCalledTimes(1)
+      expect(windowSpy).toHaveBeenLastCalledWith(expect.any(Function), 50)
     })
   })
   describe('DrawMap()', () => {
@@ -99,8 +100,8 @@ describe('mapwork.rendermanager.js', () => {
     it(`should run all rendering routines, as we have a map model and render flag is set to true`, () => {
       testRenderManager.renderFlag = true
       testRenderManager.DrawMap()
-      const canvas = document.getElementById('editorCanvas')
-      const context = canvas.getContext('2d')
+      const canvas:any = document.getElementById('editorCanvas')
+      const context:any = canvas.getContext('2d')
 
       expect(clearCanvasSpy).toHaveBeenCalledTimes(1)
       expect(renderMapTilesSpy).toHaveBeenCalledTimes(1)
@@ -151,7 +152,7 @@ describe('mapwork.rendermanager.js', () => {
     })
     it(`should adjust canvas context to draw a white fill colour`, () => {
       testRenderManager.clearCanvas(context, width, height)
-      expect(context.fillStyle).toEqual('#fff')
+      expect(context.fillStyle).toEqual('#ffffff')
     })
     it(`should call fillRect to fill the canvas with fill colour to 'clear' it for next frame`, () => {
       const canvasFillRectSpy = jest.spyOn(context, 'fillRect')

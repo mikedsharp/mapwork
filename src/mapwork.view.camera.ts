@@ -1,4 +1,11 @@
 ﻿export class Camera {
+  MapModel: any
+  x: number
+  y: number
+  width: number
+  height: number
+  maxY: any
+  maxX: any
   constructor(MapModel) {
     // injected dependencies
     this.MapModel = MapModel

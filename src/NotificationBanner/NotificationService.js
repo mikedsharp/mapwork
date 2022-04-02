@@ -1,4 +1,4 @@
-import { NotificationConfig } from './NotificationStore'
+import { NotificationConfig } from './NotificationStore';
 export function DisplayNotification(message = '', colour = 'green') {
-  NotificationConfig.set({ message, colour })
+  NotificationConfig.set({ message, colour });
 }

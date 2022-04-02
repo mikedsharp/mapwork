@@ -1,5 +1,16 @@
 ﻿import { mapModel } from './MapModel/MapModel'
 export class RenderManager {
+  EditorEnvironment: any
+  mapModel: any
+  camera: any
+  renderFlag: boolean
+  viewFPS: number
+  tilesetTilesAccross: any
+  tilesetTilesDown: any
+  pickerRowCount: any
+  pickerTilesPerRow: any
+  totalPickerTiles: any
+  mapSubscriber: any
   constructor(EditorEnvironment) {
     // inject dependencies
     this.EditorEnvironment = EditorEnvironment
@@ -24,7 +35,7 @@ export class RenderManager {
   }
   InitiateRenderLoop() {
     'use strict'
-    setTimeout(() => {
+    window.setTimeout(() => {
       this.DrawMap()
     }, 1000 / this.viewFPS)
   }
@@ -55,7 +66,7 @@ export class RenderManager {
   }
 
   clearCanvas(context, width, height) {
-    context.fillStyle = '#fff'
+    context.fillStyle = '#ffffff'
     context.fillRect(0, 0, width, height)
   }
 
@@ -90,23 +101,23 @@ export class RenderManager {
                 .getLayerByZPosition(this.EditorEnvironment.selectedLayer)
                 .getTilesetImage(),
               parseInt(
-                (this.EditorEnvironment.selectedAreaTiles.rows[rowCount][
-                  cellCount
-                ] *
-                  this.mapModel.getTileWidth()) %
-                  this.mapModel
-                    .getLayerByZPosition(this.EditorEnvironment.selectedLayer)
-                    .getTilesetWidth(),
+               ( (this.EditorEnvironment.selectedAreaTiles.rows[rowCount][
+                cellCount
+              ] *
+                this.mapModel.getTileWidth()) %
+                this.mapModel
+                  .getLayerByZPosition(this.EditorEnvironment.selectedLayer)
+                  .getTilesetWidth()).toString(),
                 10
               ),
               parseInt(
-                (this.EditorEnvironment.selectedAreaTiles.rows[rowCount][
+                ((this.EditorEnvironment.selectedAreaTiles.rows[rowCount][
                   cellCount
                 ] *
                   this.mapModel.getTileWidth()) /
                   this.mapModel
                     .getLayerByZPosition(this.EditorEnvironment.selectedLayer)
-                    .getTilesetWidth(),
+                    .getTilesetWidth()).toString(),
                 10
               ) * this.mapModel.getTileWidth(),
               this.mapModel.getTileWidth(),
@@ -196,13 +207,13 @@ export class RenderManager {
               context.drawImage(
                 currentLayer.getTilesetImage(),
                 parseInt(
-                  (currentTile.getTileCode() * this.mapModel.getTileWidth()) %
-                    currentLayer.getTilesetWidth(),
+                  (  (currentTile.getTileCode() * this.mapModel.getTileWidth()) %
+                  currentLayer.getTilesetWidth()).toString(),
                   10
                 ),
                 parseInt(
-                  (currentTile.getTileCode() * this.mapModel.getTileWidth()) /
-                    currentLayer.getTilesetWidth(),
+                  ((currentTile.getTileCode() * this.mapModel.getTileWidth()) /
+                  currentLayer.getTilesetWidth()).toString(),
                   10
                 ) * this.mapModel.getTileWidth(),
                 this.mapModel.getTileWidth(),
@@ -314,8 +325,8 @@ export class RenderManager {
     ) {
       //draw the tiles in the palette
 
-      const pickerCanvas = document.getElementById('paletteCanvas')
-      const pickerContext = pickerCanvas.getContext('2d')
+      const pickerCanvas:any = document.getElementById('paletteCanvas')
+      const pickerContext:any = pickerCanvas.getContext('2d')
 
       pickerContext.fillStyle = '#ccc'
       pickerContext.rect(
@@ -344,13 +355,13 @@ export class RenderManager {
             pickerContext.drawImage(
               currentLayer.getTilesetImage(),
               parseInt(
-                (tileCode * this.mapModel.getTileWidth()) %
-                  currentLayer.getTilesetWidth(),
+              (  (tileCode * this.mapModel.getTileWidth()) %
+              currentLayer.getTilesetWidth()).toString(),
                 10
               ),
               parseInt(
-                (tileCode * this.mapModel.getTileWidth()) /
-                  currentLayer.getTilesetWidth(),
+                ((tileCode * this.mapModel.getTileWidth()) /
+                currentLayer.getTilesetWidth()).toString(),
                 10
               ) * this.mapModel.getTileWidth(),
               this.mapModel.getTileWidth(),

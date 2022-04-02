@@ -1,6 +1,6 @@
 <script>
-  import NameMapStep from './NameMapStep'
-  import SetMapDimensionsStep from './SetMapDimensionsStep'
+  import NameMapStep from './NameMapStep.svelte'
+  import SetMapDimensionsStep from './SetMapDimensionsStep.svelte'
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
   let mapName

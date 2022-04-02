@@ -1,4 +1,8 @@
 ﻿export class Tile {
+  tileCode: number
+  tilesheetX: any
+  tilesheetY: any
+  properties: any[]
   constructor() {
     this.tileCode = -1
     this.tilesheetX = null

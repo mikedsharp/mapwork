@@ -12,6 +12,8 @@ let mapModelInstance
 const changeRecorder = new ChangeRecorder()
 let scope
 export class EditorEnvironment {
+  rootScope: any
+  mapSubscriber: any
   constructor(ChangeRecorder) {
     scope = this
     scope.editorMoveInterval = null
@@ -121,6 +123,7 @@ export class EditorEnvironment {
     //move the camera around the map with given directional arrow key
     if (scope.renderManager.camera) {
       event = event || window.event
+      //@ts-ignore
       if (window.opera && !scope.arrowKeyDown) {
         switch (event.keyCode) {
           case 37:
@@ -182,6 +185,7 @@ export class EditorEnvironment {
   Editor_KeyUp() {
     'use strict'
     // resolve repeating keys issue in opera
+    //@ts-ignore
     if (window.opera) {
       clearInterval(scope.editorMoveInterval)
       scope.arrowKeyDown = false
@@ -266,8 +270,8 @@ export class EditorEnvironment {
     //}
 
     if (
-      parseInt($('#settingsTilesAccross').val(), 10) *
-        parseInt($('#settingsTilesDown').val(), 10) >
+      parseInt($('#settingsTilesAccross').val().toString(), 10) *
+        parseInt($('#settingsTilesDown').val().toString(), 10) >
       16384
     ) {
       DisplayNotification(
@@ -365,8 +369,8 @@ export class EditorEnvironment {
     'use strict'
     var scopeValue, layerValue, html, properties
 
-    scopeValue = parseInt($('#selectPropertyScope').val(), 10)
-    layerValue = parseInt($('#selectLayerScope').val(), 10)
+    scopeValue = parseInt($('#selectPropertyScope').val().toString(), 10)
+    layerValue = parseInt($('#selectLayerScope').val().toString(), 10)
 
     if (scopeValue === 0) {
       properties = scope.renderManager.mapModel
@@ -480,8 +484,8 @@ export class EditorEnvironment {
 
     var inputValue, scopeValue
 
-    scopeValue = parseInt($('#selectPropertyScope').val(), 10)
-    inputValue = parseInt($(event.target).val(), 10)
+    scopeValue = parseInt($('#selectPropertyScope').val().toString(), 10)
+    inputValue = parseInt($(event.target).val().toString(), 10)
 
     if (inputValue === -1) {
       $('#propertiesInspectTile').off(
@@ -524,7 +528,7 @@ export class EditorEnvironment {
     if (propertyType === 'map') {
       properties = scope.renderManager.mapModel.getAllProperties()
     } else if (propertyType === 'layer') {
-      inputValue = parseInt($('#selectLayerScope').val(), 10)
+      inputValue = parseInt($('#selectLayerScope').val().toString(), 10)
       properties = scope.renderManager.mapModel
         .getLayer(inputValue)
         .getAllProperties()
@@ -578,7 +582,7 @@ export class EditorEnvironment {
     'use strict'
 
     var inputValue, html, layerCount
-    inputValue = parseInt($(this).val(), 10)
+    inputValue = parseInt($(this).val().toString(), 10)
 
     $('#propertyTable').empty()
 
@@ -600,16 +604,16 @@ export class EditorEnvironment {
 
     switch (inputValue) {
       case 0:
-        $('#selectLayerScope').attr('disabled', true)
+        $('#selectLayerScope').attr('disabled', 'true')
         break
       case 1:
-        $('#selectLayerScope').attr('disabled', false)
+        $('#selectLayerScope').attr('disabled', 'false')
         break
       case 2:
-        $('#selectLayerScope').attr('disabled', true)
+        $('#selectLayerScope').attr('disabled', 'true')
         break
       case -1:
-        $('#selectLayerScope').attr('disabled', true)
+        $('#selectLayerScope').attr('disabled', 'true')
         break
       default:
         break
@@ -699,7 +703,7 @@ export class EditorEnvironment {
           .parent()
           .find('.layerName')
           .first()
-          .text($(event.target).parent().parent().find('.layerNameInput').val())
+          .text($(event.target).parent().parent().find('.layerNameInput').val().toString())
         scope.renderManager.mapModel
           .getLayer($(event.target).parent().parent().data('zPosition'))
           .setName(
@@ -750,11 +754,11 @@ export class EditorEnvironment {
   RefreshScrollpane(element) {
     'use strict'
 
-    var pane, api
+    // var pane, api
 
-    pane = $($('.' + element))
-    api = pane.data('jsp')
-    api.reinitialise()
+    // pane = $($('.' + element))
+    // api = pane.data('jsp')
+    // api.reinitialise()
   }
   LayerCreateNewLayer_Click() {
     'use strict'
@@ -1002,13 +1006,13 @@ export class EditorEnvironment {
       if (scope.selectedLayer !== null) {
         selectedTileX = scope.mouseX + scope.renderManager.camera.getX()
         selectedTileX = parseInt(
-          selectedTileX / scope.renderManager.mapModel.getTileWidth(),
+          (selectedTileX / scope.renderManager.mapModel.getTileWidth()).toString(),
           10
         )
 
         selectedTileY = scope.mouseY + scope.renderManager.camera.getY()
         selectedTileY = parseInt(
-          selectedTileY / scope.renderManager.mapModel.getTileHeight(),
+          (selectedTileY / scope.renderManager.mapModel.getTileHeight()).toString(),
           10
         )
 
@@ -1041,13 +1045,13 @@ export class EditorEnvironment {
       if (scope.selectedLayer !== null) {
         selectedTileX = scope.mouseX + scope.renderManager.camera.getX()
         selectedTileX = parseInt(
-          selectedTileX / scope.renderManager.mapModel.getTileWidth(),
+          (selectedTileX / scope.renderManager.mapModel.getTileWidth()).toString(),
           10
         )
 
         selectedTileY = scope.mouseY + scope.renderManager.camera.getY()
         selectedTileY = parseInt(
-          selectedTileY / scope.renderManager.mapModel.getTileHeight(),
+          (selectedTileY / scope.renderManager.mapModel.getTileHeight()).toString(),
           10
         )
 
@@ -1080,13 +1084,13 @@ export class EditorEnvironment {
       if (scope.selectedLayer !== null) {
         selectedTileX = scope.mouseX + scope.renderManager.camera.getX()
         selectedTileX = parseInt(
-          selectedTileX / scope.renderManager.mapModel.getTileWidth(),
+          (selectedTileX / scope.renderManager.mapModel.getTileWidth()).toString(),
           10
         )
 
         selectedTileY = scope.mouseY + scope.renderManager.camera.getY()
         selectedTileY = parseInt(
-          selectedTileY / scope.renderManager.mapModel.getTileHeight(),
+          (selectedTileY / scope.renderManager.mapModel.getTileHeight()).toString(),
           10
         )
 
@@ -1105,13 +1109,13 @@ export class EditorEnvironment {
         // identify world (map) co-ordinates by converting mouse co-ordinates
         selectedTileX = scope.mouseX + scope.renderManager.camera.getX()
         selectedTileX = parseInt(
-          selectedTileX / scope.renderManager.mapModel.getTileWidth(),
+          (selectedTileX / scope.renderManager.mapModel.getTileWidth()).toString(),
           10
         )
 
         selectedTileY = scope.mouseY + scope.renderManager.camera.getY()
         selectedTileY = parseInt(
-          selectedTileY / scope.renderManager.mapModel.getTileHeight(),
+          (selectedTileY / scope.renderManager.mapModel.getTileHeight()).toString(),
           10
         )
 
@@ -1510,23 +1514,6 @@ export class EditorEnvironment {
         $('body').remove('#postDownloadMap');
 
         */
-  }
-  CheckDownloadTimer() {
-    'use strict'
-    var cookieValue
-    // if the token previously specified has become a cookie, stop polling for it and let user know that download is complete
-
-    if ($.cookie('bundleDownloadToken') !== null) {
-      cookieValue = $.cookie('bundleDownloadToken').toString()
-    }
-
-    if (cookieValue === scope.downloadToken) {
-      $.cookie('bundleDownloadToken', null)
-      scope.downloadToken = null
-      clearInterval(scope.downloadInterval)
-      scope.downloadInterval = null
-      scope.PostMapForDownload_Success()
-    }
   }
   BuildUIFromModel() {
     'use strict'

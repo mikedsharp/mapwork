@@ -2,6 +2,14 @@
 import { Tile } from './mapwork.model.tile'
 
 export class Map {
+  EditorEnvironment: any
+  properties: any[]
+  name: any
+  tileWidth: any
+  tileHeight: any
+  tilesAccross: any
+  tilesDown: any
+  layers: any[]
   constructor(EditorEnvironment) {
     // injected dependencies
     this.EditorEnvironment = EditorEnvironment

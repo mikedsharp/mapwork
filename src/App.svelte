@@ -1,16 +1,16 @@
-<script>
-  import ActionMenu from './Menu/ActionMenu'
-  import CreateProjectWizard from './CreateProjectWizard/CreateProjectWizard'
-  import DownloadMapWizard from './DownloadMapWizard/DownloadMapWizard'
+<script lang="ts">
+  import ActionMenu from './Menu/ActionMenu.svelte';
+  import CreateProjectWizard from './CreateProjectWizard/CreateProjectWizard.svelte'
+  import DownloadMapWizard from './DownloadMapWizard/DownloadMapWizard.svelte'
   // tool menus
-  import PaletteMenu from './PaletteMenu/PaletteMenu'
-  import LayersMenu from './LayersMenu/LayersMenu'
-  import PropertiesMenu from './PropetiesMenu/PropertiesMenu'
-  import SettingsMenu from './SettingsMenu/SettingsMenu'
+  import PaletteMenu from './PaletteMenu/PaletteMenu.svelte'
+  import LayersMenu from './LayersMenu/LayersMenu.svelte'
+  import PropertiesMenu from './PropetiesMenu/PropertiesMenu.svelte'
+  import SettingsMenu from './SettingsMenu/SettingsMenu.svelte'
   // canvas
-  import EditorCanvas from './EditorCanvas/EditorCanvas'
+  import EditorCanvas from './EditorCanvas/EditorCanvas.svelte'
   // notifications
-  import NotificationBanner from './NotificationBanner/NotificationBanner'
+  import NotificationBanner from './NotificationBanner/NotificationBanner.svelte'
   import { DisplayNotification } from './NotificationBanner/NotificationService'
   // enums
   import { WizardTypes } from './Wizard/WizardTypes'
