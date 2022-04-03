@@ -11,8 +11,8 @@
 Running locally will allow you to run MapWork as a
 server that you can interact with on localhost. running locally also gives you sourcemaps that let you debug the code as it has been written, so you can find issues and add new features more easily.
 
-1. type `npm run dev`
-2. go to http://localhost:1234 in you browser (This project favours Brave or Chrome, but as things stand you should be good to run this in browsers as far back as IE10)
+1. type `npm start`
+2. go to http://localhost:3000 in you browser (This project favours Brave or Chrome, but as things stand you should be good to run this in browsers as far back as IE10)
 
 ## Building
 
