@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import TilePicker from '../TilePicker/TilePicker.svelte'
   export let editorInstance
 

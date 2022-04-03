@@ -83,7 +83,6 @@ export class EditorEnvironment {
     $('#selectLayerScope').change(scope.SelectLayerScope_Change)
 
     // settings menu binders
-    $('#settingsToggleGrid').click(scope.SettingsToggleGrid_Change.bind(scope))
     $('#settingsSaveChanges').click(scope.SettingsSaveChanges_Click.bind(scope))
 
     // navigation key handlers
@@ -116,15 +115,6 @@ export class EditorEnvironment {
         }
       }
     }
-  }
-  SettingsToggleGrid_Change() {
-    'use strict'
-    if ($('#settingsToggleGrid:checked').length > 0) {
-      scope.gridEnabled = true
-    } else {
-      scope.gridEnabled = false
-    }
-    //user toggles on-screen grid
   }
   SettingsSaveChanges_Click() {
     'use strict'

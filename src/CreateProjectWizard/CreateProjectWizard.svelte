@@ -5,11 +5,8 @@
   const dispatch = createEventDispatcher()
   let mapName
   let setupStage = 'create-project'
-  function handleStepCompletion(event) {
-    mapName = event.detail.mapName
-    dispatch('wizardStepChange', 'set-map-dimensions')
-  }
   function handleWizardStepChange(event) {
+    mapName = event.detail.mapName;
     setupStage = 'set-map-dimensions'
   }
 </script>

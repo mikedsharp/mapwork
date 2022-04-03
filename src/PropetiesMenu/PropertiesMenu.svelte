@@ -1,3 +1,7 @@
+<script lang="ts">
+
+</script>
+
 <div id="propertiesDialog" class="dialogDummy">
   <h3>Map Properties</h3>
   <div id="mapPropertiesContainer">
