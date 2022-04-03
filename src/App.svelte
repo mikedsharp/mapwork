@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ActionMenu from './Menu/ActionMenu.svelte';
+  import SideBar from './Menu/SideBar.svelte';
   import CreateProjectWizard from './CreateProjectWizard/CreateProjectWizard.svelte'
   import DownloadMapWizard from './DownloadMapWizard/DownloadMapWizard.svelte'
   // tool menus
@@ -140,12 +140,12 @@
   {/if}
   <NotificationBanner />
   <div id="leftBar" class="leftBar">
-    <ActionMenu actions={primaryActions} />
+    <SideBar actions={primaryActions} />
   </div>
   <EditorCanvas />
   <div id="rightBar" class="rightBar">
     {#if editorInstance.renderManager.mapModel}
-      <ActionMenu actions={secondaryActions} />
+      <SideBar actions={secondaryActions} />
     {/if}
     {#if openDrawer !== null}
       <svelte:component this={openDrawer.component} {editorInstance} />

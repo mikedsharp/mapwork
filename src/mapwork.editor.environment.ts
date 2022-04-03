@@ -606,10 +606,6 @@ export class EditorEnvironment {
     'use strict'
     scope.tilesets = data
   }
-  LoadTilesetList_Error() {
-    'use strict'
-    DisplayNotification('Failed to retrieve tilesets from server', 'red')
-  }
   showBuildMenu() {
     if (scope.renderManager.mapModel) {
     }
