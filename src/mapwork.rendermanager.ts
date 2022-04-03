@@ -317,9 +317,14 @@ export class RenderManager {
     let pickerRowCount
     let pickerCellCount
     let tileCode
-
+    const paletteDialog = document.getElementById('paletteDialog');
+    if(!paletteDialog) {
+      return;
+    }
+    const paletteDialogStyles = window.getComputedStyle(paletteDialog);
+    const paletteDialogVisible = paletteDialogStyles.display !== 'none';
     if (
-      ($('#paletteDialog').is(':visible') || palletteDialogVisible) &&
+      (paletteDialogVisible || palletteDialogVisible) &&
       this.mapModel.getLayers().length > 0 &&
       this.EditorEnvironment.selectedLayer !== null
     ) {
@@ -332,8 +337,8 @@ export class RenderManager {
       pickerContext.rect(
         0,
         0,
-        $('#paletteCanvas').width(),
-        $('#paletteCanvas').height()
+        pickerCanvas.getBoundingClientRect().width,
+        pickerCanvas.getBoundingClientRect().height
       )
       pickerContext.fill()
 

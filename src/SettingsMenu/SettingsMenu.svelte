@@ -31,9 +31,10 @@
         editorInstance.renderManager.mapModel.getWorldWidth(),
         editorInstance.renderManager.mapModel.getWorldHeight()
       )
+      const editorCanvas = document.getElementById('editorCanvas');
       editorInstance.renderManager.camera.setSize(
-          jQuery('#editorCanvas').width(),
-          jQuery('#editorCanvas').height()
+        editorCanvas.getBoundingClientRect().width,
+        editorCanvas.getBoundingClientRect().height
         )
         editorInstance.renderManager.camera.setPosition(
           editorInstance.renderManager.camera.getX(),

@@ -102,8 +102,7 @@ export class Map {
         layerTwoIndex = layerCount
       }
     }
-
-    if (!$.isEmptyObject(layerOne) && !$.isEmptyObject(layerTwo)) {
+    if (Object.keys(layerOne).length !== 0 && Object.keys(layerTwo).length !== 0) {
       layerOne.setZPosition(zPositionTwo)
       layerTwo.setZPosition(zPositionOne)
       this.setLayer(layerOne, layerTwoIndex)

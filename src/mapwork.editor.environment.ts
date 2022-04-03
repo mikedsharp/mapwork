@@ -1,13 +1,10 @@
 ﻿import { Map } from './mapwork.model.map'
-import { Layer } from './mapwork.model.layer'
 import { Camera } from './mapwork.view.camera'
 import { ChangeRecorder } from './mapwork.editor.changes'
-import { ValidationHelper } from './mapwork.helper.validation'
 import { RenderManager } from './mapwork.rendermanager'
 import { DisplayNotification } from './NotificationBanner/NotificationService'
 
 import { mapModel } from './MapModel/MapModel'
-let mapModelInstance
 
 const changeRecorder = new ChangeRecorder()
 let scope
@@ -45,7 +42,7 @@ export class EditorEnvironment {
   }
   Init() {
     'use strict'
-    // bind all JQuery event handlers
+    // bind all event handlers
     scope.BindEvent()
 
     // Trigger a window resize to make canvas fit into page
@@ -64,27 +61,8 @@ export class EditorEnvironment {
     canvas.addEventListener('mouseout', scope.EditorCanvas_MouseOut.bind(scope));
     canvas.addEventListener('mousemove', scope.EditorCanvas_MouseMove.bind(scope));
 
-    // left ribbon events
-
-    $('#toolboxItemInspect').click(scope.ToolboxItemInspect_Click.bind(scope))
-
-    //change events for dialogs
-    $('#createExistingProjectName').change(
-      scope.CreateExistingProjectName_Change
-    )
-
-    $('#propertyTable').on(
-      'blur',
-      '.propertiesInput',
-      scope.PropertiesInput_Blur.bind(scope)
-    )
-
-    //binders for map properties section
-    $('#selectPropertyScope').change(scope.SelectPropertyScope_Change)
-    $('#selectLayerScope').change(scope.SelectLayerScope_Change)
-
     // navigation key handlers
-    $(window).keydown(scope.Editor_KeyDown.bind(scope))
+    window.addEventListener('keydown', scope.Editor_KeyDown.bind(scope));
   }
   Editor_KeyDown(event) {
     'use strict'
@@ -113,355 +91,6 @@ export class EditorEnvironment {
         }
       }
     }
-  }
-  
-  PropertiesInput_Blur(event) {
-    'use strict'
-    var scopeValue, layerValue, html, properties
-
-    scopeValue = parseInt($('#selectPropertyScope').val().toString(), 10)
-    layerValue = parseInt($('#selectLayerScope').val().toString(), 10)
-
-    if (scopeValue === 0) {
-      properties = scope.renderManager.mapModel
-    } else if (scopeValue === 1) {
-      properties = scope.renderManager.mapModel.getLayer(layerValue)
-    } else if (scopeValue === 2) {
-      properties = scope.selectedTile
-    }
-
-    if ($(event.target).parent().parent().hasClass('lastRow')) {
-      // last row gets appended if user addes something to previous last row, otherwise, row stays the same
-      if (
-        $(event.target)
-          .parent()
-          .parent()
-          .children()
-          .find('.propertyKey')
-          .val() !== ''
-      ) {
-        // add the property to the model
-
-        $(event.target)
-          .parent()
-          .parent()
-          .data(
-            'key',
-            $(event.target)
-              .parent()
-              .parent()
-              .children()
-              .find('.propertyKey')
-              .val()
-          )
-        $(event.target)
-          .parent()
-          .parent()
-          .data(
-            'value',
-            $(event.target)
-              .parent()
-              .parent()
-              .children()
-              .find('.propertyValue')
-              .val()
-          )
-
-        properties.addProperty({
-          key: $(event.target)
-            .parent()
-            .parent()
-            .children()
-            .find('.propertyKey')
-            .val(),
-          value: $(event.target)
-            .parent()
-            .parent()
-            .children()
-            .find('.propertyValue')
-            .val(),
-        })
-
-        // remove the 'last row class'
-        $(event.target).parent().parent().removeClass('lastRow')
-        html =
-          ' <div class="tableRow border lastRow">' +
-          '<div class="tableCell border">' +
-          '<input type="text"   class="noPadding propertyKey propertiesInput" />' +
-          '</div>' +
-          '<div class="tableCell border">' +
-          '<input type="text"  class="noPadding propertyValue propertiesInput" />' +
-          ' </div>'
-
-        $(html).insertAfter($(event.target).parent().parent())
-        // scope.RefreshScrollpane('propertiesScroll')
-      }
-    } else {
-      // scope isnt the bottom row, but does need to be removed from the DOM
-      if (
-        $(event.target)
-          .parent()
-          .parent()
-          .children()
-          .find('.propertyKey')
-          .val() === ''
-      ) {
-        properties.removeProperty($(event.target).parent().parent().data('key'))
-        $(event.target).parent().parent().remove()
-        // scope.RefreshScrollpane('propertiesScroll')
-      } else {
-        // property exists, lets modify it
-        properties.setProperty({
-          oldKey: $(event.target).parent().parent().data('key'),
-          newKey: $(event.target)
-            .parent()
-            .parent()
-            .children()
-            .find('.propertyKey')
-            .val(),
-          newValue: $(event.target)
-            .parent()
-            .parent()
-            .children()
-            .find('.propertyValue')
-            .val(),
-        })
-      }
-    }
-  }
-  SelectLayerScope_Change(event) {
-    'use strict'
-
-    var inputValue, scopeValue
-
-    scopeValue = parseInt($('#selectPropertyScope').val().toString(), 10)
-    inputValue = parseInt($(event.target).val().toString(), 10)
-
-    if (inputValue === -1) {
-      $('#propertiesInspectTile').off(
-        'click',
-        scope.PropertiesInspectTile_Click.bind(scope)
-      )
-    } else {
-      if (scopeValue === 2) {
-        //Tile-level scope
-        $('#propertiesInspectTile').on(
-          'click',
-          scope.PropertiesInspectTile_Click.bind(scope)
-        )
-      } else if (scopeValue === 1) {
-        scope.BuildPropertyTable('layer')
-        $('#propertyTable').show()
-      }
-    }
-  }
-
-  BuildPropertyTable(propertyType) {
-    'use strict'
-    var properties, html, propertyCount, inputValue
-
-    // empty existing table contents
-    $('#propertyTable').empty()
-
-    // add heading
-    html = '<div class="tableRow border">'
-    html += '<div class="tableCell border">'
-    html += '<span class="textCentered">Property</span>'
-    html += '</div>'
-    html += '<div class="tableCell border">'
-    html += '<span class="textCentered">Value</span>'
-    html += '</div>'
-
-    $('#propertyTable').append(html)
-
-    // add property data
-    if (propertyType === 'map') {
-      properties = scope.renderManager.mapModel.getAllProperties()
-    } else if (propertyType === 'layer') {
-      inputValue = parseInt($('#selectLayerScope').val().toString(), 10)
-      properties = scope.renderManager.mapModel
-        .getLayer(inputValue)
-        .getAllProperties()
-      //add properties from the model
-    } else if (propertyType === 'tile') {
-      properties = scope.selectedTile.getAllProperties()
-    }
-
-    for (
-      propertyCount = 0;
-      propertyCount < properties.length;
-      propertyCount++
-    ) {
-      html = '<div class ="tableRow border">'
-      html += '<div class="tableCell border">'
-      html +=
-        '<input type="text" value="' +
-        properties[propertyCount].key +
-        '" class="noPadding propertyKey propertiesInput" />'
-      html += '</div>'
-      html += '<div class="tableCell border">'
-      html +=
-        '<input type="text" value="' +
-        properties[propertyCount].value +
-        '" class="noPadding propertyValue propertiesInput" />'
-      html += '</div>'
-      html += '</div>'
-      html = $(html)
-      $(html).data('key', properties[propertyCount].key)
-      $(html).data('value', properties[propertyCount].value)
-
-      $('#propertyTable').append(html)
-    }
-    // a final row for enterting a new property
-    html = '<div class ="tableRow border lastRow">'
-    html += '<div class="tableCell border">'
-    html +=
-      '<input type="text" value="' +
-      '" class="noPadding propertyKey propertiesInput" />'
-    html += '</div>'
-    html += '<div class="tableCell border">'
-    html +=
-      '<input type="text" value="' +
-      '" class="noPadding propertyValue propertiesInput" />'
-    html += '</div>'
-    html += '</div>'
-    $('#propertyTable').append(html)
-  }
-
-  SelectPropertyScope_Change() {
-    'use strict'
-
-    var inputValue, html, layerCount
-    inputValue = parseInt($(this).val().toString(), 10)
-
-    $('#propertyTable').empty()
-
-    // add heading to property table
-    html = '<div class="tableRow border">'
-    html += '<div class="tableCell border">'
-    html += '<span class="textCentered">Property</span>'
-    html += '</div>'
-    html += '<div class="tableCell border">'
-    html += '<span class="textCentered">Value</span>'
-    html += '</div>'
-
-    $('#propertyTable').append(html)
-    html = ''
-
-    // set layer scope dropdown to default again
-    $('#selectLayerScope').val('-1')
-    $('#propertiesInspectTile').off('click', scope.PropertiesInspectTile_Click)
-
-    switch (inputValue) {
-      case 0:
-        $('#selectLayerScope').attr('disabled', 'true')
-        break
-      case 1:
-        $('#selectLayerScope').attr('disabled', 'false')
-        break
-      case 2:
-        $('#selectLayerScope').attr('disabled', 'true')
-        break
-      case -1:
-        $('#selectLayerScope').attr('disabled', 'true')
-        break
-      default:
-        break
-    }
-    // map-level logic
-    if (inputValue === 0) {
-      scope.BuildPropertyTable('map')
-      $('#propertyTable').show()
-    } else if (inputValue === -1) {
-      $('#propertyTable').empty()
-      $('#propertyTable').hide()
-    } else if (inputValue === 2) {
-      $('#propertiesInspectTile').on('click', scope.PropertiesInspectTile_Click)
-      $('#propertyTable').show()
-    }
-    if ($('#selectLayerScope').attr('disabled') !== 'disabled') {
-      // populate the list with layer data from the model
-      $('#selectLayerScope').empty()
-      html = '<option value="-1">--Select Layer--</option>'
-      $('#selectLayerScope').append(html)
-      for (
-        layerCount = 0;
-        layerCount < scope.renderManager.mapModel.getLayers().length;
-        layerCount++
-      ) {
-        html =
-          '<option value="' +
-          layerCount +
-          '"> ' +
-          scope.renderManager.mapModel.getLayer(layerCount).getName() +
-          ' </option>'
-        $('#selectLayerScope').append(html)
-      }
-    }
-  }
-
-  PropertiesInspectTile_Click() {
-    'use strict'
-    scope.selectedTool = 'inspectTile'
-  }
-
-  RefreshScrollpane(element) {
-    'use strict'
-
-    // var pane, api
-
-    // pane = $($('.' + element))
-    // api = pane.data('jsp')
-    // api.reinitialise()
-  }
-
-  LoadPropertiesFromModel() {
-    'use strict'
-    if ($('#selectPropertyScope').val() === '2') {
-      scope.BuildPropertyTable('tile')
-    }
-  }
-
-  LoadSettingsFromModel() {
-    'use strict'
-    $('#settingsMapName').val(scope.renderManager.mapModel.getName())
-    $('#settingsTilesAccross').val(
-      scope.renderManager.mapModel.getTilesAccross()
-    )
-    $('#settingsTilesDown').val(scope.renderManager.mapModel.getTilesDown())
-    $('#settingsTileWidth').val(scope.renderManager.mapModel.getTileWidth())
-    $('#settingsTileHeight').val(scope.renderManager.mapModel.getTileHeight())
-  }
-
-  LayerListItemDescription_Click() {
-    'use strict'
-
-    // remove the highlighter for all unselected layers
-    $('.layerListItem').each(function (index, element) {
-      $(element).removeClass('layerSelected')
-      $(element).addClass('layerUnselected')
-    })
-    // add a highlighter to the selected element
-
-    $(this).parent().addClass('layerSelected')
-    $(this).parent().removeClass('layerUnselected')
-    scope.selectedLayer = $(this).parent().data('zPosition')
-    scope.selectedPalleteTile = 0
-  }
-
-  CreateExistingProjectName_Change(event) {
-    'use strict'
-
-    if ($(event.target).val() === '0') {
-      $('#createProjectOptions').show()
-    } else {
-      $('#createProjectOptions').hide()
-    }
-  }
-
-  ToolboxItemInspect_Click() {
-    'use strict'
-    scope.selectedTool = 'inspectTile'
   }
 
   Window_Resize() {
@@ -586,7 +215,7 @@ export class EditorEnvironment {
           scope.selectedTile = scope.renderManager.mapModel
             .getLayerByZPosition(scope.selectedLayer)
             .getRow(selectedTileY)[selectedTileX]
-          scope.LoadPropertiesFromModel()
+          // TODO: implement new tile properties system
         }
       }
     } else if (scope.selectedTool === 'bucketFill') {
