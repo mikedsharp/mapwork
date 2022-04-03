@@ -82,9 +82,6 @@ export class EditorEnvironment {
     $('#selectPropertyScope').change(scope.SelectPropertyScope_Change)
     $('#selectLayerScope').change(scope.SelectLayerScope_Change)
 
-    // settings menu binders
-    $('#settingsSaveChanges').click(scope.SettingsSaveChanges_Click.bind(scope))
-
     // navigation key handlers
     $(window).keydown(scope.Editor_KeyDown.bind(scope))
   }
@@ -116,170 +113,7 @@ export class EditorEnvironment {
       }
     }
   }
-  SettingsSaveChanges_Click() {
-    'use strict'
-    var result, valid
-    valid = true
-
-    // remove error borders pre-validation
-    $('#settingsSelectProject').removeClass('errorBorder')
-    $('#settingsMapName').removeClass('errorBorder')
-    $('#settingsTilesAccross').removeClass('errorBorder')
-    $('#settingsTilesDown').removeClass('errorBorder')
-    $('#settingsTileHeight').removeClass('errorBorder')
-    $('#settingsTileWidth').removeClass('errorBorder')
-
-    // validate each field an add error borders where appropriate
-
-    result = ValidationHelper.validateInput($('#settingsMapName'), [
-      { kind: 'required' },
-      { kind: 'istext' },
-    ])
-
-    if (result.length > 0) {
-      $('#settingsMapName').addClass('errorBorder')
-      valid = false
-    }
-
-    result = ValidationHelper.validateInput($('#settingsTilesAccross'), [
-      { kind: 'required' },
-      { kind: 'isnumeric' },
-      { kind: 'min', value: 1 },
-    ])
-
-    if (result.length > 0) {
-      $('#settingsTilesAccross').addClass('errorBorder')
-      valid = false
-    }
-    result = ValidationHelper.validateInput($('#settingsTilesDown'), [
-      { kind: 'required' },
-      { kind: 'isnumeric' },
-      { kind: 'min', value: 1 },
-    ])
-
-    if (result.length > 0) {
-      $('#settingsTilesDown').addClass('errorBorder')
-      valid = false
-    }
-    //result = ValidationHelper.validateInput($('#settingsTileWidth'),
-    //    [{ kind: 'required' },
-    //        { kind: 'isnumeric' },
-    //        { kind: 'min', value: 1 }]);
-
-    //if (result.length > 0) {
-    //    $('#settingsTileWidth').addClass('errorBorder');
-    //    valid = false;
-    //}
-    //result = ValidationHelper.validateInput($('#settingsTileHeight'),
-    //    [{ kind: 'required' },
-    //        { kind: 'isnumeric' },
-    //        { kind: 'min', value: 1 }]);
-
-    //if (result.length > 0) {
-    //    $('#settingsTileHeight').addClass('errorBorder');
-    //    valid = false;
-    //}
-    //if ($('#settingsSelectProject').val() === '-1') {
-    //    $('#settingsSelectProject').addClass('errorBorder');
-    //    valid = false;
-    //}
-
-    if (
-      parseInt($('#settingsTilesAccross').val().toString(), 10) *
-        parseInt($('#settingsTilesDown').val().toString(), 10) >
-      16384
-    ) {
-      DisplayNotification(
-        'Tiles per layer must not exceed 16384 (e.g 128x128 or 512x32 etc)',
-        'red'
-      )
-      valid = false
-    }
-
-    if (valid) {
-      //check if any changes have occured
-      if (
-        $('#settingsMapName').val() !== scope.renderManager.mapModel.getName()
-      ) {
-        // update the model
-        scope.renderManager.mapModel.setName($('#settingsMapName').val())
-      }
-      //check if any changes have occured
-      if (
-        $('#settingsTilesAccross').val() !==
-        scope.renderManager.mapModel.getTilesAccross()
-      ) {
-        // update the model
-        scope.renderManager.renderFlag = false
-        scope.renderManager.mapModel.resizeMap({
-          tilesAccross: $('#settingsTilesAccross').val(),
-        })
-        //update the camera
-        scope.renderManager.camera.setBounds(
-          scope.renderManager.mapModel.getWorldWidth(),
-          scope.renderManager.mapModel.getWorldHeight()
-        )
-        //scope.renderManager.camera.setSize(scope.renderManager.camera.getWidth(), scope.renderManager.camera.getHeight());
-        scope.renderManager.camera.setSize(
-          $('#editorCanvas').width(),
-          $('#editorCanvas').height()
-        )
-        scope.renderManager.camera.setPosition(
-          scope.renderManager.camera.getX(),
-          scope.renderManager.camera.getY()
-        )
-
-        scope.renderManager.renderFlag = true
-      }
-      //check if any changes have occured
-      if (
-        $('#settingsTilesDown').val() !==
-        scope.renderManager.mapModel.getTilesDown()
-      ) {
-        // update the model
-        scope.renderManager.renderFlag = false
-        scope.renderManager.mapModel.resizeMap({
-          tilesDown: $('#settingsTilesDown').val(),
-        })
-        scope.renderManager.camera.setBounds(
-          scope.renderManager.mapModel.getWorldWidth(),
-          scope.renderManager.mapModel.getWorldHeight()
-        )
-        scope.renderManager.camera.setSize(
-          $('#editorCanvas').width(),
-          $('#editorCanvas').height()
-        )
-        scope.renderManager.camera.setPosition(
-          scope.renderManager.camera.getX(),
-          scope.renderManager.camera.getY()
-        )
-
-        scope.renderManager.renderFlag = true
-      }
-      ////check if any changes have occured
-      //if ($('#settingsTileWidth').val() !== scope.renderManager.mapModel.getTileWidth()) {
-      //    // update the model
-      //    scope.renderManager.renderFlag = false;
-      //    scope.renderManager.mapModel.setTileWidth($('#settingsTileWidth').val());
-
-      //    scope.renderManager.camera.setBounds(scope.renderManager.mapModel.getWorldWidth(), scope.renderManager.mapModel.getWorldHeight());
-      //    scope.renderManager.camera.setSize($('#editorCanvas').width(), $('#editorCanvas').height());
-      //    scope.renderManager.camera.setPosition(scope.renderManager.camera.getX(), scope.renderManager.camera.getY());
-      //    scope.renderManager.renderFlag = true;
-      //}
-      ////check if any changes have occured
-      //if ($('#settingsTileHeight').val() !== scope.renderManager.mapModel.getTileHeight()) {
-      //    // update the model
-      //    scope.renderManager.renderFlag = false;
-      //    scope.renderManager.mapModel.setTileHeight($('#settingsTileHeight').val());
-      //    scope.renderManager.camera.setBounds(scope.renderManager.mapModel.getWorldWidth(), scope.renderManager.mapModel.getWorldHeight());
-      //    scope.renderManager.camera.setSize($('#editorCanvas').width(), $('#editorCanvas').height());
-      //    scope.renderManager.camera.setPosition(scope.renderManager.camera.getX(), scope.renderManager.camera.getY());
-      //    scope.renderManager.renderFlag = true;
-      //}
-      DisplayNotification('Changes Saved', 'green')
-    }
-  }
+  
   PropertiesInput_Blur(event) {
     'use strict'
     var scopeValue, layerValue, html, properties
@@ -675,26 +509,27 @@ export class EditorEnvironment {
   }
   ModifyTile() {
     'use strict'
-    
     var selectedTileX, selectedTileY, queue, currTile, selectedTileType
-    selectedTileX = scope.mouseX + scope.renderManager.camera.getX()
-    selectedTileX = parseInt(
-      (selectedTileX / scope.renderManager.mapModel.getTileWidth()).toString(),
-      10
-    )
-
-    selectedTileY = scope.mouseY + scope.renderManager.camera.getY()
-    selectedTileY = parseInt(
-      (selectedTileY / scope.renderManager.mapModel.getTileHeight()).toString(),
-      10
-    )
-
-    if(selectedTileY >= scope.renderManager.mapModel.tilesDown) {
-      return;
-    }
-
-    if(selectedTileX >= scope.renderManager.mapModel.tilesAccross) {
-      return;
+    if (scope.selectedTool && scope.selectedLayer !== null) {
+      selectedTileX = scope.mouseX + scope.renderManager.camera.getX()
+      selectedTileX = parseInt(
+        (selectedTileX / scope.renderManager.mapModel.getTileWidth()).toString(),
+        10
+      )
+  
+      selectedTileY = scope.mouseY + scope.renderManager.camera.getY()
+      selectedTileY = parseInt(
+        (selectedTileY / scope.renderManager.mapModel.getTileHeight()).toString(),
+        10
+      )
+  
+      if(selectedTileY >= scope.renderManager.mapModel.tilesDown) {
+        return;
+      }
+  
+      if(selectedTileX >= scope.renderManager.mapModel.tilesAccross) {
+        return;
+      }
     }
 
     if (scope.selectedTool === 'singleTileBrush') {
@@ -883,10 +718,10 @@ export class EditorEnvironment {
 
     if (!scope.leftMouseButtonDown && scope.selectedTool === 'areaSelect') {
       // grab mouse co-ordinates for start point of area selection
-      scope.areaSelectX = event.pageX - $('#editorCanvas').offset().left
-      scope.areaSelectY = event.pageY - $('#editorCanvas').offset().top
-      scope.mouseX = event.pageX - $('#editorCanvas').offset().left
-      scope.mouseY = event.pageY - $('#editorCanvas').offset().top
+      scope.areaSelectX = event.pageX - document.getElementById('editorCanvas').getBoundingClientRect().x;
+      scope.areaSelectY = event.pageY - document.getElementById('editorCanvas').getBoundingClientRect().y;
+      scope.mouseX = event.pageX - document.getElementById('editorCanvas').getBoundingClientRect().x;
+      scope.mouseY = event.pageY - document.getElementById('editorCanvas').getBoundingClientRect().y;
       // trigger drawing of the selection box and stop capturing any additional co-ordinates until mouse button is released
       scope.leftMouseButtonDown = true
       scope.areaSelectEnabled = true
@@ -896,10 +731,9 @@ export class EditorEnvironment {
       scope.selectedTool === 'pasteTiles'
     ) {
       // begin pasting tiles to map
-
       startTileX =
         event.pageX -
-        $('#editorCanvas').offset().left +
+        document.getElementById('editorCanvas').getBoundingClientRect().x +
         scope.renderManager.mapModel.getTileWidth() / 2 +
         scope.renderManager.camera.getX() -
         (scope.selectedAreaTiles.rows[0].length *
@@ -907,7 +741,7 @@ export class EditorEnvironment {
           2
       startTileY =
         event.pageY -
-        $('#editorCanvas').offset().top +
+        document.getElementById('editorCanvas').getBoundingClientRect().y +
         scope.renderManager.mapModel.getTileHeight() / 2 +
         scope.renderManager.camera.getY() -
         (scope.selectedAreaTiles.rows.length *
@@ -1087,8 +921,8 @@ export class EditorEnvironment {
       scope.renderManager.mapModel.getWorldHeight()
     )
     scope.renderManager.camera.setSize(
-      $('#editorCanvas').width(),
-      $('#editorCanvas').height()
+      document.getElementById('editorCanvas').getBoundingClientRect().width,
+      document.getElementById('editorCanvas').getBoundingClientRect().height
     )
 
     // rebuild UI from model
