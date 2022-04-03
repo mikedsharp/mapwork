@@ -675,22 +675,30 @@ export class EditorEnvironment {
   }
   ModifyTile() {
     'use strict'
+    
     var selectedTileX, selectedTileY, queue, currTile, selectedTileType
+    selectedTileX = scope.mouseX + scope.renderManager.camera.getX()
+    selectedTileX = parseInt(
+      (selectedTileX / scope.renderManager.mapModel.getTileWidth()).toString(),
+      10
+    )
+
+    selectedTileY = scope.mouseY + scope.renderManager.camera.getY()
+    selectedTileY = parseInt(
+      (selectedTileY / scope.renderManager.mapModel.getTileHeight()).toString(),
+      10
+    )
+
+    if(selectedTileY >= scope.renderManager.mapModel.tilesDown) {
+      return;
+    }
+
+    if(selectedTileX >= scope.renderManager.mapModel.tilesAccross) {
+      return;
+    }
 
     if (scope.selectedTool === 'singleTileBrush') {
       if (scope.selectedLayer !== null) {
-        selectedTileX = scope.mouseX + scope.renderManager.camera.getX()
-        selectedTileX = parseInt(
-          (selectedTileX / scope.renderManager.mapModel.getTileWidth()).toString(),
-          10
-        )
-
-        selectedTileY = scope.mouseY + scope.renderManager.camera.getY()
-        selectedTileY = parseInt(
-          (selectedTileY / scope.renderManager.mapModel.getTileHeight()).toString(),
-          10
-        )
-
         if (
           selectedTileX < scope.renderManager.mapModel.getTilesAccross() &&
           selectedTileY < scope.renderManager.mapModel.getTilesDown()
@@ -718,18 +726,6 @@ export class EditorEnvironment {
       }
     } else if (scope.selectedTool === 'eraser') {
       if (scope.selectedLayer !== null) {
-        selectedTileX = scope.mouseX + scope.renderManager.camera.getX()
-        selectedTileX = parseInt(
-          (selectedTileX / scope.renderManager.mapModel.getTileWidth()).toString(),
-          10
-        )
-
-        selectedTileY = scope.mouseY + scope.renderManager.camera.getY()
-        selectedTileY = parseInt(
-          (selectedTileY / scope.renderManager.mapModel.getTileHeight()).toString(),
-          10
-        )
-
         if (
           selectedTileX < scope.renderManager.mapModel.getTilesAccross() &&
           selectedTileY < scope.renderManager.mapModel.getTilesDown()
@@ -757,18 +753,6 @@ export class EditorEnvironment {
       }
     } else if (scope.selectedTool === 'inspectTile') {
       if (scope.selectedLayer !== null) {
-        selectedTileX = scope.mouseX + scope.renderManager.camera.getX()
-        selectedTileX = parseInt(
-          (selectedTileX / scope.renderManager.mapModel.getTileWidth()).toString(),
-          10
-        )
-
-        selectedTileY = scope.mouseY + scope.renderManager.camera.getY()
-        selectedTileY = parseInt(
-          (selectedTileY / scope.renderManager.mapModel.getTileHeight()).toString(),
-          10
-        )
-
         if (
           selectedTileX < scope.renderManager.mapModel.getTilesAccross() &&
           selectedTileY < scope.renderManager.mapModel.getTilesDown()
@@ -781,19 +765,6 @@ export class EditorEnvironment {
       }
     } else if (scope.selectedTool === 'bucketFill') {
       if (scope.selectedLayer !== null) {
-        // identify world (map) co-ordinates by converting mouse co-ordinates
-        selectedTileX = scope.mouseX + scope.renderManager.camera.getX()
-        selectedTileX = parseInt(
-          (selectedTileX / scope.renderManager.mapModel.getTileWidth()).toString(),
-          10
-        )
-
-        selectedTileY = scope.mouseY + scope.renderManager.camera.getY()
-        selectedTileY = parseInt(
-          (selectedTileY / scope.renderManager.mapModel.getTileHeight()).toString(),
-          10
-        )
-
         // queue of filled tiles (used in the 4-neighbour algorithm)
         queue = []
         currTile = null
