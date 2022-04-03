@@ -24,9 +24,9 @@ const app = new App({
     editorInstance,
   },
 })
-//@ts-ignore
-$(document).ready(function () {
+
+document.addEventListener('DOMContentLoaded',function () {
   'use strict'
   //Init Environment
   editorInstance.Init()
-})
+} );

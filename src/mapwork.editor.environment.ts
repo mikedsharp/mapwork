@@ -56,14 +56,15 @@ export class EditorEnvironment {
   BindEvent() {
     'use strict'
 
-    $(window).resize(scope.Window_Resize.bind(scope))
-    $('#editorCanvas').mousedown(scope.EditorCanvas_MouseDown.bind(scope))
-    $('#editorCanvas').mouseup(scope.EditorCanvas_MouseUp.bind(scope))
-    $('#editorCanvas').mouseout(scope.EditorCanvas_MouseOut.bind(scope))
-    $('#editorCanvas').mousemove(scope.EditorCanvas_MouseMove.bind(scope))
+    window.addEventListener("resize",scope.Window_Resize.bind(scope))
+    const canvas = document.getElementById('editorCanvas');
+
+    canvas.addEventListener('mousedown', scope.EditorCanvas_MouseDown.bind(scope));
+    canvas.addEventListener('mouseup', scope.EditorCanvas_MouseUp.bind(scope));
+    canvas.addEventListener('mouseout', scope.EditorCanvas_MouseOut.bind(scope));
+    canvas.addEventListener('mousemove', scope.EditorCanvas_MouseMove.bind(scope));
 
     // left ribbon events
-    $('#saveItem').click(scope.SaveItem_Click.bind(scope))
 
     $('#toolboxItemInspect').click(scope.ToolboxItemInspect_Click.bind(scope))
 
@@ -466,12 +467,10 @@ export class EditorEnvironment {
   Window_Resize() {
     'use strict'
     //let's resize the canvas to the size of the window space
-    document.getElementById('editorCanvas').width = $(
-      '#canvasContainer'
-    ).width()
-    document.getElementById('editorCanvas').height = $(
-      '#canvasContainer'
-    ).height()
+    const editorCanvas = document.getElementById('editorCanvas');
+    const canvasContainer = document.getElementById('canvasContainer');
+    editorCanvas.width = canvasContainer.getBoundingClientRect().width
+    editorCanvas.height = canvasContainer.getBoundingClientRect().height
 
     //resize the tile palette based on the size of the screen
     if (
@@ -479,33 +478,25 @@ export class EditorEnvironment {
       document.getElementById('paletteCanvas') &&
       document.getElementById('paletteInfo')
     ) {
-      $('#paletteCanvasContainer').css(
-        'top',
-        $('#paletteInfo').height().toString() + 'px'
-      )
-      document.getElementById('paletteCanvas').width = $(
-        '#paletteCanvasContainer'
-      ).width()
-      document.getElementById('paletteCanvas').height = $(
-        '#paletteCanvasContainer'
-      ).height()
+      const canvasContainer = document.getElementById('paletteCanvasContainer');
+      const paletteInfo = document.getElementById('paletteInfo');
+      canvasContainer.style.top = paletteInfo.offsetHeight.toString() + 'px';
+  
+      document.getElementById('paletteCanvas').width = canvasContainer.getBoundingClientRect().width;
+      document.getElementById('paletteCanvas').height = canvasContainer.getBoundingClientRect().height;
     }
 
     //inform mapwork.rendermanager of update
     if (scope.renderManager.camera) {
       scope.renderManager.camera.setSize(
-        $('#editorCanvas').width(),
-        $('#editorCanvas').height()
+        document.getElementById('editorCanvas').getBoundingClientRect().width,
+        document.getElementById('editorCanvas').getBoundingClientRect().height
       )
       scope.renderManager.camera.setPosition(
         scope.renderManager.camera.getX(),
         scope.renderManager.camera.getY()
       )
     }
-
-    // refresh all scrollbars
-    // scope.RefreshScrollpane('layerScroll')
-    // scope.RefreshScrollpane('propertiesScroll')
   }
   ModifyTile() {
     'use strict'
@@ -688,9 +679,10 @@ export class EditorEnvironment {
   }
   EditorCanvas_MouseMove(event) {
     'use strict'
+    const editorCanvas = document.getElementById('editorCanvas');
     if (scope.renderManager.mapModel) {
-      scope.mouseX = event.pageX - $('#editorCanvas').offset().left
-      scope.mouseY = event.pageY - $('#editorCanvas').offset().top
+      scope.mouseX = event.pageX - editorCanvas.getBoundingClientRect().left;
+      scope.mouseY = event.pageY - editorCanvas.getBoundingClientRect().top;
     }
   }
   EditorCanvas_MouseDown(event) {
@@ -924,151 +916,8 @@ export class EditorEnvironment {
       document.getElementById('editorCanvas').getBoundingClientRect().width,
       document.getElementById('editorCanvas').getBoundingClientRect().height
     )
-
-    // rebuild UI from model
-    scope.BuildUIFromModel()
   }
-  CompressMapData_Success(data) {
-    'use strict'
-    var encodedData
-    //begin sending scope to the server
-    encodedData = encodeURIComponent(data)
-    scope.PostMapForDownload(encodedData)
-  }
-  PostMapForDownload() {
-    'use strict'
-    /*  var fileDownloadCheckTimer, token, assetsIncluded;
 
-        scope.downloadToken = new Date().getTime().toString();
-
-        if ($('#publishIncludeAssets:checked').length > 0) {
-            assetsIncluded = 'true';
-        }
-        else {
-            assetsIncluded = 'false';
-        }
-
-        //add submission form to view
-        $('body').append($('<form/>', {
-            id: 'postDownloadMap',
-            method: 'POST',
-            action: LocationSettings.getMapBundleLocation
-        }));
-        // momentarily provide hidden fields, including users specifications and an identifying token
-        $('#postDownloadMap').append($('<input/>', {
-            type: 'hidden',
-            name: 'mapData',
-            value: mapData
-        }));
-
-        $('#postDownloadMap').append($('<input/>', {
-            type: 'hidden',
-            name: 'mapName',
-            value: scope.renderManager.mapModel.getName()
-        }));
-
-        $('#postDownloadMap').append($('<input/>', {
-            type: 'hidden',
-            name: 'exportFormat',
-            value: $('#publishSelectOutputFormat').val()
-        }));
-
-
-        $('#postDownloadMap').append($('<input/>', {
-            type: 'hidden',
-            name: 'includeAssets',
-            value: assetsIncluded
-        }));
-
-        $('#postDownloadMap').append($('<input/>', {
-            type: 'hidden',
-            name: 'downloadToken',
-            value: scope.downloadToken
-        }));
-
-
-        scope.downloadInterval = window.setInterval(scope.CheckDownloadTimer, 1000);
-
-        $('#postDownloadMap').submit();
-        $('#postDownloadMap').empty();
-        $('body').remove('#postDownloadMap');
-
-        */
-  }
-  BuildUIFromModel() {
-    'use strict'
-    // scope.LoadLayersFromModel()
-    scope.LoadSettingsFromModel()
-  }
-  SaveItem_Click() {
-    'use strict'
-    if (
-      scope.renderManager.mapModel !== null &&
-      scope.renderManager.mapModel !== undefined
-    ) {
-      scope.PresentRibbonContextMenu('save')
-    }
-  }
-  openPropertiesDrawer() {
-    'use strict'
-    scope.PresentRibbonDialog('properties')
-  }
-  openSettingsDrawer() {
-    'use strict'
-    scope.LoadSettingsFromModel()
-    scope.PresentRibbonDialog('settings')
-  }
-  PresentRibbonDialog(kind) {
-    // 'use strict'
-    // $('#' + kind + 'Dialog').toggle()
-    // if (kind !== 'palette') {
-    //   $('#paletteDialog').hide()
-    // } else {
-    //   //// assign a tilesheet to the palette for selected layer
-    //   scope.PalletCanvasResize()
-    // }
-    // if (kind !== 'layers') {
-    //   $('#layersDialog').hide()
-    // } else {
-    //   scope.LoadLayersFromModel()
-    // }
-    // if (kind !== 'properties') {
-    //   $('#propertiesDialog').hide()
-    // } else {
-    //   // reset property selection
-    //   $('#selectPropertyScope').val('-1')
-    //   $('#selectPropertyScope').trigger('change')
-    // }
-    // if (kind !== 'settings') {
-    //   $('#settingsDialog').hide()
-    // } else {
-    //   //clear error validation warnings
-    //   $('#settingsSelectProject').removeClass('errorBorder')
-    //   $('#settingsMapName').removeClass('errorBorder')
-    //   $('#settingsTilesAccross').removeClass('errorBorder')
-    //   $('#settingsTilesDown').removeClass('errorBorder')
-    //   $('#settingsTileHeight').removeClass('errorBorder')
-    //   $('#settingsTileWidth').removeClass('errorBorder')
-    //   scope.LoadSettingsFromModel()
-    // }
-    // // alter size of the main canvas, based on dialog being visible or not
-    // if ($('#' + kind + 'Dialog').is(':visible')) {
-    //   $('#canvasContainer').css('right', '328px')
-    // } else {
-    //   $('#canvasContainer').css('right', '72px')
-    // }
-    // // do a canvas resize based on new dimensions of screen after toggle
-    // scope.Window_Resize()
-  }
-  PresentRibbonContextMenu(kind) {
-    'use strict'
-    scope.PresentRibbonDialog('none')
-    if (kind === 'build') {
-      $('#buildContextRibbon').show()
-    } else {
-      $('#buildContextRibbon').hide()
-    }
-  }
   PalletCanvasResize() {
     'use strict'
     if (!document.getElementById('paletteCanvas')) {
@@ -1106,15 +955,6 @@ export class EditorEnvironment {
 
   LoadTilesetList() {
     'use strict'
-    /*  $.ajax({
-            url: 'Editor/GetTilesetFilenames',
-            type: 'GET',
-            contentType: 'application/json',
-            dataType: 'json',
-            success: scope.LoadTilesetList_Success,
-            error: scope.LoadTilesetList_Error
-        });
-        */
 
     var result = [
       'brick_tiles_64.png',
@@ -1143,7 +983,6 @@ export class EditorEnvironment {
   }
   showBuildMenu() {
     if (scope.renderManager.mapModel) {
-      scope.PresentRibbonContextMenu('build')
     }
   }
 }
