@@ -87,28 +87,44 @@
       label: 'palette',
       id: 'paletteItem',
       actionHandler: () => {
-        openDrawer = drawers['palette']
+        if(openDrawer === drawers['palette']) {
+          openDrawer = null;
+        } else {
+          openDrawer = drawers['palette']
+        }
       },
     },
     {
       label: 'layers',
       id: 'layersItem',
       actionHandler: () => {
-        openDrawer = drawers['layers']
+        if(openDrawer === drawers['layers']) {
+          openDrawer = null;
+        } else {
+          openDrawer = drawers['layers']
+        }
       },
     },
     {
       label: 'properties',
       id: 'propertiesItem',
       actionHandler: () => {
-        openDrawer = drawers['properties']
+        if(openDrawer === drawers['properties']) {
+          openDrawer = null;
+        } else {
+          openDrawer = drawers['properties']
+        }
       },
     },
     {
       label: 'settings',
       id: 'settingsItem',
       actionHandler: () => {
-        openDrawer = drawers['settings']
+        if(openDrawer === drawers['settings']) {
+          openDrawer = null;
+        } else {
+          openDrawer = drawers['settings']
+        }
       },
     },
   ]

@@ -2,13 +2,11 @@
   import { onMount } from 'svelte'
   import { mapModel } from '../MapModel/MapModel'
   export let editorInstance
-  let mapModelInstance
   let tilesAccross = 0;
   let tilesDown = 0;
   let mapName = 'sefwseg';
 
   mapModel.subscribe(value => {
-    mapModelInstance = value
     mapName = value.name;
     tilesAccross = parseInt(value.tilesAccross);
     tilesDown = parseInt(value.tilesDown);
