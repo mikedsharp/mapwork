@@ -88,62 +88,25 @@ export class EditorEnvironment {
 
     // navigation key handlers
     $(window).keydown(scope.Editor_KeyDown.bind(scope))
-    $(window).keyup(scope.Editor_KeyUp.bind(scope))
   }
   Editor_KeyDown(event) {
     'use strict'
     //move the camera around the map with given directional arrow key
     if (scope.renderManager.camera) {
       event = event || window.event
-      //@ts-ignore
-      if (window.opera && !scope.arrowKeyDown) {
-        switch (event.keyCode) {
-          case 37:
-            scope.editorMoveInterval = setInterval(
-              scope.renderManager.camera.move('left', 16),
-              10
-            )
-            scope.arrowKeyDown = true
-            break
-          case 39:
-            scope.editorMoveInterval = setInterval(
-              scope.renderManager.camera.move('right', 16),
-              10
-            )
-            scope.arrowKeyDown = true
-            break
-          case 40:
-            scope.editorMoveInterval = setInterval(
-              scope.renderManager.camera.move('down', 16),
-              10
-            )
-            scope.arrowKeyDown = true
-            break
-          case 38:
-            scope.editorMoveInterval = setInterval(
-              scope.renderManager.camera.move('up', 16),
-              10
-            )
-            scope.arrowKeyDown = true
-            break
-          default:
-            break
-        }
-      } else {
-        switch (event.keyCode) {
-          case 37:
-            scope.renderManager.camera.move('left', 16)
-            break
-          case 39:
-            scope.renderManager.camera.move('right', 16)
-            break
-          case 40:
-            scope.renderManager.camera.move('down', 16)
-            break
-          case 38:
-            scope.renderManager.camera.move('up', 16)
-            break
-        }
+      switch (event.keyCode) {
+        case 37:
+          scope.renderManager.camera.move('left', 16)
+          break
+        case 39:
+          scope.renderManager.camera.move('right', 16)
+          break
+        case 40:
+          scope.renderManager.camera.move('down', 16)
+          break
+        case 38:
+          scope.renderManager.camera.move('up', 16)
+          break
       }
 
       if (scope.selectedTool === 'pasteTiles') {
@@ -152,16 +115,6 @@ export class EditorEnvironment {
           scope.selectedTool = 'areaSelect'
         }
       }
-    }
-  }
-  Editor_KeyUp() {
-    'use strict'
-    // resolve repeating keys issue in opera
-    //@ts-ignore
-    if (window.opera) {
-      clearInterval(scope.editorMoveInterval)
-      scope.arrowKeyDown = false
-      scope.editorMoveInterval = null
     }
   }
   SettingsToggleGrid_Change() {
