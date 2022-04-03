@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte'
   import { mapModel } from '../MapModel/MapModel'
   import { DisplayNotification } from '../NotificationBanner/NotificationService'
@@ -55,11 +55,39 @@
   function onLayerSelect(event, layer) {
     editorInstance.selectedLayer = layer.getZPosition()
   }
-  function onMoveLayerDownClick() {
-    editorInstance.LayerMoveDown_Click()
-  }
   function onMoveLayerUpClick() {
-    editorInstance.LayerMoveUp_Click()
+    mapModel.update(map => {
+      if(editorInstance.selectedLayer > 0) {
+        map.swapLayers(editorInstance.selectedLayer,editorInstance.selectedLayer - 1);
+        editorInstance.selectedLayer--;
+      }
+      return map;
+    })
+  }
+  function onMoveLayerDownClick() {
+    mapModel.update(map => {
+      if(editorInstance.selectedLayer +1 < map.getLayers().length) {
+        map.swapLayers(editorInstance.selectedLayer, editorInstance.selectedLayer + 1);
+        editorInstance.selectedLayer++;
+      }
+      return map;
+    })
+  }
+  function onLayerRename(event, layer) {
+    const newLayerName = window.prompt("Enter new name for layer", layer.name);
+    if(newLayerName) {
+        mapModel.update(map => {
+        map.getLayerByZPosition(layer.getZPosition()).setName(newLayerName);
+        return map;
+      });
+    }
+  }
+  function onToggleVisibility(event, layer) {
+    mapModel.update(map => {
+      const layerVisibility =  map.getLayerByZPosition(layer.getZPosition()).getVisibility()
+      map.getLayerByZPosition(layer.getZPosition()).setVisibility(!layerVisibility);
+      return map;
+    })
   }
 </script>
 
@@ -92,8 +120,8 @@
 
           </div>
           <div class="layerListItemActions">
-            <a class="renameLayer" />
-            <a class="toggleLayerVisibility layerVisibilityIconVisible" />
+            <a class="renameLayer" on:click={(event) => onLayerRename(event,layer)} />
+            <a class={`toggleLayerVisibility ${layer.getVisibility() ? 'layerVisibilityIconVisible': 'layerVisibilityIconHidden'}`} on:click={(event) => onToggleVisibility(event,layer)} />
             <a
               class="deleteLayer"
               on:click={event => {

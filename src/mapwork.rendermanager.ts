@@ -184,9 +184,9 @@ export class RenderManager {
     startColumn = Math.floor(parseFloat(startColumn))
     // run render the map
     for (
-      layerCount = 0;
-      layerCount < this.mapModel.getLayers().length;
-      layerCount++
+      layerCount = this.mapModel.getLayers().length - 1;
+      layerCount >= 0;
+      layerCount--
     ) {
       currentLayer = this.mapModel.getLayerByZPosition(layerCount)
 

@@ -72,34 +72,6 @@ export class EditorEnvironment {
       scope.CreateExistingProjectName_Change
     )
 
-    //layer selection click event (accounts for appended list elements)
-    $('#layerList').on(
-      'click',
-      '.layerListItemDescription',
-      scope.LayerListItemDescription_Click
-    )
-    $('#layerList').on(
-      'click',
-      '.renameLayer',
-      scope.RenameLayer_Click.bind(scope)
-    )
-    $('#layerList').on(
-      'click',
-      '.toggleLayerVisibility',
-      scope.ToggleLayerVisibility_Click.bind(scope)
-    )
-    $('#layerList').on(
-      'click',
-      '.deleteLayer',
-      scope.DeleteLayer_Click.bind(scope)
-    )
-
-    $('#layerList').on(
-      'change',
-      '.layerSelectTileset ',
-      scope.LayerSelectTileset_Change.bind(scope)
-    )
-
     $('#propertyTable').on(
       'blur',
       '.propertiesInput',
@@ -654,102 +626,6 @@ export class EditorEnvironment {
     'use strict'
     scope.selectedTool = 'inspectTile'
   }
-  ToggleLayerVisibility_Click(event) {
-    'use strict'
-
-    // code for changing the sprite from/to visible or hidden
-    if ($(event.target).hasClass('layerVisibilityIconVisible')) {
-      $(event.target).removeClass('layerVisibilityIconVisible')
-      $(event.target).addClass('layerVisibilityIconHidden')
-      scope.renderManager.mapModel
-        .getLayerByZPosition(
-          $(event.target).parent().parent().data('zPosition')
-        )
-        .setVisibility(false)
-    } else {
-      $(event.target).addClass('layerVisibilityIconVisible')
-      $(event.target).removeClass('layerVisibilityIconHidden')
-      scope.renderManager.mapModel
-        .getLayerByZPosition(
-          $(event.target).parent().parent().data('zPosition')
-        )
-        .setVisibility(true)
-    }
-  }
-  RenameLayer_Click(event) {
-    'use strict'
-    var result
-    // dummy code for renaming a layer
-    $(event.target)
-      .parent()
-      .parent()
-      .find('.layerNameInput')
-      .removeClass('errorBorder')
-
-    if (
-      $(event.target).parent().parent().find('.layerNameInput').is(':visible')
-    ) {
-      // validate selection
-      result = ValidationHelper.validateInput(
-        $(event.target).parent().parent().find('.layerNameInput'),
-        [{ kind: 'required' }, { kind: 'istext' }]
-      )
-
-      if (result.length < 1) {
-        $(event.target).parent().parent().find('.layerName').show()
-        $(event.target).parent().parent().find('.layerNameInput').hide()
-        $(event.target)
-          .parent()
-          .parent()
-          .find('.layerName')
-          .first()
-          .text($(event.target).parent().parent().find('.layerNameInput').val().toString())
-        scope.renderManager.mapModel
-          .getLayer($(event.target).parent().parent().data('zPosition'))
-          .setName(
-            $(event.target).parent().parent().find('.layerNameInput').val()
-          )
-      } else {
-        $(event.target)
-          .parent()
-          .parent()
-          .find('.layerNameInput')
-          .addClass('errorBorder')
-      }
-    } else {
-      $(event.target).parent().parent().find('.layerName').hide()
-      $(event.target)
-        .parent()
-        .parent()
-        .find('.layerNameInput')
-        .val($(event.target).parent().parent().find('.layerName').text())
-      $(event.target).parent().parent().find('.layerNameInput').show()
-    }
-
-    scope.RefreshScrollpane('layerScroll')
-  }
-  DeleteLayer_Click(event) {
-    'use strict'
-    var layerCount
-    // code for physically removing the layer element from the DOM
-    scope.renderManager.mapModel.removeLayer(
-      $(event.target).parent().parent().data('zPosition')
-    )
-
-    // if layer is selected layer, remove selected layer
-    scope.selectedLayer = null
-    // re-order array
-    for (
-      layerCount = 0;
-      layerCount < scope.renderManager.mapModel.getLayers().length;
-      layerCount++
-    ) {
-      scope.renderManager.mapModel.getLayer(layerCount).setZPosition(layerCount)
-    }
-    scope.RefreshScrollpane('layerScroll')
-    // rebuild the View
-    scope.LoadLayersFromModel()
-  }
 
   RefreshScrollpane(element) {
     'use strict'
@@ -759,36 +635,6 @@ export class EditorEnvironment {
     // pane = $($('.' + element))
     // api = pane.data('jsp')
     // api.reinitialise()
-  }
-  LayerCreateNewLayer_Click() {
-    'use strict'
-
-    var layerName, newLayer
-
-    if (scope.renderManager.mapModel.getLayers().length < 5) {
-      //create new layer
-      layerName =
-        'Untitled Layer ' + scope.renderManager.mapModel.getLayers().length
-
-      // adding the new layer to the model
-      newLayer = new Layer(scope)
-      newLayer.createBlankModelLayer(
-        scope.renderManager.mapModel,
-        layerName,
-        'default_tileset.png'
-      )
-      newLayer.setZPosition(scope.renderManager.mapModel.getLayers().length)
-      scope.selectedLayer = scope.renderManager.mapModel.getLayers().length
-      scope.renderManager.mapModel.addLayer(newLayer)
-      mapModel.set(scope.renderManager.mapModel)
-
-      // refresh layers view
-      //scope.LoadLayersFromModel()
-      //refresh the scrollpane
-      // scope.RefreshScrollpane('layerScroll')
-    } else {
-      DisplayNotification('A map may only have up to 5 layers', 'red')
-    }
   }
 
   LoadPropertiesFromModel() {
@@ -807,120 +653,6 @@ export class EditorEnvironment {
     $('#settingsTilesDown').val(scope.renderManager.mapModel.getTilesDown())
     $('#settingsTileWidth').val(scope.renderManager.mapModel.getTileWidth())
     $('#settingsTileHeight').val(scope.renderManager.mapModel.getTileHeight())
-  }
-
-  LoadLayersFromModel() {
-    'use strict'
-    var layerCount,
-      html,
-      layerName,
-      visible,
-      tilesetSelect,
-      tileset,
-      tilesetCount
-
-    //update list of layers with contents of model, starting with emptying previous contents
-    $('#layerList').empty()
-
-    for (
-      layerCount = 0;
-      layerCount < scope.renderManager.mapModel.getLayers().length;
-      layerCount++
-    ) {
-      tileset = scope.renderManager.mapModel
-        .getLayer(layerCount)
-        .getTilesetPath()
-      layerName = scope.renderManager.mapModel.getLayer(layerCount).getName()
-      visible = scope.renderManager.mapModel
-        .getLayer(layerCount)
-        .getVisibility()
-      html = $(
-        '<li class="layerListItem layerUnselected">' +
-          '<div class="layerListItemDescription">' +
-          '<span class="layerName">' +
-          layerName +
-          '</span>' +
-          '<input type="text" class="layerNameInput">' +
-          '</input>' +
-          '<select class="layerSelectTileset noPadding marT-10"> </select>' +
-          '</div>' +
-          '<div class="layerListItemActions">' +
-          '<a class="renameLayer"></a>' +
-          '<a class="toggleLayerVisibility ' +
-          (visible
-            ? 'layerVisibilityIconVisible'
-            : 'layerVisibilityIconHidden') +
-          '"></a>' +
-          '<a class="deleteLayer"></a>' +
-          '</div>' +
-          '</li>'
-      )
-      $(html).data(
-        'zPosition',
-        scope.renderManager.mapModel.getLayer(layerCount).getZPosition()
-      )
-
-      // append tileset data to the selected list element
-      tilesetSelect = $(html).find('.layerSelectTileset')
-
-      if (scope.tilesets !== null) {
-        for (
-          tilesetCount = 0;
-          tilesetCount < scope.tilesets.length;
-          tilesetCount++
-        ) {
-          tilesetSelect.append(
-            '<option value=' +
-              scope.tilesets[tilesetCount] +
-              '>' +
-              scope.tilesets[tilesetCount] +
-              '</option>'
-          )
-        }
-      }
-      tilesetSelect.val(tileset)
-
-      // check whether layer was previously selected and which layer was
-      if ($(html).data('zPosition') === scope.selectedLayer) {
-        $(html).removeClass('layerUnselected')
-        $(html).addClass('layerSelected')
-      }
-      $('#layerList').prepend(html)
-    }
-  }
-
-  LayerMoveUp_Click() {
-    'use strict'
-
-    var target
-    target = $('#layerList').find('.layerSelected').prev()
-    if (target.length > 0) {
-      // move list element up above preceeding list element
-      scope.renderManager.mapModel.swapLayers(
-        $(target).data('zPosition'),
-        $(target).next().data('zPosition')
-      )
-      scope.selectedLayer = $(target).data('zPosition')
-      scope.LoadLayersFromModel()
-      scope.RefreshScrollpane('layerScroll')
-    }
-  }
-
-  LayerMoveDown_Click() {
-    'use strict'
-
-    var target
-    target = $('#layerList').find('.layerSelected').next()
-    if (target.length > 0) {
-      // move the layer down after next element in list
-      scope.renderManager.mapModel.swapLayers(
-        $(target).data('zPosition'),
-        $(target).prev().data('zPosition')
-      )
-      scope.selectedLayer = $(target).data('zPosition')
-      scope.LoadLayersFromModel()
-      scope.RefreshScrollpane('layerScroll')
-    }
   }
 
   LayerListItemDescription_Click() {
@@ -1517,7 +1249,7 @@ export class EditorEnvironment {
   }
   BuildUIFromModel() {
     'use strict'
-    scope.LoadLayersFromModel()
+    // scope.LoadLayersFromModel()
     scope.LoadSettingsFromModel()
   }
   SaveItem_Click() {
@@ -1660,18 +1392,6 @@ export class EditorEnvironment {
   LoadTilesetList_Error() {
     'use strict'
     DisplayNotification('Failed to retrieve tilesets from server', 'red')
-  }
-  LayerSelectTileset_Change(event) {
-    'use strict'
-    $(event.target).parent().parent().data('zPosition')
-    scope.renderManager.mapModel
-      .getLayerByZPosition(
-        parseInt($(event.target).parent().parent().data('zPosition'), 10)
-      )
-      .setTilesetPath($(event.target).val())
-    ;() => {
-      scope.PalletCanvasResize()
-    }
   }
   showBuildMenu() {
     if (scope.renderManager.mapModel) {
