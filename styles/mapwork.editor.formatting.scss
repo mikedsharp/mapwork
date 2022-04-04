@@ -1,0 +1,45 @@
+﻿body {
+}
+
+.ribbonItem span {
+  display: block;
+  margin-top: 3px;
+  margin-right: 2px;
+  margin-left: 2px;
+  font-size: 11px;
+  font-family: Verdana, Geneva, 'DejaVu Sans', sans-serif;
+}
+
+.dialogDummy {
+  font-family: Verdana;
+}
+
+.dialogDummy h3 {
+  padding: 5px 0;
+  background-color: #444;
+  color: #ddd;
+}
+
+.dialogDummy p {
+  margin: 5px 10px 10px 10px;
+  text-align: center;
+  font-weight: normal;
+}
+
+h3 {
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 5px 0;
+  background-color: #444;
+  color: #ddd;
+}
+h1 {
+  font-size: 24px;
+}
+.left {
+  float: left;
+}
+.right {
+  float: right;
+}
