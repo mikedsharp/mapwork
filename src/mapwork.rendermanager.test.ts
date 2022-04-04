@@ -93,7 +93,6 @@ describe('mapwork.rendermanager.js', () => {
         'renderAreaSelectTool'
       )
       drawStencilBrushSpy = jest.spyOn(testRenderManager, 'drawStencilBrush')
-      renderTilePickerSpy = jest.spyOn(testRenderManager, 'renderTilePicker')
       renderGridSpy = jest.spyOn(testRenderManager, 'renderGrid')
       MockEditorEnvironment.selectedTool = 'pasteTiles'
     })
@@ -107,7 +106,6 @@ describe('mapwork.rendermanager.js', () => {
       expect(renderMapTilesSpy).toHaveBeenCalledTimes(1)
       expect(renderAreaSelectToolSpy).toHaveBeenCalledTimes(1)
       expect(drawStencilBrushSpy).toHaveBeenCalledTimes(1)
-      expect(renderTilePickerSpy).toHaveBeenCalledTimes(1)
       expect(renderGridSpy).toHaveBeenCalledTimes(1)
 
       expect(clearCanvasSpy).toHaveBeenCalledWith(
@@ -128,7 +126,6 @@ describe('mapwork.rendermanager.js', () => {
       expect(renderMapTilesSpy).not.toHaveBeenCalled()
       expect(renderAreaSelectToolSpy).not.toHaveBeenCalled()
       expect(drawStencilBrushSpy).not.toHaveBeenCalled()
-      expect(renderTilePickerSpy).not.toHaveBeenCalled()
     })
     it(`should not run any rendering routines, we have no map model`, () => {
       testRenderManager.renderFlag = true
@@ -139,7 +136,6 @@ describe('mapwork.rendermanager.js', () => {
       expect(renderMapTilesSpy).not.toHaveBeenCalled()
       expect(renderAreaSelectToolSpy).not.toHaveBeenCalled()
       expect(drawStencilBrushSpy).not.toHaveBeenCalled()
-      expect(renderTilePickerSpy).not.toHaveBeenCalled()
     })
   })
   describe('clearCanvas(context, width, height)', () => {
@@ -390,24 +386,6 @@ describe('mapwork.rendermanager.js', () => {
       expect(contextBeginPathSpy).not.toHaveBeenCalled()
       expect(contextMoveToSpy).not.toHaveBeenCalled()
       expect(contextLineToSpy).not.toHaveBeenCalled()
-    })
-  })
-  describe('renderTilePicker()', () => {
-    let canvas, context
-    let contextFillSpy, contextDrawImage
-    beforeEach(() => {
-      jest.clearAllMocks()
-      canvas = document.getElementById('paletteCanvas')
-      context = canvas.getContext('2d')
-      testRenderManager.pickerRowCount = 2
-      testRenderManager.pickerTilesPerRow = 5
-      contextFillSpy = jest.spyOn(context, 'fill')
-      contextDrawImage = jest.spyOn(context, 'drawImage')
-    })
-    it(`should refresh picker canvas with a fill colour and then render each tile in the tileset`, () => {
-      testRenderManager.renderTilePicker(true)
-      expect(contextFillSpy).toHaveBeenCalledTimes(1)
-      expect(contextDrawImage).toHaveBeenCalledTimes(10)
     })
   })
   describe('getPickerTileCode(x, y)', () => {

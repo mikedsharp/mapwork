@@ -1,6 +1,14 @@
 <script lang="ts">
+  import PaletteTile from '../PaletteTile/PaletteTile.svelte'
   import TilePicker from '../TilePicker/TilePicker.svelte'
   export let editorInstance
+  const tilesetsEndpoint =
+        'https://mds-mapwork-tilesets.s3-eu-west-1.amazonaws.com'
+  const tilesetImage = new Image();
+  tilesetImage.src = `${tilesetsEndpoint}/${editorInstance.renderManager.mapModel.getLayerByZPosition(editorInstance.selectedLayer).getTilesetPath()}`;
+  const tilesetPath = tilesetImage.src;
+  const tilesetWidth = tilesetImage.width;
+  const tilesetHeight = tilesetImage.height;
 
   function onBrushToolSelected() {
     editorInstance.selectedTool = 'singleTileBrush'
@@ -14,15 +22,12 @@
   function onEraserToolSelected() {
     editorInstance.selectedTool = 'eraser'
   }
+
+  function onPaletteTilePicked(event) {
+   editorInstance.renderManager.getPickerTileCode(event.detail.x, event.detail.y);
+  }
 </script>
 
-<style lang="scss">
-  #paletteDialog {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
-</style>
 
 <div id="paletteDialog" class="dialogDummy">
   <div id="paletteInfo" class="clearfix">
@@ -63,4 +68,29 @@
   </div>
 
   <TilePicker {editorInstance} />
+  <div class="paletteMenu__tiles">
+      {#each {length: tilesetHeight/32} as _, i} 
+        {#each {length: tilesetWidth/32} as _, j} 
+          {#if editorInstance.renderManager.mapModel.getLayerByZPosition(editorInstance.selectedLayer)}
+          <PaletteTile on:paletteTilePicked={onPaletteTilePicked} tileCell={j} tileRow={i} {tilesetPath} />
+          {/if}
+        {/each}
+      {/each}
+  </div>
 </div>
+
+<style lang="scss">
+  .paletteMenu {
+    &__tiles {
+      display: flex;
+      flex-wrap: wrap;
+      background-color:#aaa;
+      margin:0 auto;
+    }
+  }
+  #paletteDialog {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+</style>

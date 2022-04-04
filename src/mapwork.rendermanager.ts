@@ -60,8 +60,6 @@ export class RenderManager {
     this.renderAreaSelectTool(context)
     this.drawStencilBrush(context)
 
-    // now the tile picker
-    this.renderTilePicker()
     this.renderGrid(context)
   }
 
@@ -313,83 +311,11 @@ export class RenderManager {
     }
   }
 
-  renderTilePicker(palletteDialogVisible = false) {
-    let pickerRowCount
-    let pickerCellCount
-    let tileCode
-    const paletteDialog = document.getElementById('paletteDialog');
-    if(!paletteDialog) {
-      return;
-    }
-    const paletteDialogStyles = window.getComputedStyle(paletteDialog);
-    const paletteDialogVisible = paletteDialogStyles.display !== 'none';
-    if (
-      (paletteDialogVisible || palletteDialogVisible) &&
-      this.mapModel.getLayers().length > 0 &&
-      this.EditorEnvironment.selectedLayer !== null
-    ) {
-      //draw the tiles in the palette
-
-      const pickerCanvas:any = document.getElementById('paletteCanvas')
-      const pickerContext:any = pickerCanvas.getContext('2d')
-
-      pickerContext.fillStyle = '#ccc'
-      pickerContext.rect(
-        0,
-        0,
-        pickerCanvas.getBoundingClientRect().width,
-        pickerCanvas.getBoundingClientRect().height
-      )
-      pickerContext.fill()
-
-      tileCode = 0
-      const currentLayer = this.mapModel.getLayerByZPosition(
-        this.EditorEnvironment.selectedLayer
-      )
-      for (
-        pickerRowCount = 0;
-        pickerRowCount < this.pickerRowCount;
-        pickerRowCount++
-      ) {
-        for (
-          pickerCellCount = 0;
-          pickerCellCount < this.pickerTilesPerRow;
-          pickerCellCount++
-        ) {
-          if (tileCode < this.totalPickerTiles) {
-            pickerContext.drawImage(
-              currentLayer.getTilesetImage(),
-              parseInt(
-              (  (tileCode * this.mapModel.getTileWidth()) %
-              currentLayer.getTilesetWidth()).toString(),
-                10
-              ),
-              parseInt(
-                ((tileCode * this.mapModel.getTileWidth()) /
-                currentLayer.getTilesetWidth()).toString(),
-                10
-              ) * this.mapModel.getTileWidth(),
-              this.mapModel.getTileWidth(),
-              this.mapModel.getTileHeight(),
-              pickerCellCount * this.mapModel.getTileWidth(),
-              pickerRowCount * this.mapModel.getTileHeight(),
-              this.mapModel.getTileWidth(),
-              this.mapModel.getTileHeight()
-            )
-          }
-
-          tileCode++
-        }
-      }
-    }
-  }
-
   getPickerTileCode(x, y) {
     'use strict'
     var row, col
     row = Math.floor(y / this.mapModel.getTileHeight())
     col = Math.floor(x / this.mapModel.getTileWidth())
-
     if (row * this.pickerTilesPerRow + col < this.totalPickerTiles) {
       this.EditorEnvironment.selectedPalleteTile =
         row * this.pickerTilesPerRow + col

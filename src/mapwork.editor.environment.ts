@@ -606,8 +606,4 @@ export class EditorEnvironment {
     'use strict'
     scope.tilesets = data
   }
-  showBuildMenu() {
-    if (scope.renderManager.mapModel) {
-    }
-  }
 }

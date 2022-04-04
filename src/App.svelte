@@ -59,7 +59,7 @@
       label: 'Map Tools',
       id: 'buildItem',
       actionHandler: () => {
-        editorInstance.showBuildMenu()
+        
       },
     },
     {
